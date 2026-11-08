@@ -1,0 +1,330 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Linear gradient background used across the entire site (matches the Figma Homepage frame).
+   `fixed` keeps the gradient pinned to the viewport so it stays consistent while scrolling. */
+html,
+body {
+  min-height: 100%;
+  background-color: #f3e7d4;
+  background-image: linear-gradient(to bottom, #fbf6ec, #f3e7d4);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* Concept carousel (Prism case study): the progress fill doubles as the autoplay timer.
+   The next slide is shown when the fill finishes, and hovering or focusing the carousel pauses it. */
+@keyframes concept-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.concept-progress-fill {
+  transform-origin: left center;
+  animation: concept-progress 5.5s linear forwards;
+}
+.concept-carousel:hover .concept-progress-fill,
+.concept-carousel:focus-within .concept-progress-fill {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .concept-progress-fill {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
+/* Ceramic glaze on homepage tiles: a cursor-driven specular highlight, clipped to the photo.
+   Tune the radii, alphas, blend and falloff here (and the matching JS constants in Homepage.tsx). */
+.tile-glaze {
+  --mx: 50%;
+  --my: 50%;
+  --glow: 0;
+  --shine: 1;
+  --hotspot-r: 90px;
+  --sheen-r: 320px;
+  --hotspot-a: 0.95;
+  --sheen-a: 0.5;
+  overflow: hidden;
+}
+.tile-glaze::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: var(--glow);
+  transition: opacity 0.25s ease-out;
+  mix-blend-mode: overlay;
+  background:
+    radial-gradient(
+      circle var(--hotspot-r) at var(--mx) var(--my),
+      rgba(255, 255, 255, calc(var(--hotspot-a) * var(--shine))) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle var(--sheen-r) at var(--mx) var(--my),
+      rgba(255, 255, 255, calc(var(--sheen-a) * var(--shine))) 0%,
+      transparent 70%
+    );
+}
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .tile-glaze::after {
+    display: none;
+  }
+}
+
+/* Hero staircase: rest shadow lives on an inner wrapper so Motion doesn't
+   overwrite it. Hover only deepens the shadow — the tile stays in place. */
+.hero-tile-shadow {
+  filter: drop-shadow(0px 16px 20px rgba(89, 51, 13, 0.24));
+  transition: filter 0.4s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero-tile:hover .hero-tile-shadow {
+    filter: drop-shadow(0px 22px 28px rgba(89, 51, 13, 0.36));
+  }
+}
+.home-dark .hero-tile-shadow,
+.home-dark .hero-tile:hover .hero-tile-shadow {
+  filter: none;
+}
+
+/* Prism My Craft card (Figma 912:57011). Positions are % of the 612×408 frame. */
+.prism-craft {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 15px;
+  background: linear-gradient(to bottom, #2d4a36, #131815);
+}
+.prism-craft-bg {
+  position: absolute;
+  left: 50%;
+  top: -11%;
+  width: 108%;
+  height: 138%;
+  transform: translateX(-50%) rotate(180deg);
+  object-fit: cover;
+  pointer-events: none;
+}
+.prism-craft-tags {
+  position: absolute;
+  top: 17px;
+  left: 20px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.prism-craft-pill,
+.prism-craft-title-pill {
+  background: #fbf6ec;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 16px;
+  line-height: 18px;
+  white-space: nowrap;
+}
+.prism-craft-title-pill {
+  position: absolute;
+  top: 17px;
+  right: 21px;
+  z-index: 2;
+  font-size: 20px;
+  line-height: normal;
+  letter-spacing: 0.2px;
+  color: #000;
+}
+.prism-craft-panel {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 37.75%;
+  height: 80.88%;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 -2px 3.5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: top 0.45s ease;
+}
+.prism-craft-shot-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.prism-craft-shot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 4px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+.prism-craft-shot-fit {
+  object-fit: contain;
+  object-position: top center;
+}
+.craft-chrome-end .prism-craft-tags {
+  left: auto;
+  right: 20px;
+  align-items: flex-end;
+}
+.craft-chrome-end .prism-craft-title-pill {
+  right: auto;
+  left: 21px;
+}
+.prism-craft-veil {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  background: linear-gradient(118.45deg, rgba(15, 118, 110, 0) 0.45%, rgba(25, 103, 91, 0) 52.4%);
+  transition: background 0.4s ease;
+}
+.prism-craft-copy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px 24px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.prism-craft-logo {
+  width: 148px;
+  height: 63px;
+  overflow: hidden;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.15));
+  flex-shrink: 0;
+}
+.prism-craft-logo img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 236.46%;
+  top: -63.54%;
+  max-width: none;
+  pointer-events: none;
+}
+.prism-craft-hmw {
+  margin: 0;
+  max-width: 445px;
+  font-size: 16px;
+  line-height: 22.4px;
+  text-align: center;
+  color: #fff;
+}
+.prism-craft-enter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.12s ease;
+}
+.prism-craft-enter-face {
+  display: block;
+  background: linear-gradient(
+    180deg,
+    rgba(251, 246, 236, 0.28) 0%,
+    rgba(31, 61, 43, 0.22) 100%
+  );
+  color: #fbf6ec;
+  border: 1px solid rgba(251, 246, 236, 0.42);
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-family: "Roboto Condensed", "Roboto", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 1.12px;
+  white-space: nowrap;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.28);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(16px) saturate(1.6);
+}
+.home-dark .prism-craft-enter-face {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.38);
+}
+.halo-craft {
+  background: #07060f;
+}
+.halo-craft-bg {
+  top: -18%;
+  width: 130%;
+  height: 150%;
+  transform: translateX(-50%);
+  object-position: 50% 62%;
+}
+.halo-craft-logo {
+  width: 220px;
+  height: 49px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.15));
+}
+.halo-craft-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .craft-card-face:hover {
+    cursor: none;
+  }
+  .prism-craft:hover .prism-craft-panel {
+    top: 23.04%;
+  }
+  .prism-craft:hover .prism-craft-veil {
+    background: linear-gradient(118.45deg, rgba(15, 118, 110, 0.8) 0.45%, rgba(25, 103, 91, 0.8) 52.4%);
+  }
+  .halo-craft:hover .prism-craft-veil {
+    background: linear-gradient(118.45deg, rgba(42, 48, 68, 0.88) 0.45%, rgba(28, 38, 65, 0.88) 52.4%);
+  }
+  .prism-craft:hover .prism-craft-copy,
+  .craft-card-face:hover .prism-craft-enter {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prism-craft-panel,
+  .prism-craft-veil,
+  .prism-craft-copy,
+  .prism-craft-enter {
+    transition: none;
+  }
+  .prism-craft-enter-face {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+
+
