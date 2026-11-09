@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
@@ -8,6 +8,8 @@ import { StepScrollScene } from "../components/StepScrollScene";
 import { EdgeGlyphs } from "../components/EdgeGlyphs";
 import { SectionProgressBar, PROGRESS_BAR_HEIGHT } from "../components/SectionProgressBar";
 import { SddLifecycleCompare } from "../components/SddLifecycleCompare";
+import { ConceptScrollStory } from "../components/ConceptScrollStory";
+import { ScreensGallery } from "../components/ScreensGallery";
 
 const C = {
   forest: "#1f3d2b",
@@ -139,7 +141,7 @@ const H1 = ({ children, style }: { children: ReactNode; style?: CSSProperties })
   </h2>
 );
 const H2 = ({ children, style }: { children: ReactNode; style?: CSSProperties }) => (
-  <h3 className="m-0" style={{ ...T.heading2, ...style }}>
+  <h3 className="m-0" style={{ ...T.heading2, fontWeight: 700, ...style }}>
     {revealText(children)}
   </h3>
 );
@@ -161,6 +163,51 @@ function Tag({ children, color }: { children: ReactNode; color: string }) {
     >
       {children}
     </span>
+  );
+}
+
+function Chip({ children, bold = false }: { children: ReactNode; bold?: boolean }) {
+  return (
+    <span
+      className="whitespace-nowrap inline-flex flex-col items-center"
+      style={{
+        background: "#fff",
+        color: "#000",
+        fontFamily: SANS,
+        fontWeight: bold ? 700 : 400,
+        fontSize: 16,
+        lineHeight: "18px",
+        padding: "4px 12px",
+        borderRadius: 999,
+        filter: "drop-shadow(0px 0px 2.5px rgba(0,0,0,0.1))",
+      }}
+    >
+      {children}
+      {/* Invisible bold copy reserves the bold width so chips don't shift when they turn bold */}
+      <span aria-hidden style={{ fontWeight: 700, height: 0, overflow: "hidden", visibility: "hidden" }}>
+        {children}
+      </span>
+    </span>
+  );
+}
+
+// Renders text where **keyword** segments turn bold when `bold` is true, without changing their width.
+function KeywordText({ text, bold }: { text: string; bold: boolean }) {
+  return (
+    <>
+      {text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
+        i % 2 === 0 ? (
+          <LensDrift key={i} text={part} />
+        ) : (
+          <span key={i} className="whitespace-nowrap inline-flex flex-col align-top" style={{ fontWeight: bold ? 700 : 400 }}>
+            {part}
+            <span aria-hidden style={{ fontWeight: 700, height: 0, overflow: "hidden", visibility: "hidden" }}>
+              {part}
+            </span>
+          </span>
+        ),
+      )}
+    </>
   );
 }
 
@@ -246,36 +293,15 @@ const FINDING_STEPS = [
 const IDEAS = [
   {
     title: "Context compiler",
+    boldAt: 0.41, // handle has passed the Context Compiler box in the flowchart
     chips: ["Gaps", "Context", "Dependencies"],
-    body: "It reads the spec against the repo’s patterns, tech stack and dependencies, finds what the spec leaves out, and drafts a suggested line for each gap.",
+    body: "It reads the spec against the repo’s **patterns**, **tech stack** and **dependencies**, finds what the spec leaves out, and drafts a suggested line for each **gap**.",
   },
   {
     title: "Assumption gating",
+    boldAt: 0.69, // handle has passed Approve Lines and Review Panel in the flowchart
     chips: ["Assumptions", "Approval", "Traceability"],
-    body: "It holds the handoff until an engineer approves the lines that matter. Blocking lines must be approved; optional ones travel on, labelled Still open.",
-  },
-];
-
-const SCREENS = [
-  {
-    title: "One map of the whole spec.",
-    body: "Each section shows how many gaps it holds and how many block export.",
-    visual: "Spec map recording",
-  },
-  {
-    title: "Blocking items come first.",
-    body: "Only items marked Blocks export stop the handoff. Optional ones travel on, labelled Still open.",
-    visual: "Review list",
-  },
-  {
-    title: "Every suggestion shows its source.",
-    body: "Why it is there, what the AI looked for, and the authority it cites.",
-    visual: "Item dialog",
-  },
-  {
-    title: "Export carries what is unresolved.",
-    body: "The preview lists approved, unreviewed and open lines, and tells the agent to treat the last two as suggestions.",
-    visual: "Export preview",
+    body: "It holds the handoff until an engineer **approves** the lines that matter. **Blocking** lines must be **approved**; optional ones travel on, labelled **Still open**.",
   },
 ];
 
@@ -301,7 +327,7 @@ const PROGRESS_SECTIONS: { label: string; short: string; group: "story" | "resea
   { label: "Testing", short: "Testing", group: "research", focus: [11, 12] },
 ];
 
-function ProductSProgressBar() {
+function ProductSProgressBar({ dark }: { dark: boolean }) {
   const { focused, focusOn } = useContext(FocusCtx);
   const active = Math.max(0, PROGRESS_SECTIONS.findIndex((s) => s.focus.includes(focused)));
 
@@ -323,6 +349,7 @@ function ProductSProgressBar() {
       activeIndex={active}
       onSelect={jumpTo}
       offsetTop={NAV_H}
+      dark={dark}
     />
   );
 }
@@ -331,17 +358,45 @@ export function ProductSCaseStudy() {
   const navigate = useNavigate();
   const tags = PROJECTS.find((p) => p.slug === "project-s")?.tags ?? [];
 
+  // The concept section dissolves the whole screen to dark and back. The fixed nav and section
+  // bar follow, so everything reads as dark mode while the section is the main thing on screen.
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      const band = document.querySelector<HTMLElement>('[data-focus-section="5"]');
+      if (!band) return;
+      const r = band.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // in once the section's top reaches the upper third; out as its end rises, before the next section arrives
+      setDark(r.top < vh * 0.3 && r.bottom > vh * 0.8);
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
+  }, []);
+
   const navLink: CSSProperties = {
     fontFamily: NAV,
     fontWeight: 500,
     fontSize: 13,
     lineHeight: "24px",
     letterSpacing: "1.04px",
-    color: C.ink,
+    color: dark ? "#fff" : C.ink,
+    transition: "color 500ms ease",
   };
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "#FFFFFF" }}>
+    <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "#FFFFFF", overflowX: "clip" }}>
+      {/* the dark screen: fades in and out behind the content */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0"
+        style={{ background: "#0b0c0e", opacity: dark ? 1 : 0, transition: "opacity 500ms ease", zIndex: 0 }}
+      />
       <EdgeGlyphs />
       <nav
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between"
@@ -350,8 +405,9 @@ export function ProductSCaseStudy() {
           paddingLeft: 71,
           paddingRight: 80,
           paddingBottom: 1,
-          background: "rgba(255,255,255,0.92)",
-          borderBottom: "1px solid rgba(42,32,24,0.1)",
+          background: dark ? "rgba(11,12,14,0.92)" : "rgba(255,255,255,0.92)",
+          borderBottom: dark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(42,32,24,0.1)",
+          transition: "background 500ms ease, border-color 500ms ease",
         }}
       >
         <button
@@ -380,6 +436,8 @@ export function ProductSCaseStudy() {
             padding: `${NAV_H + PROGRESS_BAR_HEIGHT + 128}px 80px 40vh`,
             boxSizing: "border-box",
             gap: 200,
+            position: "relative",
+            zIndex: 1,
           }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -544,54 +602,53 @@ export function ProductSCaseStudy() {
 
             <Focus index={4} className="w-full">
               <SddLifecycleCompare>
+                {(t: number) => (
+                <>
                 <H1>What I developed</H1>
-                <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "28px", color: C.ink, maxWidth: 720 }}>
-                  <B>
-                    <LensDrift text="Two ideas: a context compiler and assumption gating." />
-                  </B>
-                </p>
-                <div className="grid w-full text-left max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                <div className="grid w-full text-left max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 40 }}>
                   {IDEAS.map((idea) => (
-                    <div
-                      key={idea.title}
-                      className="flex flex-col items-start"
-                      style={{ gap: 12, background: C.cream, borderRadius: 15, padding: 20, minHeight: 160 }}
-                    >
+                    <div key={idea.title} className="flex flex-col items-start" style={{ gap: 12 }}>
                       <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "24px", color: C.ink }}>
                         <LensDrift text={idea.title} />
                       </p>
                       <div className="flex gap-[8px] items-start flex-wrap">
-                        {idea.chips.map((chip, i) => (
-                          <Tag key={chip} color={TAG_COLORS[i % TAG_COLORS.length]}>
+                        {idea.chips.map((chip) => (
+                          <Chip key={chip} bold={t >= idea.boldAt}>
                             {chip}
-                          </Tag>
+                          </Chip>
                         ))}
                       </div>
                       <p className="m-0" style={{ ...T.intro, lineHeight: "26px" }}>
-                        <LensDrift text={idea.body} />
+                        <KeywordText text={idea.body} bold={t >= idea.boldAt} />
                       </p>
                     </div>
                   ))}
                 </div>
+                </>
+                )}
               </SddLifecycleCompare>
             </Focus>
 
-            <Focus index={5} className="flex flex-col items-center w-full text-center" style={{ gap: 40 }}>
-              <H1>Hi-fi screens</H1>
-              <div className="flex flex-col w-full" style={{ gap: 40 }}>
-                {SCREENS.map((screen, i) => (
-                  <div key={screen.title} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
-                    <div className="flex flex-col items-center" style={{ gap: 8, maxWidth: 570 }}>
-                      <Mark n={i + 1} />
-                      <H2>{screen.title}</H2>
-                      <P style={{ lineHeight: "28px" }}>{screen.body}</P>
-                      <p className="m-0" style={T.muted}>
-                        Result.
-                      </p>
-                    </div>
-                    <VisualSlot label={screen.visual} />
-                  </div>
-                ))}
+            {/* the concept story: the screen dissolves to dark for it, then back */}
+            <Focus
+              index={5}
+              className="flex flex-col items-center text-center"
+              style={{ gap: 40, padding: "100px 0" }}
+            >
+              <div
+                className="flex flex-col items-center w-full"
+                style={{
+                  gap: 40,
+                  maxWidth: 1120,
+                  opacity: dark ? 1 : 0,
+                  transition: "opacity 500ms ease",
+                }}
+              >
+                <H1 style={{ color: "#fff" }}>Developing high fidelity concept</H1>
+                <ConceptScrollStory />
+                <div className="w-full" style={{ marginTop: 100 }}>
+                  <ScreensGallery />
+                </div>
               </div>
             </Focus>
 
@@ -776,7 +833,7 @@ export function ProductSCaseStudy() {
             </Focus>
           </section>
         </motion.main>
-        <ProductSProgressBar />
+        <ProductSProgressBar dark={dark} />
       </SectionFocusProvider>
     </div>
   );

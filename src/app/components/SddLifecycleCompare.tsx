@@ -62,7 +62,7 @@ function Legend() {
   );
 }
 
-export function SddLifecycleCompare({ children }: { children: ReactNode }) {
+export function SddLifecycleCompare({ children }: { children: ReactNode | ((t: number) => ReactNode) }) {
   const reduced = useReducedMotion();
   const pinRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -216,7 +216,14 @@ export function SddLifecycleCompare({ children }: { children: ReactNode }) {
 
   const stage = (
     <div ref={stageRef} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
-      {children}
+      {typeof children === "function" ? children(t) : children}
+      <p
+        className="m-0 w-full text-center"
+        aria-live="polite"
+        style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "24px", color: "#000" }}
+      >
+        {t >= 0.5 ? "After implementing idea" : "Before implementing idea"}
+      </p>
       {frame}
       <Legend />
       {caption}

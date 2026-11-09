@@ -35,11 +35,13 @@ export function SectionProgressBar({
   activeIndex,
   onSelect,
   offsetTop = 66,
+  dark = false,
 }: {
   items: ProgressItem[];
   activeIndex: number;
   onSelect: (index: number) => void;
   offsetTop?: number;
+  dark?: boolean;
 }) {
   const segRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const rowRef = useRef<HTMLDivElement>(null);
@@ -80,8 +82,9 @@ export function SectionProgressBar({
         top: offsetTop,
         height: BAR_H,
         zIndex: 45,
-        background: "rgba(255,255,255,0.92)",
-        borderBottom: "1px solid rgba(42,32,24,0.1)",
+        background: dark ? "rgba(11,12,14,0.92)" : "rgba(255,255,255,0.92)",
+        borderBottom: dark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(42,32,24,0.1)",
+        transition: "background 500ms ease, border-color 500ms ease",
       }}
     >
       <div ref={rowRef} className="relative flex w-full h-full">
@@ -125,9 +128,9 @@ export function SectionProgressBar({
                 letterSpacing: research && !active ? "0.4px" : undefined,
                 textTransform: "uppercase",
                 textOverflow: "ellipsis",
-                color: active ? ACTIVE_TEXT : research ? "rgba(0,0,0,0.46)" : "#000000",
+                color: active ? ACTIVE_TEXT : dark ? (research ? "rgba(255,255,255,0.5)" : "#ffffff") : research ? "rgba(0,0,0,0.46)" : "#000000",
                 opacity: research && !active ? 0.9 : 1,
-                transition: "color 300ms ease",
+                transition: "color 500ms ease",
                 boxShadow: splitBefore ? "inset 1px 0 0 rgba(42,32,24,0.16)" : undefined,
               }}
             >
