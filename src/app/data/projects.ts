@@ -41,8 +41,8 @@ export const PROJECTS: Project[] = [
   {
     id: 2,
     slug: "project-s",
-    title: "Project S",
-    desc: "Product S catches missing context before an AI agent writes code.",
+    title: "SpecTrim",
+    desc: "SpecTrim catches missing context before an AI agent writes code.",
     tags: ["Agentic AI", "Developer tools", "Service design", "Specification-driven development"],
     image: tile3,
     frost: frost3,

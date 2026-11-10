@@ -5,6 +5,9 @@ import cardBg from "@/assets/final-outcomes/bg.jpg";
 const INK = "#000000";
 const SANS = "'Roboto', sans-serif";
 
+// The recordings were slow enough to read as stills, so they play faster.
+const PLAYBACK_RATE = 1.8;
+
 const MEDIA_W = 1280;
 const MEDIA_H = 757;
 
@@ -87,6 +90,7 @@ export function OutcomeVideoCards() {
       if (!video) return;
       if (!reduceMotion && i === active) {
         video.currentTime = 0;
+        video.playbackRate = PLAYBACK_RATE;
         const play = video.play();
         if (play) play.catch(() => {});
       } else {
@@ -194,6 +198,7 @@ function OutcomeVideoCard({
               loop
               playsInline
               preload="metadata"
+              onLoadedMetadata={(e) => { e.currentTarget.playbackRate = PLAYBACK_RATE; }}
               disablePictureInPicture
               aria-label={title}
               className="absolute inset-0 block"

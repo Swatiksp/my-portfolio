@@ -677,7 +677,7 @@ function StepCopy({ i, style }: { i: number; style?: CSSProperties }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 10, textAlign: "left", ...style }}>
       <h3
         className="m-0"
-        style={{ fontFamily: SANS, fontWeight: 700, fontSize: 24, lineHeight: "32px", color: "#fff" }}
+        style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 30, lineHeight: "36px", letterSpacing: "-0.015em", color: "#fff" }}
       >
         {STEPS[i].title}
       </h3>

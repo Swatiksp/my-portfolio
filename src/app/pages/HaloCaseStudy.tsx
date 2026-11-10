@@ -1,5 +1,10 @@
+import logoMark from "@/assets/logo/logo.svg";
 import { useContext } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import { TypeIn } from "../components/TypeIn";
+import { CaseHero, HeroPill } from "../components/CaseHero";
+import herohBg from "@/assets/craft-poster/h-bg.webp";
+import herohShot from "@/assets/craft-poster/h-shot.webp";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Focus, FocusCtx, LensDrift, revealText, SectionFocusProvider } from "../components/SectionReveal";
@@ -46,7 +51,7 @@ const T = {
     textTransform: "uppercase",
     color: C.forest,
   },
-  heading1: { fontFamily: MONO, fontWeight: 700, fontSize: 32, lineHeight: "40px", textTransform: "uppercase", color: C.ink },
+  heading1: { fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: C.ink },
   metaLabel: {
     fontFamily: SANS,
     fontWeight: 600,
@@ -106,7 +111,7 @@ function Tag({ children, color }: { children: ReactNode; color: string }) {
         borderRadius: 999,
       }}
     >
-      {children}
+      {typeof children === "string" ? <TypeIn text={children} /> : children}
     </span>
   );
 }
@@ -162,7 +167,7 @@ function MetaCell({
   return (
     <div className="flex flex-col min-w-0" style={{ gap }}>
       <p className="m-0" style={labelStyle ?? T.metaLabel}>
-        {label}
+        <TypeIn text={label} />
       </p>
       {children}
     </div>
@@ -276,12 +281,12 @@ const PERSONAS: Persona[] = [
 const PROGRESS_SECTIONS: { label: string; short: string; group: "story" | "research"; focus: number[] }[] = [
   { label: "Intro", short: "Intro", group: "story", focus: [0] },
   { label: "The problem", short: "Problem", group: "story", focus: [1] },
-  { label: "What we made", short: "Made", group: "story", focus: [2] },
-  { label: "Wireframes", short: "Wireframes", group: "story", focus: [3] },
-  { label: "Screens", short: "Screens", group: "story", focus: [4] },
-  { label: "Outcomes", short: "Outcomes", group: "story", focus: [5] },
-  { label: "People", short: "People", group: "research", focus: [6, 7] },
-  { label: "Flow", short: "Flow", group: "research", focus: [8] },
+  { label: "People", short: "People", group: "story", focus: [2] },
+  { label: "What we made", short: "Made", group: "story", focus: [3] },
+  { label: "Task flow", short: "Flow", group: "story", focus: [4] },
+  { label: "Wireframes", short: "Wireframes", group: "story", focus: [5] },
+  { label: "Screens", short: "Screens", group: "story", focus: [6] },
+  { label: "Outcomes", short: "Outcomes", group: "story", focus: [7] },
 ];
 
 function HaloProgressBar() {
@@ -446,6 +451,8 @@ function DesignExecution() {
   );
 }
 
+const HERO_DESC = "Reimagining Microsoft Copilot to generate tailor-made presentations that streamline conversations between sales executives and clients";
+
 export function HaloCaseStudy() {
   const navigate = useNavigate();
   const tags = PROJECTS.find((p) => p.slug === "halo-conversations")?.tags ?? [];
@@ -477,7 +484,7 @@ export function HaloCaseStudy() {
           aria-label="Back to portfolio"
           onClick={() => navigate("/")}
           className="shrink-0 border-none cursor-pointer p-0"
-          style={{ width: 44, height: 44, background: C.forest, borderRadius: 4 }}
+          style={{ width: 44, height: 44, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
         />
         <button
           onClick={() => navigate("/")}
@@ -500,63 +507,48 @@ export function HaloCaseStudy() {
             boxSizing: "border-box",
             gap: 200,
           }}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
         >
           <div className="flex flex-col w-full" style={{ gap: 200 }}>
             <Focus as="header" index={0} className="flex flex-col gap-[40px] items-start w-full">
-              <div
-                className="relative w-full overflow-hidden flex flex-col gap-[20px] items-start"
-                style={{ minHeight: 485, padding: 20, borderRadius: 15 }}
-              >
-                <div
-                  className="halo-soft pointer-events-none absolute inset-0"
-                  aria-hidden
-                  style={{
-                    borderRadius: 15,
-                    backgroundColor: C.sand,
-                    backgroundImage:
-                      "radial-gradient(ellipse 1100px 820px at 0% 85%, #ffffff 27.4%, rgba(255,255,255,0.71) 42.3%, rgba(255,255,255,0) 80%)",
-                  }}
-                />
+              <CaseHero bg={herohBg} shot={herohShot} shotAlt="Halo Conversations launch page in Microsoft Copilot" glyph="#bfe3ff" bgRotate={0}>
                 <h1
-                  className="relative z-[1] m-0"
+                  className="m-0"
                   style={{
-                    fontFamily: MONO,
+                    fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
                     fontWeight: 700,
-                    fontSize: 62,
-                    lineHeight: "68px",
-                    letterSpacing: "0.62px",
-                    color: C.prism,
+                    fontSize: 64,
+                    lineHeight: "66px",
+                    letterSpacing: "-0.02em",
+                    color: "#fff",
                     maxWidth: 720,
                   }}
                 >
-                  <LensDrift text="HALO CONVERSATIONS" />
+                  <TypeIn text="Halo" />
+                  <br />
+                  <TypeIn text="Conversations" />
                 </h1>
-                <p className="relative z-[1] m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "32px", color: C.ink, maxWidth: 720 }}>
-                  <LensDrift
-                    text="Reimagining Microsoft Copilot to generate tailor-made presentations that streamline conversations between sales executives and clients"
-                  />
+                <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "32px", color: "#fff", maxWidth: 720 }}>
+                  <TypeIn text={HERO_DESC} />
                 </p>
-                <div className="relative z-[1] flex gap-[8px] items-start flex-wrap">
+                <div className="flex gap-[8px] items-start flex-wrap">
                   {tags.map((tag, i) => (
-                    <Tag key={tag} color={TAG_COLORS[i % TAG_COLORS.length]}>
-                      {tag}
-                    </Tag>
-                  ))}
+<HeroPill key={tag}>{tag}</HeroPill>
+))}
                 </div>
-              </div>
+                            </CaseHero>
 
               <div className="grid w-full items-start max-lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 20 }}>
                 <div className="flex flex-col gap-[20px] min-w-0">
                   <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 28, lineHeight: "36px", color: C.ink }}>
-                    <LensDrift
+                    <TypeIn
                       text="An internal sales tool on Microsoft’s stack, so a client conversation can become a tailored deck."
                     />
                   </p>
                   <p className="m-0" style={T.intro}>
-                    <LensDrift
+                    <TypeIn
                       text="Halo Conversations is an AI-powered chat application integrated into the Microsoft Showcase platform. By leveraging MS Copilot, it assists in creating presentation decks that cater to a client’s specific needs."
                     />
                   </p>
@@ -566,15 +558,15 @@ export function HaloCaseStudy() {
                   <div className="grid w-full items-start" style={{ gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 20 }}>
                     <MetaCell label="Client" labelStyle={T.storyMetaLabel} gap={10}>
                       <p className="m-0" style={T.metaValue}>
-                        Avanade
+                        <TypeIn text="Avanade" />
                       </p>
                       <p className="m-0" style={T.muted}>
-                        Microsoft Showcase
+                        <TypeIn text="Microsoft Showcase" />
                       </p>
                     </MetaCell>
                     <MetaCell label="Duration" labelStyle={T.storyMetaLabel} gap={10}>
                       <p className="m-0" style={T.metaValue}>
-                        Completed in 2024
+                        <TypeIn text="Completed in 2024" />
                       </p>
                     </MetaCell>
                     <MetaCell label="Role" labelStyle={T.storyMetaLabel} gap={10}>
@@ -619,7 +611,16 @@ export function HaloCaseStudy() {
               />
             </Focus>
 
-            <Focus index={2} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
+            <Focus index={2} className="flex flex-col items-center w-full" style={{ gap: 40 }}>
+              <H1 style={{ textAlign: "center" }}>Here’s a little more about the people</H1>
+              <div className="halo-soft grid w-full max-lg:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                {PERSONAS.map((person) => (
+                  <PersonaCard key={person.name} person={person} />
+                ))}
+              </div>
+            </Focus>
+
+            <Focus index={3} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
               <H1>Ideas we developed</H1>
               <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "28px", color: C.ink, maxWidth: 720 }}>
                 <B>
@@ -655,45 +656,7 @@ export function HaloCaseStudy() {
               </div>
             </Focus>
 
-            <Focus index={3} className="flex flex-col w-full" style={{ gap: 20 }}>
-              <DesignExecution />
-            </Focus>
-
             <Focus index={4} className="w-full">
-              <HaloHifiStages />
-            </Focus>
-
-            <Focus as="section" index={5} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
-              <H1>How it helped sales executives</H1>
-              {SALES_USE.map((para) => (
-                <P key={para} style={{ lineHeight: "28px", maxWidth: 570 }}>
-                  {para}
-                </P>
-              ))}
-            </Focus>
-          </div>
-
-          <Focus as="section" index={6} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
-            <p className="m-0" style={T.eyebrow}>
-              <LensDrift text="Optional reading" />
-            </p>
-            <H1>How did we build this tool?</H1>
-            <P style={{ lineHeight: "28px", maxWidth: 570 }}>
-              The people we designed for, and the task flow after iteration.
-            </P>
-          </Focus>
-
-          <section className="flex flex-col w-full" style={{ gap: 200 }}>
-            <Focus index={7} className="flex flex-col items-center w-full" style={{ gap: 40 }}>
-              <H1 style={{ textAlign: "center" }}>Here’s a little more about the people</H1>
-              <div className="halo-soft grid w-full max-lg:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                {PERSONAS.map((person) => (
-                  <PersonaCard key={person.name} person={person} />
-                ))}
-              </div>
-            </Focus>
-
-            <Focus index={8} className="w-full">
               <div className="w-full flex justify-center">
                 <div className="w-full flex flex-col" style={{ maxWidth: SCENE_MAX, gap: 20 }}>
                   <SceneCopy>
@@ -706,7 +669,24 @@ export function HaloCaseStudy() {
                 </div>
               </div>
             </Focus>
-          </section>
+
+            <Focus index={5} className="flex flex-col w-full" style={{ gap: 20 }}>
+              <DesignExecution />
+            </Focus>
+
+            <Focus index={6} className="w-full">
+              <HaloHifiStages />
+            </Focus>
+
+            <Focus as="section" index={7} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
+              <H1>How it helped sales executives</H1>
+              {SALES_USE.map((para) => (
+                <P key={para} style={{ lineHeight: "28px", maxWidth: 570 }}>
+                  {para}
+                </P>
+              ))}
+            </Focus>
+          </div>
         </motion.main>
         <HaloProgressBar />
       </SectionFocusProvider>

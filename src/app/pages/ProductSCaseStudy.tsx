@@ -1,5 +1,10 @@
+import logoMark from "@/assets/logo/logo.svg";
 import { useContext, useEffect, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import { TypeIn } from "../components/TypeIn";
+import { CaseHero, HeroPill } from "../components/CaseHero";
+import herosBg from "@/assets/craft-poster/s-bg.webp";
+import herosShot from "@/assets/craft-poster/s-shot.webp";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Focus, FocusCtx, LensDrift, revealText, SectionFocusProvider } from "../components/SectionReveal";
@@ -10,6 +15,27 @@ import { SectionProgressBar, PROGRESS_BAR_HEIGHT } from "../components/SectionPr
 import { SddLifecycleCompare } from "../components/SddLifecycleCompare";
 import { ConceptScrollStory } from "../components/ConceptScrollStory";
 import { ScreensGallery } from "../components/ScreensGallery";
+import { PainClusters } from "../components/ResearchStory";
+import stakeholderMap from "@/assets/research/stakeholder-map.png";
+import ecosystemMap from "@/assets/research/ecosystem-map.png";
+import journeyMap from "@/assets/research/journey-map.png";
+import lifecycle from "@/assets/research/lifecycle.png";
+import userFlow from "@/assets/research/user-flow.png";
+import { ExpandableImage } from "../components/ExpandableImage";
+import { MindMapTour } from "../components/MindMapTour";
+import { ProblemDeck } from "../components/ProblemDeck";
+import { VersionPreview } from "../components/VersionPreview";
+import v1a from "@/assets/versions/v1-1-spec-input.png";
+import v1b from "@/assets/versions/v1-2-compiler-result.png";
+import v1c from "@/assets/versions/v1-3-review-plan.png";
+import v1d from "@/assets/versions/v1-4-assumption-detail.png";
+import v1e from "@/assets/versions/v1-7-node-view.png";
+import v2a from "@/assets/versions/v2-8-spec-map.png";
+import v2b from "@/assets/versions/v2-8b-goals-context.png";
+import v2c from "@/assets/versions/v2-8c-edge-cases.png";
+import v2d from "@/assets/versions/v2-8d-decisions-assumptions.png";
+import v2e from "@/assets/versions/v2-8e-plan-approved.png";
+
 
 const C = {
   forest: "#1f3d2b",
@@ -38,7 +64,7 @@ const T = {
     textTransform: "uppercase",
     color: C.forest,
   },
-  heading1: { fontFamily: MONO, fontWeight: 700, fontSize: 32, lineHeight: "40px", textTransform: "uppercase", color: C.ink },
+  heading1: { fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: C.ink },
   metaLabel: {
     fontFamily: SANS,
     fontWeight: 600,
@@ -70,6 +96,22 @@ const T = {
   body: { fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "32px", color: C.ink },
   intro: { fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "28px", color: C.ink },
 } satisfies Record<string, CSSProperties>;
+
+const MapBlock = ({ title, paragraphs, children }: { title: string; paragraphs: string[]; children: ReactNode }) => (
+  <div className="flex flex-col items-center w-full" style={{ gap: 20 }}>
+    <div className="flex flex-col items-center" style={{ gap: 12, maxWidth: 570 }}>
+      <h3 className="m-0" style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 34, lineHeight: "40px", letterSpacing: "-0.02em", color: C.ink }}>
+        {revealText(title)}
+      </h3>
+      {paragraphs.map((t) => (
+        <P key={t} style={{ lineHeight: "28px" }}>
+          {t}
+        </P>
+      ))}
+    </div>
+    {children}
+  </div>
+);
 
 const P = ({ children, style }: { children: ReactNode; style?: CSSProperties }) => (
   <p className="m-0" style={{ ...T.body, ...style }}>
@@ -161,7 +203,7 @@ function Tag({ children, color }: { children: ReactNode; color: string }) {
         borderRadius: 999,
       }}
     >
-      {children}
+      {typeof children === "string" ? <TypeIn text={children} /> : children}
     </span>
   );
 }
@@ -262,7 +304,7 @@ function MetaCell({
   return (
     <div className="flex flex-col min-w-0" style={{ gap }}>
       <p className="m-0" style={labelStyle ?? T.metaLabel}>
-        {label}
+        <TypeIn text={label} />
       </p>
       {children}
     </div>
@@ -290,6 +332,12 @@ const FINDING_STEPS = [
   "Short prompts let agents guess. Exhaustive prompts take too long to write, so agents make unauthorized decisions in the gaps.",
 ];
 
+const VALIDATION_STEPS = [
+  "Test 1: two participants on the spec map. What they found hard, and what I changed because of it.",
+  "Test 2: three people on the redesign. My professor as a stakeholder, then two classmates, with the results of each task.",
+  "What changed the direction. The changes from testing that led to the final screens, shown before and after.",
+];
+
 const IDEAS = [
   {
     title: "Context compiler",
@@ -305,12 +353,20 @@ const IDEAS = [
   },
 ];
 
-const STATS = [
-  { n: "6", label: "Interviews" },
-  { n: "30", label: "Cited excerpts" },
-  { n: "4", label: "Pain clusters" },
-  { n: "5", label: "Questionnaire versions" },
-  { n: "5", label: "Usability sessions" },
+const VERSION_1 = [
+  { src: v1a, label: "1 · Spec input" },
+  { src: v1b, label: "2 · Compiler result" },
+  { src: v1c, label: "3 · Review plan" },
+  { src: v1d, label: "4 · Assumption detail" },
+  { src: v1e, label: "7 · Node view" },
+];
+
+const VERSION_2 = [
+  { src: v2a, label: "8 · Spec map" },
+  { src: v2b, label: "8b · Side open · Goals & Context" },
+  { src: v2c, label: "8c · Side open · Edge Cases" },
+  { src: v2d, label: "8d · Side open · Decisions & Assumptions" },
+  { src: v2e, label: "8e · Spec map, plan approved" },
 ];
 
 const PROGRESS_SECTIONS: { label: string; short: string; group: "story" | "research"; focus: number[] }[] = [
@@ -353,6 +409,8 @@ function ProductSProgressBar({ dark }: { dark: boolean }) {
     />
   );
 }
+
+const HERO_DESC = "SpecTrim catches missing context before an AI agent writes code.";
 
 export function ProductSCaseStudy() {
   const navigate = useNavigate();
@@ -414,7 +472,7 @@ export function ProductSCaseStudy() {
           aria-label="Back to portfolio"
           onClick={() => navigate("/")}
           className="shrink-0 border-none cursor-pointer p-0"
-          style={{ width: 44, height: 44, background: C.forest, borderRadius: 4 }}
+          style={{ width: 44, height: 44, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
         />
         <button
           onClick={() => navigate("/")}
@@ -439,59 +497,44 @@ export function ProductSCaseStudy() {
             position: "relative",
             zIndex: 1,
           }}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
         >
           <div className="flex flex-col w-full" style={{ gap: 200 }}>
             <Focus as="header" index={0} className="flex flex-col gap-[40px] items-start w-full">
-              <div
-                className="relative w-full overflow-hidden flex flex-col gap-[20px] items-start"
-                style={{ minHeight: 485, padding: 20, borderRadius: 15 }}
-              >
-                <div
-                  className="halo-soft pointer-events-none absolute inset-0"
-                  aria-hidden
-                  style={{
-                    borderRadius: 15,
-                    backgroundColor: C.sand,
-                    backgroundImage:
-                      "radial-gradient(ellipse 1100px 820px at 0% 85%, #ffffff 27.4%, rgba(255,255,255,0.71) 42.3%, rgba(255,255,255,0) 80%)",
-                  }}
-                />
+              <CaseHero bg={herosBg} shot={herosShot} shotAlt="SpecTrim spec map with the review list" glyph="#c9f2dc" bgRotate={180}>
                 <h1
-                  className="relative z-[1] m-0"
+                  className="m-0"
                   style={{
-                    fontFamily: MONO,
+                    fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
                     fontWeight: 700,
-                    fontSize: 62,
-                    lineHeight: "68px",
-                    letterSpacing: "0.62px",
-                    color: C.prism,
+                    fontSize: 64,
+                    lineHeight: "66px",
+                    letterSpacing: "-0.02em",
+                    color: "#fff",
                     maxWidth: 720,
                   }}
                 >
-                  <LensDrift text="PROJECT S" />
+                  <TypeIn text="SpecTrim" />
                 </h1>
-                <p className="relative z-[1] m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "32px", color: C.ink, maxWidth: 720 }}>
-                  <LensDrift text="Product S catches missing context before an AI agent writes code." />
+                <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "32px", color: "#fff", maxWidth: 720 }}>
+                  <TypeIn text={HERO_DESC} />
                 </p>
-                <div className="relative z-[1] flex gap-[8px] items-start flex-wrap">
+                <div className="flex gap-[8px] items-start flex-wrap">
                   {tags.map((tag, i) => (
-                    <Tag key={tag} color={TAG_COLORS[i % TAG_COLORS.length]}>
-                      {tag}
-                    </Tag>
-                  ))}
+<HeroPill key={tag}>{tag}</HeroPill>
+))}
                 </div>
-              </div>
+                            </CaseHero>
 
               <div className="grid w-full items-start max-lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 20 }}>
                 <div className="flex flex-col gap-[20px] min-w-0">
                   <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 28, lineHeight: "36px", color: C.ink }}>
-                    <LensDrift text="A map of your spec, and where the AI needs you." />
+                    <TypeIn text="A map of your spec, and where the AI needs you." />
                   </p>
                   <p className="m-0" style={T.intro}>
-                    <LensDrift text="Product S turns a specification into a spec map. It shows what a spec is made of and which parts can go wrong, what the AI has already covered, and the high-stakes areas where it needs your input before an agent builds." />
+                    <TypeIn text="SpecTrim turns a specification into a spec map. It shows what a spec is made of and which parts can go wrong, what the AI has already covered, and the high-stakes areas where it needs your input before an agent builds." />
                   </p>
                 </div>
 
@@ -499,23 +542,23 @@ export function ProductSCaseStudy() {
                   <div className="grid w-full items-start" style={{ gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 20 }}>
                     <MetaCell label="Role" labelStyle={T.storyMetaLabel} gap={10}>
                       <p className="m-0" style={T.metaValue}>
-                        Sole designer
+                        <TypeIn text="Sole designer" />
                       </p>
                       <p className="m-0" style={T.muted}>
-                        Research to prototype
+                        <TypeIn text="Research to prototype" />
                       </p>
                     </MetaCell>
                     <MetaCell label="Duration" labelStyle={T.storyMetaLabel} gap={10}>
                       <p className="m-0" style={T.metaValue}>
-                        Aug 20, 2026 to ongoing
+                        <TypeIn text="Aug 20, 2026 to ongoing" />
                       </p>
                     </MetaCell>
                     <MetaCell label="Course" labelStyle={T.storyMetaLabel} gap={10}>
                       <p className="m-0" style={T.metaValue}>
-                        NC State GD 503
+                        <TypeIn text="NC State GD 503" />
                       </p>
                       <p className="m-0" style={T.muted}>
-                        Brief provided by IBM
+                        <TypeIn text="Brief provided by IBM" />
                       </p>
                     </MetaCell>
                   </div>
@@ -671,84 +714,67 @@ export function ProductSCaseStudy() {
 
           <section className="flex flex-col w-full" style={{ gap: 200 }}>
             <Focus index={8} className="flex flex-col items-center w-full text-center" style={{ gap: 40 }}>
-              <H1>By the numbers</H1>
-              <div className="grid w-full" style={{ gridTemplateColumns: "repeat(5, minmax(0,1fr))", gap: 20 }}>
-                {STATS.map((stat) => (
-                  <MetaCell key={stat.label} label={stat.label} labelStyle={{ ...T.storyMetaLabel, textAlign: "center" }} gap={10}>
-                    <p className="m-0" style={{ fontFamily: MONO, fontWeight: 700, fontSize: 32, lineHeight: "40px", color: C.ink }}>
-                      {stat.n}
-                    </p>
-                  </MetaCell>
-                ))}
-              </div>
-              <p className="m-0" style={T.muted}>
-                Five usability sessions, one with my professor.
-              </p>
-
               <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
                 <H1>Research</H1>
-                <H2>I asked before I designed.</H2>
+                <H2>Six interviews, four clusters of pain.</H2>
                 <P style={{ lineHeight: "28px" }}>
-                  I had never heard of SDD, so I started with secondary research on its lifecycle, then several questionnaires,
-                  then interviews with 6 engineers, from a junior engineer to a director.
+                  I had never heard of SDD, so I started with its lifecycle, then interviewed 6 engineers, from a junior engineer
+                  to a director. I cited 30 excerpts from those interviews and sorted them into four clusters of pain. Two of the
+                  clusters are what I built my ideas on.
                 </P>
               </div>
-              <VisualSlot label="The questionnaires" />
+              <PainClusters />
 
               <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H2>Missing context, detected before code is generated.</H2>
+                <H2>What it all came down to.</H2>
                 <P style={{ lineHeight: "28px" }}>
-                  Problem statements from the interviews pointed to one central theme, and I held every later decision to it.
+                  Engineers need a way to ground AI tools in their team’s rules and context, and to check generated code against
+                  their architecture.
+                </P>
+                <P style={{ lineHeight: "28px" }}>
+                  Today, short prompts let agents guess in the gaps, and context trapped in private chats leaves reviewers
+                  skimming.
                 </P>
               </div>
-              <VisualSlot label="Problem statements" minHeight={280} />
-              <VisualSlot label="Pain-point synthesis" />
 
-              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H2>Not every engineer writes a spec.</H2>
-                <P style={{ lineHeight: "28px" }}>
-                  One participant said a detailed spec up front does not produce better code. So the idea had to work for prompts
-                  and chats too.
-                </P>
+              <div className="flex flex-col items-center w-full" style={{ gap: 20 }}>
+                <MindMapTour caption="The research mind map, with the counter-evidence cards at the bottom." />
               </div>
-              <VisualSlot label="Finalized mind map and counter-evidence cards" />
             </Focus>
 
             <Focus index={9} className="flex flex-col items-center w-full text-center" style={{ gap: 40 }}>
-              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H1>From problem to ideas</H1>
-                <P style={{ lineHeight: "28px" }}>The problem statements became one How Might We.</P>
-                <H2>
-                  How might we automatically detect and surface architectural and query missing context gaps before code is
-                  generated to prevent unauthorized agent inferences?
-                </H2>
-              </div>
-              <VisualSlot label="HMW" minHeight={240} />
+              <H1>From problem to ideas</H1>
+              <ProblemDeck />
 
-              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <P style={{ lineHeight: "28px" }}>The HMW became a user story.</P>
-                <P style={{ lineHeight: "28px" }}>
-                  As a Senior Software Engineer, I want the system to detect and surface missing context gaps before code
-                  generation, so that I can prevent unauthorized agent inferences.
-                </P>
+              <MapBlock
+                title="Stakeholder map"
+                paragraphs={[
+                  "Showed why I focused on senior engineers: they run spec development, while principals hand it down and juniors don’t call the shots.",
+                ]}
+              >
+                <ExpandableImage src={stakeholderMap} alt="Stakeholder map" width={2800} height={2030} />
+              </MapBlock>
+              <div className="grid w-full max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
+                <MapBlock
+                  title="Ecosystem map"
+                  paragraphs={[
+                    "Showed the tools, people, processes and props around each stage of specification-driven development, and where my idea sits in that lifecycle.",
+                  ]}
+                >
+                  <ExpandableImage src={ecosystemMap} alt="Ecosystem map" width={2800} height={2800} />
+                </MapBlock>
+                <MapBlock
+                  title="User journey"
+                  paragraphs={[
+                    "Mapped the actions, needs, pain points and gain points of a senior software engineer’s workflow.",
+                  ]}
+                >
+                  <ExpandableImage src={journeyMap} alt="User journey map: The Conductor" width={2857} height={3200} />
+                </MapBlock>
               </div>
-              <VisualSlot label="User story" minHeight={240} />
-
-              <div className="grid w-full max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                <VisualSlot label="Stakeholder map" />
-                <VisualSlot label="Ecosystem map" />
-              </div>
-              <VisualSlot label="User journey map" />
-              <VisualSlot label="Mind map: four places to design" />
-
-              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H2>Finalized mind map: two ideas had the strongest evidence.</H2>
-                <P style={{ lineHeight: "28px" }}>
-                  Two actions had strong evidence, from four or more of the six participants: a pre-ingestion context compiler, and
-                  recording AI assumptions with explicit human gating. I built on those two and parked the rest.
-                </P>
-              </div>
-              <VisualSlot label="Finalized mind map" />
+              <P style={{ lineHeight: "28px", maxWidth: 570 }}>
+                Together, these maps, built on primary and secondary data, gave my problem statement weight.
+              </P>
             </Focus>
 
             <Focus index={10} className="flex flex-col items-center w-full text-center" style={{ gap: 40 }}>
@@ -759,7 +785,13 @@ export function ProductSCaseStudy() {
                   I simplified the standard lifecycle, then placed the context compiler and the approval gate inside it.
                 </P>
               </div>
-              <VisualSlot label="SDD lifecycle with the compiler and the gate" />
+              <ExpandableImage
+                src={lifecycle}
+                alt="SDD lifecycle with the context compiler and the assumption gate"
+                width={3600}
+                height={671}
+                caption="The SDD lifecycle with the compiler and the gate."
+              />
 
               <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
                 <H2>Several user flows, one final.</H2>
@@ -768,68 +800,80 @@ export function ProductSCaseStudy() {
                   design.
                 </P>
               </div>
-              <VisualSlot label="User flow, the prototype as it is now (Review list model, Version 23)" />
+              <ExpandableImage
+                src={userFlow}
+                alt="User flow: the prototype as it is now (Review list model, Version 23)"
+                width={3700}
+                height={2900}
+                caption="The final user flow."
+              />
 
               <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H2>First interface: Core Flow.</H2>
+                <H2>From version 1 to version 2.</H2>
                 <P style={{ lineHeight: "28px" }}>
-                  It followed the earlier flow, and it felt too jarring. I wanted to see how the spec breaks apart straight away.
+                  The first iteration of the interface showed the process one step at a time. This process was deemed too jarring.
+                </P>
+                <P style={{ lineHeight: "28px" }}>
+                  This led me to creating the spec map. The spec map viewed the whole spec in one place and made visible everything
+                  that the spec contained.
                 </P>
               </div>
-              <VisualSlot label="Core Flow section, Interface Design page" />
-
-              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H2>New idea: the spec map.</H2>
-                <P style={{ lineHeight: "28px" }}>
-                  One view of the whole spec, with the gaps shown in place. I built an environment for it and drew simple
-                  wireframes.
-                </P>
+              <div className="grid w-full max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 20, alignItems: "start" }}>
+                <VersionPreview
+                  title="Version 1: the core flow"
+                  caption="Version 1: the core flow"
+                  screens={VERSION_1}
+                  thumbIndex={1}
+                />
+                <VersionPreview
+                  title="Version 2: the spec map"
+                  caption="Version 2: the spec map idea"
+                  screens={VERSION_2}
+                  thumbIndex={0}
+                />
               </div>
-              <VisualSlot label="Spec map new idea section" />
             </Focus>
 
-            <Focus index={11} className="flex flex-col items-center w-full text-center" style={{ gap: 40 }}>
-              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H1>Validating through iteration</H1>
-                <H2>Test 1: two participants on the spec map.</H2>
-                <p className="m-0" style={T.muted}>
-                  Two or three findings. I changed the interface from what they said.
-                </p>
-              </div>
-              <VisualSlot label="Wireframes beside the revised screens, changes marked" />
-
-              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H2>Test 2: three people on the redesign.</H2>
-                <P style={{ lineHeight: "28px" }}>
-                  I tested my professor as a stakeholder, giving him three tasks and judging how he did, then two classmates,
-                  participants 1 and 2.
-                </P>
-                <p className="m-0" style={T.muted}>
-                  Task results and findings.
-                </p>
-              </div>
-              <VisualSlot label="Task results" />
-
-              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
-                <H2>Final redesign.</H2>
-                <p className="m-0" style={T.muted}>
-                  The changes this round caused.
-                </p>
-              </div>
-              <VisualSlot label="Prototype; Technical Review page, before and after" />
+            <Focus as="section" index={11} className="w-full">
+              <ProblemLikeScene
+                left={
+                  <SceneCopy>
+                    <H1>
+                      <LensDrift text="Validating through iteration" />
+                    </H1>
+                    <p className="m-0" style={{ ...T.body, lineHeight: "28px", fontWeight: 700 }}>
+                      <LensDrift text="This section is still being written." />
+                    </p>
+                    <p className="m-0" style={{ ...T.body, lineHeight: "28px" }}>
+                      <LensDrift text="My user testing is not finished. I present the work to the stakeholders at IBM at the IBM/NC State symposium on November 23, and I will add the results here after that." />
+                    </p>
+                  </SceneCopy>
+                }
+                count={VALIDATION_STEPS.length}
+                renderStep={(i, active) => (
+                  <SceneStep n={i + 1} active={active}>
+                    <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "28px" }}>
+                      <LensDrift text={VALIDATION_STEPS[i]} />
+                    </P>
+                  </SceneStep>
+                )}
+              />
             </Focus>
 
             <Focus as="section" index={12} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
               <H1>Reflection</H1>
-              <P style={{ lineHeight: "28px", maxWidth: 570 }}>
-                I started without knowing what SDD was and have so far tested a prototype with five people. The spec map and the
-                blocking-versus-optional split are my design decisions, not findings from the interviews, and a small sample
-                shows that a problem exists, not how often. Parts of the flow are still simulated: the owner’s reply and the
-                Copilot handoff.
-              </P>
-              <p className="m-0" style={{ ...T.muted, maxWidth: 570 }}>
-                One line on what you would do differently.
-              </p>
+              <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
+                <P style={{ lineHeight: "28px" }}>
+                  I started without knowing what SDD was, and so far I have tested a prototype with five people.
+                </P>
+                <P style={{ lineHeight: "28px" }}>
+                  The spec map and the blocking-versus-optional split are my design decisions, not findings from the interviews.
+                  A small sample shows that a problem exists, not how often.
+                </P>
+                <P style={{ lineHeight: "28px" }}>
+                  Parts of the flow are still simulated: the owner’s reply and the Copilot handoff.
+                </P>
+              </div>
             </Focus>
           </section>
         </motion.main>

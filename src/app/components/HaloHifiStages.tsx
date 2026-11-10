@@ -275,11 +275,11 @@ export function HaloHifiStages() {
                       <h2
                         className="m-0"
                         style={{
-                          fontFamily: MONO,
-                          fontWeight: 700,
-                          fontSize: 32,
-                          lineHeight: "36px",
-                          textTransform: "uppercase",
+                          fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
+                          fontWeight: 400,
+                          fontSize: 40,
+                          lineHeight: "44px",
+                          letterSpacing: "-0.02em",
                           color: INK,
                         }}
                       >

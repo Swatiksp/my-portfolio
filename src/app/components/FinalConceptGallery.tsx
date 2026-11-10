@@ -18,7 +18,7 @@ const SAND = "#f3e7d4";
 const LINE = "#e5daca";
 const SANS = "'Roboto', sans-serif";
 
-const DWELL = 7000;
+const DWELL = 3200;
 const ASPECT = 16 / 9;
 
 type Screen = { image: string; title: string; note: string; alt: string };

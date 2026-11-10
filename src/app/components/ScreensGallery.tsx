@@ -111,7 +111,7 @@ export function ScreensGallery() {
       <div className="flex flex-col items-center text-center" style={{ gap: 12 }}>
         <h2
           className="m-0"
-          style={{ fontFamily: MONO, fontWeight: 700, fontSize: 32, lineHeight: "40px", textTransform: "uppercase", color: "#fff" }}
+          style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: "#fff" }}
         >
           The screens in the interface
         </h2>

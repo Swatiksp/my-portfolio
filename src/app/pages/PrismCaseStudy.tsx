@@ -1,5 +1,10 @@
+import logoMark from "@/assets/logo/logo.svg";
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import { TypeIn } from "../components/TypeIn";
+import { CaseHero, HeroPill } from "../components/CaseHero";
+import heropBg from "@/assets/craft-poster/p-bg.webp";
+import heropShot from "@/assets/craft-poster/p-shot.webp";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Focus, FocusCtx, LensDrift, revealText, SectionFocusProvider } from "../components/SectionReveal";
@@ -45,7 +50,7 @@ const T = {
     textTransform: "uppercase",
     color: C.forest,
   },
-  heading1: { fontFamily: MONO, fontWeight: 700, fontSize: 32, lineHeight: "40px", textTransform: "uppercase", color: C.ink },
+  heading1: { fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: C.ink },
   metaLabel: {
     fontFamily: SANS,
     fontWeight: 600,
@@ -133,7 +138,7 @@ function Tag({ children, color }: { children: ReactNode; color: string }) {
         borderRadius: 999,
       }}
     >
-      {children}
+      {typeof children === "string" ? <TypeIn text={children} /> : children}
     </span>
   );
 }
@@ -190,7 +195,7 @@ function MetaCell({
   return (
     <div className="flex flex-col min-w-0" style={{ gap }}>
       <p className="m-0" style={labelStyle ?? T.metaLabel}>
-        {label}
+        <TypeIn text={label} />
       </p>
       {children}
     </div>
@@ -398,6 +403,7 @@ function PrismProgressBar() {
   );
 }
 
+
 export function PrismCaseStudy() {
   const navigate = useNavigate();
   const tags = PROJECTS.find((p) => p.slug === "prism")?.tags ?? [];
@@ -451,7 +457,7 @@ export function PrismCaseStudy() {
           aria-label="Back to portfolio"
           onClick={() => navigate("/")}
           className="shrink-0 border-none cursor-pointer p-0"
-          style={{ width: 44, height: 44, background: C.forest, borderRadius: 4 }}
+          style={{ width: 44, height: 44, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
         />
         <button
           onClick={() => navigate("/")}
@@ -474,63 +480,48 @@ export function PrismCaseStudy() {
           boxSizing: "border-box",
           gap: 200,
         }}
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
       >
         <div className="flex flex-col w-full" style={{ gap: 200 }}>
         {/* ── Header + overview (one story beat, so the hero stays sharp) ── */}
         <Focus as="header" index={0} className="flex flex-col gap-[40px] items-start w-full">
-          <div
-            className="relative w-full overflow-hidden flex flex-col gap-[20px] items-start"
-            style={{ minHeight: 485, padding: 20, borderRadius: 15 }}
-          >
-            <div
-              className="halo-soft pointer-events-none absolute inset-0"
-              aria-hidden
-              style={{
-                borderRadius: 15,
-                backgroundColor: C.sand,
-                backgroundImage:
-                  "radial-gradient(ellipse 1100px 820px at 0% 85%, #ffffff 27.4%, rgba(255,255,255,0.71) 42.3%, rgba(255,255,255,0) 80%)",
-              }}
-            />
+          <CaseHero bg={heropBg} shot={heropShot} shotAlt="Prism workspace for intelligence editors" glyph="#ffd7a6" bgRotate={0}>
             <h1
-              className="relative z-[1] m-0"
+              className="m-0"
               style={{
-                fontFamily: MONO,
+                fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
                 fontWeight: 700,
-                fontSize: 62,
-                lineHeight: "68px",
-                letterSpacing: "0.62px",
-                color: C.prism,
+                fontSize: 64,
+                lineHeight: "66px",
+                letterSpacing: "-0.02em",
+                color: "#fff",
                 maxWidth: 720,
               }}
             >
-              <LensDrift text="PRISM" />
+              <TypeIn text="Prism" />
             </h1>
-            <p className="relative z-[1] m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "26px", color: C.ink, maxWidth: 720 }}>
-              <LensDrift text="formerly" /> <B><LensDrift text="Infinite Canvas" /></B>
+            <p className="m-0" style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontSize: 24, lineHeight: "30px", color: "#fff", maxWidth: 720 }}>
+              <TypeIn text="formerly" /> <em style={{ fontStyle: "italic" }}><TypeIn text="Infinite Canvas" /></em>
             </p>
-            <p className="relative z-[1] m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "32px", color: C.ink, maxWidth: 720 }}>
-              <LensDrift text="An AI workspace for intelligence editors" />
+            <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "32px", color: "#fff", maxWidth: 720 }}>
+              <TypeIn text="An AI workspace for intelligence editors" />
             </p>
-            <div className="relative z-[1] flex gap-[8px] items-start flex-wrap">
+            <div className="flex gap-[8px] items-start flex-wrap">
               {tags.map((tag, i) => (
-                <Tag key={tag} color={TAG_COLORS[i % TAG_COLORS.length]}>
-                  {tag}
-                </Tag>
-              ))}
+<HeroPill key={tag}>{tag}</HeroPill>
+))}
             </div>
-          </div>
+                    </CaseHero>
 
           <div className="grid w-full items-start max-lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 20 }}>
             <div className="flex flex-col gap-[20px] min-w-0">
               <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 28, lineHeight: "36px", color: C.ink }}>
-                <LensDrift text="One report has to reach several audiences. None of them can see what they shouldn’t." />
+                <TypeIn text="One report has to reach several audiences. None of them can see what they shouldn’t." />
               </p>
               <p className="m-0" style={T.intro}>
-                <LensDrift text="Prism is the workspace we designed for intelligence analytic editors for Laboratory of Analytical Sciences, so they can rewrite the same intelligence across 5 clearance levels without losing the source, the policy, or the deadline." />
+                <TypeIn text="Prism is the workspace we designed for intelligence analytic editors for Laboratory of Analytical Sciences, so they can rewrite the same intelligence across 5 clearance levels without losing the source, the policy, or the deadline." />
               </p>
             </div>
 
@@ -538,23 +529,23 @@ export function PrismCaseStudy() {
               <div className="grid w-full items-start" style={{ gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 20 }}>
                 <MetaCell label="Client" labelStyle={T.storyMetaLabel} gap={10}>
                   <p className="m-0" style={T.metaValue}>
-                    Laboratory for Analytic Sciences
+                    <TypeIn text="Laboratory for Analytic Sciences" />
                   </p>
                   <p className="m-0" style={T.muted}>
-                    A research wing of NSA
+                    <TypeIn text="A research wing of NSA" />
                   </p>
                 </MetaCell>
                 <MetaCell label="Duration" labelStyle={T.storyMetaLabel} gap={10}>
                   <p className="m-0" style={T.metaValue}>
-                    Spring 2026
+                    <TypeIn text="Spring 2026" />
                   </p>
                   <p className="m-0" style={T.muted}>
-                    Feb–Mar
+                    <TypeIn text="Feb–Mar" />
                   </p>
                 </MetaCell>
                 <MetaCell label="Team" labelStyle={T.storyMetaLabel} gap={10}>
                   <p className="m-0" style={T.metaValue}>
-                    Diya Franklin, Colton Hendrix, and me
+                    <TypeIn text="Diya Franklin, Colton Hendrix, and me" />
                   </p>
                 </MetaCell>
               </div>
@@ -571,7 +562,7 @@ export function PrismCaseStudy() {
                 </MetaCell>
                 <MetaCell label="User" labelStyle={T.storyMetaLabel} gap={10}>
                   <p className="m-0" style={T.metaValue}>
-                    Marcus, analytic editor
+                    <TypeIn text="Marcus, analytic editor" />
                   </p>
                 </MetaCell>
               </div>
@@ -714,13 +705,15 @@ export function PrismCaseStudy() {
 
           <Focus index={11} className="flex flex-col gap-[20px] w-full">
             <H1>Five pains we designed against</H1>
-            <div className="grid grid-cols-[minmax(0,650fr)_minmax(0,630fr)] gap-[0px] w-full items-start" style={{ marginTop: 0 }}>
-              <div ref={painListRef} className="relative flex flex-col gap-[24px]" style={{ paddingRight: 20, paddingTop: 0 }}>
+            <p className="m-0" style={{ ...T.muted, fontSize: 16, lineHeight: "24px" }}>Hover over each item to see excerpts from the interviews for that area.</p>
+            <div className="grid grid-cols-[minmax(0,630fr)_minmax(0,650fr)] gap-x-[40px] w-full items-start" style={{ marginTop: 0 }}>
+              <EvidencePanel painPoint={PAIN_POINTS[activePain]} />
+              <div ref={painListRef} className="relative flex flex-col gap-[24px]" style={{ paddingLeft: 20, paddingTop: 0 }}>
                 {painBar && (
                   <motion.div
                     aria-hidden
                     className="absolute"
-                    style={{ left: -15, width: 6, borderRadius: 10, background: C.bar, pointerEvents: "none" }}
+                    style={{ left: 0, width: 6, borderRadius: 10, background: C.bar, pointerEvents: "none" }}
                     initial={false}
                     animate={{ top: painBar.top, height: painBar.height }}
                     transition={{ type: "spring", stiffness: 420, damping: 38 }}
@@ -765,7 +758,6 @@ export function PrismCaseStudy() {
                   );
                 })}
               </div>
-              <EvidencePanel painPoint={PAIN_POINTS[activePain]} />
             </div>
           </Focus>
         </section>

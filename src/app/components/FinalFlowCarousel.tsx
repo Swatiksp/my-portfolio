@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import diya1 from "@/assets/final-flow/diya-1.jpg";
 import diya2 from "@/assets/final-flow/diya-2.jpg";
@@ -47,7 +47,7 @@ const SECTIONS: readonly Section[] = [
     id: "diya",
     heading: "Concept by Diya Franklin",
     person: "Diya Franklin",
-    dwell: 4000,
+    dwell: 2400,
     thumbH: 32,
     screens: [
       {
@@ -67,7 +67,7 @@ const SECTIONS: readonly Section[] = [
     heading: "Concept by Swatik",
     person: "Swatik",
     final: true,
-    dwell: 6500,
+    dwell: 4000,
     thumbH: 52,
     screens: [
       {
@@ -101,7 +101,7 @@ const SECTIONS: readonly Section[] = [
     id: "colton",
     heading: "Concept by Colton Hendrix",
     person: "Colton Hendrix",
-    dwell: 3000,
+    dwell: 2000,
     thumbH: 32,
     screens: [
       {
@@ -186,15 +186,37 @@ const widthOf = (f: Flat) => BASE_H * f.aspect;
  * Auto-scrolling walkthrough of the finalized flow. Screens play Diya's first, then Swatik's (the final workflow,
  * which gets the biggest frame, the longest dwell time and a highlighted ring), then Colton's, then loop.
  * The filmstrip lays out every screen in its section and its progress underline doubles as the timer.
- * Hover or focus pauses it, and reduced-motion users get manual control only.
+ * It keeps playing on hover, and reduced-motion users get manual control only.
  */
 export function FinalFlowCarousel() {
   const reduceMotion = useReducedMotion();
-  const [{ active, prev }, setPos] = useState({ active: 0, prev: 0 });
+  // Starts on Swatik's concept, the one I want people looking at.
+  const [{ active, prev }, setPos] = useState({ active: FIRST_INDEX[1], prev: FIRST_INDEX[1] });
   const goTo = (n: number) => setPos((s) => (s.active === n ? s : { active: n, prev: s.active }));
   const next = () => setPos((s) => ({ active: (s.active + 1) % N, prev: s.active }));
 
   const cur = FLAT[active];
+
+  // It keeps running while off screen, so each time it scrolls back into view it restarts on Swatik's concept.
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    let seen = false;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting && !seen) {
+          seen = true;
+          setPos({ active: FIRST_INDEX[1], prev: FIRST_INDEX[1] });
+        } else if (!e.isIntersecting) {
+          seen = false;
+        }
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // Warm the cache so no screen pops in when it takes the spotlight.
   useEffect(() => {
@@ -237,7 +259,8 @@ export function FinalFlowCarousel() {
 
   return (
     <div
-      className="concept-carousel relative w-full overflow-hidden"
+      ref={rootRef}
+      className="relative w-full overflow-hidden"
       role="region"
       aria-roledescription="carousel"
       aria-label="The finalized workflow: concepts by Diya Franklin, Swatik and Colton Hendrix"

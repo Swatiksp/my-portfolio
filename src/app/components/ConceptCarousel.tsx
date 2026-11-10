@@ -204,7 +204,7 @@ function VersionStage({ slides, onComplete }: { slides: readonly Slide[]; onComp
                   <span
                     key={`${active}-${prev}`}
                     className="concept-progress-fill block w-full h-full"
-                    style={{ background: FOREST }}
+                    style={{ background: FOREST, animationDuration: "3200ms" }}
                     onAnimationEnd={next}
                   />
                 )}
@@ -221,7 +221,7 @@ function VersionStage({ slides, onComplete }: { slides: readonly Slide[]; onComp
 /**
  * Auto-advancing carousel for the Concept 3 wireframes, in two rounds (Version one, then Version two).
  * When the last screen of a version finishes, the stage slides over to the other version, and the pagination starts again.
- * Hover or focus pauses it, and people who prefer reduced motion get manual control only.
+ * It keeps playing on hover, and people who prefer reduced motion get manual control only.
  */
 export function ConceptCarousel() {
   const [{ version, dir }, setVersion] = useState({ version: 0, dir: 1 });
@@ -249,7 +249,7 @@ export function ConceptCarousel() {
 
   return (
     <div
-      className="concept-carousel relative w-full overflow-hidden"
+      className="relative w-full overflow-hidden"
       role="region"
       aria-roledescription="carousel"
       aria-label="Concept 3 wireframes, version one and version two"

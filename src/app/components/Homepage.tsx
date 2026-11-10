@@ -1,4 +1,7 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { CompanyMarquee } from "./CompanyMarquee";
+import { TypeIn } from "./TypeIn";
+import logoMark from "@/assets/logo/logo.svg";
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router";
 import linkedInIcon from "@/imports/Frame7/b9ce6f119974543779bbcad7563e234be8edd900.png";
 import {
@@ -16,6 +19,7 @@ import { FrostBitmap, useFrostBitmaps } from "../lib/frostBitmaps";
 import { GlyphCursorTrail } from "./GlyphCursorTrail";
 import { PrismCraftCard } from "./PrismCraftCard";
 import { HaloCraftCard } from "./HaloCraftCard";
+import { ProjectSCraftCard } from "./ProjectSCraftCard";
 
 /* ───────────────────────── Design tokens (from Figma "Homepage") ───────────────────────── */
 const COLORS = {
@@ -119,11 +123,9 @@ function useTileGlaze() {
 
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("resize", refresh);
-    window.addEventListener("scroll", refresh, { passive: true });
     return () => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("resize", refresh);
-      window.removeEventListener("scroll", refresh);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
@@ -215,7 +217,7 @@ function buildLayouts(viewportW: number) {
 
 function useViewport() {
   const read = () => ({
-    w: typeof window !== "undefined" ? window.innerWidth : DESIGN_W,
+    w: typeof window !== "undefined" ? document.documentElement.clientWidth || window.innerWidth : DESIGN_W,
     h: typeof window !== "undefined" ? window.innerHeight : 900,
   });
   const [size, setSize] = useState(read);
@@ -235,7 +237,8 @@ const glassFace: React.CSSProperties = {
   border: `${CARD_BORDER}px solid rgba(255,255,255,0.9)`,
   borderRadius: CARD_RADIUS,
   padding: CARD_PAD,
-  filter: "drop-shadow(0px 16px 20px rgba(89,51,13,0.24))",
+  // box-shadow, not a drop-shadow filter: filters on big 3D-transformed tiles repaint every frame while scrolling.
+  boxShadow: "0px 16px 20px rgba(89,51,13,0.24)",
   boxSizing: "border-box",
 };
 
@@ -247,6 +250,7 @@ function TileImage({
   flat = false,
   glaze = false,
   dark = false,
+  moving = false,
 }: {
   src: string;
   flatSrc?: ImageBitmap;
@@ -255,6 +259,7 @@ function TileImage({
   flat?: boolean;
   glaze?: boolean;
   dark?: boolean;
+  moving?: boolean;
 }) {
   const [svgReady, setSvgReady] = useState(!dark);
 
@@ -282,6 +287,7 @@ function TileImage({
     <div
       className={`relative w-full shrink-0${glaze && !dark ? " tile-glaze" : ""}`}
       data-tile-glaze={glaze && !dark ? "" : undefined}
+      data-moving={moving ? "" : undefined}
       style={{
         aspectRatio: aspect,
         borderRadius: IMAGE_RADIUS,
@@ -314,8 +320,10 @@ function Card({
   frostBitmaps,
   lookX,
   lookY,
+  viewportW,
 }: {
   index: number;
+  viewportW: number;
   isGrid: boolean;
   isStaggered: boolean;
   layouts: ReturnType<typeof buildLayouts>;
@@ -332,7 +340,6 @@ function Card({
   const project = PROJECTS[last - index];
   const tileSrc = dark ? project.frost : project.image;
   const flatSrc = frostBitmaps[project.frost];
-  const faceStyle: React.CSSProperties = dark ? { ...glassFace, filter: "none" } : glassFace;
 
   const delay = isStaggered
     ? index * 0.06
@@ -344,6 +351,7 @@ function Card({
   const isRightCol = toGrid.left === GRID_COL_R;
   const interactive = isGrid && !isStaggered;
   const isHero = !isGrid && !isStaggered;
+  const faceStyle: React.CSSProperties = dark ? { ...glassFace, boxShadow: "none" } : isHero ? { ...glassFace, boxShadow: "none" } : glassFace;
   const layoutKey = isStaggered ? "stag" : isGrid ? "grid" : "hero";
   const layoutRef = useRef(layoutKey);
   const pendingAnims = useRef(0);
@@ -372,6 +380,53 @@ function Card({
     if (pendingAnims.current === 0) setFlatten(false);
   };
 
+  // One spring (0 → 1) carries the tile from its old rectangle to the new one.
+  const fromRect = useRef<Rect>(target);
+  const toRect = useRef<Rect>(target);
+  const progress = useMotionValue(1);
+  const lerp = (a: number, b: number, p: number) => a + (b - a) * p;
+  const rectAt = (p: number): Rect => ({
+    top: lerp(fromRect.current.top, toRect.current.top, p),
+    left: lerp(fromRect.current.left, toRect.current.left, p),
+    width: lerp(fromRect.current.width, toRect.current.width, p),
+    height: lerp(fromRect.current.height, toRect.current.height, p),
+  });
+  const boxTop = useTransform(progress, (p) => rectAt(p).top);
+  const boxLeft = useTransform(progress, (p) => `${rectAt(p).left}%`);
+  const boxWidth = useTransform(progress, (p) => `${rectAt(p).width}%`);
+  const boxHeight = useTransform(progress, (p) => rectAt(p).height);
+
+  // The craft poster is laid out once, at its grid size, and only scaled while the tile resizes. Re-flowing its
+  // container-query text on every frame of the flip is what made the transition stutter.
+  const CHROME = (CARD_PAD + CARD_BORDER) * 2;
+  const gridInnerW = (toGrid.width / 100) * viewportW - CHROME;
+  const gridInnerH = toGrid.height - CHROME;
+  const posterScaleX = useTransform(progress, (p) => ((rectAt(p).width / 100) * viewportW - CHROME) / gridInnerW);
+  const posterScaleY = useTransform(progress, (p) => (rectAt(p).height - CHROME) / gridInnerH);
+
+  const lastLayout = useRef({ key: layoutKey, target, viewportW });
+  useLayoutEffect(() => {
+    const prev = lastLayout.current;
+    const changedKey = prev.key !== layoutKey;
+    const cur = rectAt(progress.get());
+    lastLayout.current = { key: layoutKey, target, viewportW };
+    fromRect.current = changedKey ? cur : target;
+    toRect.current = target;
+    if (!changedKey && prev.viewportW === viewportW && prev.target === target) return;
+    progress.stop();
+    if (changedKey) {
+      progress.set(0);
+      progress.jump(0); // clears the velocity that resetting the value would otherwise hand to the spring
+      onAnimStart();
+      const controls = motionAnimate(progress, 1, { type: "spring", stiffness: 70, damping: 18, velocity: 0, delay });
+      controls.then(onAnimComplete);
+      return () => controls.stop();
+    }
+    // a window resize: snap to the new rectangle
+    progress.set(1 - 1e-9);
+    progress.set(1);
+  }, [layoutKey, target, viewportW]);
+
   // Larger staircase tiles sit closer, so they travel a little more than the small ones.
   const depth = 0.4 + (index / Math.max(1, last)) * 0.6;
   const lookShiftX = useTransform(lookX, (v) => v * depth * LOOK_SHIFT_X);
@@ -380,22 +435,11 @@ function Card({
   return (
     <motion.div
       className={`absolute${isHero ? " hero-tile" : ""}`}
-      style={{ perspective: "1200px", x: lookShiftX, y: lookShiftY }}
-      initial={{
-        top: from.top,
-        left: `${from.left}%`,
-        width: `${from.width}%`,
-        height: from.height,
-      }}
-      animate={{
-        top: target.top,
-        left: `${target.left}%`,
-        width: `${target.width}%`,
-        height: target.height,
-      }}
-      transition={{ type: "spring", stiffness: 70, damping: 18, delay }}
-      onAnimationStart={onAnimStart}
-      onAnimationComplete={onAnimComplete}
+      style={{ perspective: "1200px", x: lookShiftX, y: lookShiftY, top: boxTop, left: boxLeft, width: boxWidth, height: boxHeight, contain: "layout style" }}
+      // On load the tiles just dissolve in; the spring only moves them when the layout changes.
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, delay: (PROJECTS.length - 1 - index) * 0.06, ease: "easeOut" }}
     >
       <div
         className={isHero ? "hero-tile-shadow w-full h-full" : "w-full h-full"}
@@ -406,7 +450,9 @@ function Card({
         style={{
           transformStyle: "preserve-3d",
           cursor: interactive ? "pointer" : "default",
+          willChange: "transform",
         }}
+        initial={false}
         animate={{ rotateY: isStaggered ? 180 : isGrid ? 0 : 180 }}
         transition={{ type: "spring", stiffness: 80, damping: 18, delay: delay + 0.05 }}
         onAnimationStart={onAnimStart}
@@ -418,7 +464,7 @@ function Card({
           className="absolute inset-0 flex flex-col items-start"
           style={{
             ...faceStyle,
-            filter: isHero || dark ? "none" : glassFace.filter,
+            boxShadow: isHero || dark ? "none" : glassFace.boxShadow,
             transform: "rotateY(180deg)",
             // Hero staircase: padding grows with the tile (Figma). The closing layout keeps the standard 20px.
             padding: isStaggered ? CARD_PAD : STAIRCASE_DESIGN[index].pad,
@@ -431,12 +477,13 @@ function Card({
             aspect={isStaggered ? "16 / 9" : `1 / ${STAIR_IMAGE_RATIO}`}
             flat={!isStaggered && index >= 3}
             glaze
+            moving={flatten}
             dark={dark}
           />
         </div>
 
         {/* Front face — live case studies keep the glass tile chrome and reveal the craft card. */}
-        {project.slug === "prism" || project.slug === "halo-conversations" ? (
+        {project.slug === "prism" || project.slug === "halo-conversations" || project.slug === "project-s" ? (
           <div
             className={`craft-card-face absolute inset-0 flex flex-col overflow-hidden${isRightCol ? " craft-chrome-end" : ""}`}
             style={faceStyle}
@@ -449,7 +496,27 @@ function Card({
                 boxShadow: dark ? "none" : "0px 2px 7px 5px rgba(0,0,0,0.1)",
               }}
             >
-              {project.slug === "prism" ? <PrismCraftCard /> : <HaloCraftCard />}
+              <motion.div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  width: gridInnerW,
+                  height: gridInnerH,
+                  scaleX: posterScaleX,
+                  scaleY: posterScaleY,
+                  transformOrigin: "0 0",
+                  willChange: "transform",
+                }}
+              >
+                {project.slug === "prism" ? (
+                  <PrismCraftCard />
+                ) : project.slug === "project-s" ? (
+                  <ProjectSCraftCard />
+                ) : (
+                  <HaloCraftCard />
+                )}
+              </motion.div>
             </div>
           </div>
         ) : (
@@ -501,6 +568,18 @@ export function Homepage() {
   const [isGrid, setIsGrid] = useState(false);
   const [isStaggered, setIsStaggered] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [wolf, setWolf] = useState(false); // easter egg: hovering GOWOLFPACK swaps the glyph for a wolf
+  const wolfRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // The cards layer sits over the intro text and catches the pointer, so test the pointer against the text's box.
+    const onMove = (e: PointerEvent) => {
+      const r = wolfRef.current?.getBoundingClientRect();
+      const inside = !!r && e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      setWolf((w) => (w === inside ? w : inside));
+    };
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
   const frostBitmaps = useFrostBitmaps(darkMode);
   useTileGlaze();
   const look = useHeroLook(!isGrid && !isStaggered);
@@ -622,7 +701,7 @@ export function Homepage() {
             aria-label="Back to top"
             onClick={() => scrollTo(0)}
             className="shrink-0 border-none cursor-pointer p-0"
-            style={{ width: 44, height: 44, background: mark, borderRadius: 4 }}
+            style={{ width: 44, height: 44, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
           />
           <div className="flex items-center gap-[40px]">
             <button
@@ -672,7 +751,7 @@ export function Homepage() {
               className="absolute flex flex-col"
               style={{
                 left: 70,
-                top: 162,
+                top: 135,
                 width: 595,
                 gap: 20,
                 opacity: heroOpacity,
@@ -691,19 +770,21 @@ export function Homepage() {
                       color: heading,
                     }}
                   >
-                    Glad you’re here!
+                    <TypeIn text="Glad you’re here!" />
                   </p>
                   <p
-                    className="m-0 uppercase [text-box-trim:trim-both] [text-box-edge:cap_alphabetic]"
+                    className="m-0 [text-box-trim:trim-both] [text-box-edge:cap_alphabetic]"
                     style={{
-                      fontFamily: FONT_COND,
+                      fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
+                      fontOpticalSizing: "auto",
                       fontWeight: 700,
-                      fontSize: "36px",
+                      fontSize: "52px",
                       lineHeight: "57.6px",
+                      letterSpacing: "-0.02em",
                       color: heading,
                     }}
                   >
-                    I’m Swatik
+                    <TypeIn text="I’m Swatik" />
                   </p>
                 </div>
                 <p
@@ -716,52 +797,59 @@ export function Homepage() {
                     color: copy,
                   }}
                 >
-                  A UX designer crafting intuitive digital experiences that leverage emerging technologies,
-                  enhance usability, and create meaningful connections.
+                  <TypeIn text="Designing digital systems and the relationships people have with them, through product and interaction design." />
                 </p>
               </div>
 
+              <CompanyMarquee dark={darkMode} />
+
               <div className="flex flex-col" style={{ gap: 3, fontFamily: FONT_SANS }}>
                 <p className="m-0" style={{ fontWeight: 700, fontSize: "16px", color: heading }}>
-                  Previously designed at
+                  <TypeIn text="Previously designed at" />
                 </p>
                 <p className="m-0 whitespace-nowrap" style={{ fontWeight: 400, fontSize: "20px", color: copy }}>
-                  Accenture Microsoft Business Group
+                  <TypeIn text="Accenture Microsoft Business Group" />
                 </p>
               </div>
 
               <div className="flex flex-col" style={{ gap: 3, fontFamily: FONT_SANS }}>
                 <p className="m-0" style={{ fontWeight: 700, fontSize: "16px", color: heading }}>
-                  Currently Studying at
+                  <TypeIn text="Currently Studying at" />
                 </p>
                 <div className="flex items-center" style={{ gap: 10 }}>
                   <p className="m-0 whitespace-nowrap" style={{ fontWeight: 400, fontSize: "20px", color: copy }}>
-                    North Carolina State University
+                    <TypeIn text="North Carolina State University" />
                   </p>
-                  <div className="flex items-center">
+                  <div ref={wolfRef} className="flex items-center">
                     <span
                       aria-hidden
                       className="flex items-center justify-center shrink-0"
                       style={{ width: 26.163, height: 26.163, marginRight: -2 }}
                     >
-                      <span
-                        style={{
-                          display: "block",
-                          transform: "rotate(45deg)",
-                          fontFamily: FONT_DING,
-                          fontSize: "20px",
-                          lineHeight: "normal",
-                          color: copy,
-                        }}
-                      >
-                        H
-                      </span>
+                      {wolf ? (
+                        <span style={{ display: "block", fontSize: "20px", lineHeight: 1, fontFamily: "'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif" }}>
+                          🐺
+                        </span>
+                      ) : (
+                        <span
+                          style={{
+                            display: "block",
+                            transform: "rotate(45deg)",
+                            fontFamily: FONT_DING,
+                            fontSize: "20px",
+                            lineHeight: "normal",
+                            color: copy,
+                          }}
+                        >
+                          H
+                        </span>
+                      )}
                     </span>
                     <p
                       className="m-0 uppercase whitespace-nowrap"
                       style={{ fontFamily: FONT_COND, fontWeight: 700, fontSize: "20px", color: copy }}
                     >
-                      gowolfpack!
+                      <TypeIn text="gowolfpack!" />
                     </p>
                   </div>
                 </div>
@@ -789,7 +877,7 @@ export function Homepage() {
                   color: copy,
                 }}
               >
-                Each tile represents a body of work.
+                <TypeIn text="Each tile represents a body of work." />
               </p>
               <p
                 className="m-0 flex items-center"
@@ -814,8 +902,8 @@ export function Homepage() {
                 >
                   z
                 </span>
-                <span style={{ fontWeight: 700 }}>Scroll down</span>
-                <span>&nbsp;to view the work behind them.</span>
+                <span style={{ fontWeight: 700 }}><TypeIn text="Scroll down" /></span>
+                <span><TypeIn text={"\u00A0to view the work behind them."} /></span>
               </p>
             </motion.div>
 
@@ -836,10 +924,10 @@ export function Homepage() {
                 style={{
                   top: GRID_TITLE_TOP,
                   left: `${GRID_COL_L}%`,
-                  fontFamily: FONT_COND,
-                  fontWeight: 700,
-                  fontSize: "36px",
-                  textTransform: "uppercase",
+                  fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
+                  fontWeight: 400,
+                  fontSize: "52px",
+                  letterSpacing: "-0.02em",
                   color: heading,
                 }}
                 animate={isGrid && !isStaggered ? { opacity: 1, x: 0 } : { opacity: 0, x: -48 }}
@@ -864,6 +952,7 @@ export function Homepage() {
                   frostBitmaps={frostBitmaps}
                   lookX={look.x}
                   lookY={look.y}
+                  viewportW={viewportW}
                 />
               ))}
             </motion.div>
@@ -910,10 +999,10 @@ export function Homepage() {
       >
         <div className="flex items-start justify-between w-full">
           <div className="flex items-center gap-[10px]">
-            <div className="shrink-0" style={{ width: 33, height: 33, background: mark, borderRadius: 4 }} />
+            <div className="shrink-0" style={{ width: 33, height: 33, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }} />
             <p
               className="m-0 whitespace-nowrap"
-              style={{ fontFamily: FONT_COND, fontWeight: 700, fontSize: "36px", textTransform: "uppercase", color: heading }}
+              style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: "40px", letterSpacing: "-0.02em", color: heading }}
             >
               Swatik SP
             </p>

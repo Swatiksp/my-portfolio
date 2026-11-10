@@ -80,6 +80,14 @@ export function Focus({
   children: ReactNode;
 }) {
   const { register } = useContext(FocusCtx);
+  // Everything below the opening section mounts a moment after the page is up, one section at a time, so
+  // opening a case study paints the hero straight away instead of building the whole page in one frame.
+  const [ready, setReady] = useState(() => index <= 0 || (typeof window !== "undefined" && window.scrollY > 200));
+  useEffect(() => {
+    if (ready) return;
+    const id = window.setTimeout(() => setReady(true), 500 + index * 120);
+    return () => window.clearTimeout(id);
+  }, [ready, index]);
   const ref = useCallback(
     (el: HTMLElement | null) => {
       register(index, el);
@@ -91,9 +99,9 @@ export function Focus({
       ref={ref}
       className={className}
       data-focus-section={index}
-      style={style}
+      style={ready ? style : { ...style, minHeight: 480 }}
     >
-      {children}
+      {ready ? children : null}
     </Comp>
   );
 }

@@ -70,9 +70,9 @@ const HOLD_START = 60;
 const HOLD_END = 140;
 const PER_STEP = 380;
 const STEP_COUNT = 5;
-const STAGE_W = 640;
-const STAGE_H = 300;
-const PHOTO = { w: 150, h: 200, x: (640 - 150) / 2, y: 48 };
+const STAGE_W = 930;
+const STAGE_H = 435;
+const PHOTO = { w: 218, h: 290, x: (930 - 218) / 2, y: 70 };
 
 const INTRO_LINE = "He’s a quality gate between an intelligence draft and its release to the world.";
 const SUBHEAD = "Why his current tools slow him down";
@@ -86,29 +86,29 @@ const PILLS: Pill[] = [
   {
     label: "Policy databases",
     why: "He hunts policy by keyword and memory, and still misses what he does not know to search.",
-    x: 151,
-    y: -61,
+    x: 219,
+    y: -88,
     r: 5.16,
   },
   {
     label: "Email",
     why: "Edits arrive by email with no trail back to the report they belong to.",
-    x: -119,
-    y: -71,
+    x: -173,
+    y: -103,
     r: 9.26,
   },
   {
     label: "Document software",
     why: "The draft sits in one window while sources and policy live in another.",
-    x: -169,
-    y: -15,
+    x: -245,
+    y: -22,
     r: -5.61,
   },
   {
     label: "Pen and paper",
     why: "Status and priority live on paper, so a drop-in has no queue to land in.",
-    x: 138,
-    y: 4,
+    x: 200,
+    y: 6,
     r: -12.11,
   },
 ];
@@ -220,7 +220,7 @@ function MeetMarcusStage({ t }: { t: number }) {
     <div className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
       <p
         className="m-0"
-        style={{ fontFamily: MONO, fontWeight: 700, fontSize: 32, lineHeight: "40px", textTransform: "uppercase", color: INK }}
+        style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: INK }}
       >
         Meet Marcus
       </p>
@@ -297,9 +297,9 @@ function MeetMarcusOrbit({ t }: { t: number }) {
                 color: "#ffffff",
                 fontFamily: SANS,
                 fontWeight: 500,
-                fontSize: 12,
+                fontSize: 17,
                 lineHeight: "normal",
-                padding: "6px 10px",
+                padding: "9px 15px",
                 borderRadius: 100,
                 pointerEvents: "none",
               }}
