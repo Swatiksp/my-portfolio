@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useReducedMotion } from "motion/react";
 import mindMapSvg from "@/assets/research/mind-map.svg?raw";
+import { useIsMobile } from "../lib/useIsMobile";
 
 const SANS = "'Roboto', sans-serif";
 
@@ -41,8 +42,8 @@ function viewFor(step: number, aspect: number): Rect {
 }
 
 // step 0 overview, 1 How Might We, 2 first idea, 3 second idea, 4 back out with the three outlined
-const HOLD = [1000, 2300, 2500, 2500];
-const MOVE = 1400;
+const HOLD = [0, 1200, 1500, 1500];
+const MOVE = 1000;
 const EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
 const HOLES_BY_STEP: ("hmw" | "idea1" | "idea4")[][] = [[], ["hmw"], ["idea1"], ["idea4"], ["hmw", "idea1", "idea4"]];
 
@@ -121,18 +122,18 @@ const pill: React.CSSProperties = {
 };
 
 /**
- * The research mind map. After a short pause it zooms to the How Might We on the left, then to the two
- * ideas the work was built on, then pulls back with the three outlined. It plays once; hovering holds it,
+ * The research mind map. As soon as it comes into view it zooms to the How Might We on the left, then to the two
+ * ideas the work was built on, then pulls back with the three outlined. It plays once, whatever the pointer is doing;
  * Replay runs it again, and the map can be opened full size.
  */
 export function MindMapTour({ caption }: { caption?: string }) {
   const reduced = useReducedMotion();
+  const verb = useIsMobile() ? "Tap" : "Click";
   const frameRef = useRef<HTMLDivElement>(null);
   const [frameW, setFrameW] = useState(735);
   const [winH, setWinH] = useState(() => (typeof window === "undefined" ? 900 : window.innerHeight));
   const [step, setStep] = useState(0);
   const [started, setStarted] = useState(false);
-  const [held, setHeld] = useState(false);
   const [open, setOpen] = useState(false);
   const [full, setFull] = useState(false);
   const finished = step === 4;
@@ -154,7 +155,7 @@ export function MindMapTour({ caption }: { caption?: string }) {
     };
   }, []);
 
-  // start once, when the map is mostly on screen
+  // start once, as soon as the map comes into view
   useEffect(() => {
     const el = frameRef.current;
     if (!el) return;
@@ -164,12 +165,13 @@ export function MindMapTour({ caption }: { caption?: string }) {
     }
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting && e.intersectionRatio > 0.5)) {
+        if (entries.some((e) => e.isIntersecting)) {
           setStarted(true);
           io.disconnect();
         }
       },
-      { threshold: [0.5] },
+      // no waiting for the frame to be half on screen: it begins as its top edge clears the bottom of the window
+      { threshold: [0, 0.1], rootMargin: "0px 0px -12% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -177,13 +179,12 @@ export function MindMapTour({ caption }: { caption?: string }) {
 
   // the timeline: wait, then advance through the steps, unless the viewer is holding it
   useEffect(() => {
-    if (!started || held || finished) return;
+    if (!started || finished) return;
     const t = window.setTimeout(() => setStep((s) => Math.min(4, s + 1)), HOLD[step] + (step === 0 ? 0 : MOVE));
     return () => window.clearTimeout(t);
-  }, [started, held, finished, step]);
+  }, [started, finished, step]);
 
   const replay = useCallback(() => {
-    setHeld(false);
     setStep(0);
     setStarted(true);
   }, []);
@@ -213,8 +214,6 @@ export function MindMapTour({ caption }: { caption?: string }) {
     <figure className="m-0 w-full" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       <div
         ref={frameRef}
-        onMouseEnter={() => setHeld(true)}
-        onMouseLeave={() => setHeld(false)}
         style={{
           position: "relative",
           width: "100%",
@@ -256,7 +255,7 @@ export function MindMapTour({ caption }: { caption?: string }) {
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
               <path d="M7 1h4v4M5 11H1V7M11 1 7.5 4.5M1 11l3.5-3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Click to enlarge
+            {verb} to enlarge
           </button>
         </div>
       </div>
@@ -283,7 +282,7 @@ export function MindMapTour({ caption }: { caption?: string }) {
               style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", fontFamily: SANS, color: "#fff", fontSize: 13 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <span style={{ color: "rgba(255,255,255,0.65)" }}>{full ? "Click the map to fit the screen" : "Click the map for full size"}</span>
+              <span style={{ color: "rgba(255,255,255,0.65)" }}>{full ? `${verb} the map to fit the screen` : `${verb} the map for full size`}</span>
               <button
                 type="button"
                 onClick={() => {

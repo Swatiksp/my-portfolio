@@ -121,7 +121,18 @@ export function ScreensGallery() {
       </div>
 
       {/* the track bleeds to both page edges; the first card lines up with the page column */}
-      <div style={{ width: "100vw", marginLeft: "calc(50% - 50vw)" }}>
+      <div className="screens-fade" style={{ width: "100vw", marginLeft: "calc(50% - 50vw)" }}>
+        <style>{`
+          /* Screens dissolve before they reach the glyph columns at the page edges (50px wide), instead of sliding over them.
+             The fade ends where the first card sits at rest, so nothing is dimmed until the row moves. */
+          @media (min-width: 900px) {
+            .screens-fade {
+              --fade-end: clamp(72px, max(24px, calc(50vw - 560px)), 190px);
+              -webkit-mask-image: linear-gradient(to right, transparent 0, transparent 46px, #000 var(--fade-end), #000 calc(100% - var(--fade-end)), transparent calc(100% - 46px), transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0, transparent 46px, #000 var(--fade-end), #000 calc(100% - var(--fade-end)), transparent calc(100% - 46px), transparent 100%);
+            }
+          }
+        `}</style>
         <div
           ref={trackRef}
           role="region"

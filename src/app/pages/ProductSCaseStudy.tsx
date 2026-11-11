@@ -1,11 +1,10 @@
-import logoMark from "@/assets/logo/logo.svg";
+import { SiteNav } from "../components/SiteNav";
 import { useContext, useEffect, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { TypeIn } from "../components/TypeIn";
 import { CaseHero, HeroPill } from "../components/CaseHero";
 import herosBg from "@/assets/craft-poster/s-bg.webp";
 import herosShot from "@/assets/craft-poster/s-shot.webp";
-import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Focus, FocusCtx, LensDrift, revealText, SectionFocusProvider } from "../components/SectionReveal";
 import { PROJECTS } from "../data/projects";
@@ -413,7 +412,6 @@ function ProductSProgressBar({ dark }: { dark: boolean }) {
 const HERO_DESC = "SpecTrim catches missing context before an AI agent writes code.";
 
 export function ProductSCaseStudy() {
-  const navigate = useNavigate();
   const tags = PROJECTS.find((p) => p.slug === "project-s")?.tags ?? [];
 
   // The concept section dissolves the whole screen to dark and back. The fixed nav and section
@@ -437,15 +435,6 @@ export function ProductSCaseStudy() {
     };
   }, []);
 
-  const navLink: CSSProperties = {
-    fontFamily: NAV,
-    fontWeight: 500,
-    fontSize: 13,
-    lineHeight: "24px",
-    letterSpacing: "1.04px",
-    color: dark ? "#fff" : C.ink,
-    transition: "color 500ms ease",
-  };
 
   return (
     <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "#FFFFFF", overflowX: "clip" }}>
@@ -456,39 +445,11 @@ export function ProductSCaseStudy() {
         style={{ background: "#0b0c0e", opacity: dark ? 1 : 0, transition: "opacity 500ms ease", zIndex: 0 }}
       />
       <EdgeGlyphs />
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between"
-        style={{
-          height: NAV_H,
-          paddingLeft: 71,
-          paddingRight: 80,
-          paddingBottom: 1,
-          background: dark ? "rgba(11,12,14,0.92)" : "rgba(255,255,255,0.92)",
-          borderBottom: dark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(42,32,24,0.1)",
-          transition: "background 500ms ease, border-color 500ms ease",
-        }}
-      >
-        <button
-          aria-label="Back to portfolio"
-          onClick={() => navigate("/")}
-          className="shrink-0 border-none cursor-pointer p-0"
-          style={{ width: 44, height: 44, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
-        />
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-[8px] bg-transparent border-none cursor-pointer p-0 hover:opacity-60 transition-opacity"
-          style={navLink}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-            <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          BACK TO PORTFOLIO
-        </button>
-      </nav>
+      <SiteNav current="work" />
 
       <SectionFocusProvider>
         <motion.main
-          className="mx-auto w-full flex flex-col"
+          className="case-main mx-auto w-full flex flex-col"
           style={{
             maxWidth: 1440,
             padding: `${NAV_H + PROGRESS_BAR_HEIGHT + 128}px 80px 40vh`,
@@ -501,7 +462,7 @@ export function ProductSCaseStudy() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
         >
-          <div className="flex flex-col w-full" style={{ gap: 200 }}>
+          <div className="case-gap flex flex-col w-full" style={{ gap: 200 }}>
             <Focus as="header" index={0} className="flex flex-col gap-[40px] items-start w-full">
               <CaseHero bg={herosBg} shot={herosShot} shotAlt="SpecTrim spec map with the review list" glyph="#c9f2dc" bgRotate={180}>
                 <h1
@@ -712,7 +673,7 @@ export function ProductSCaseStudy() {
             <P style={{ lineHeight: "28px", maxWidth: 570 }}>The research, the maps, the flows, and the tests so far.</P>
           </Focus>
 
-          <section className="flex flex-col w-full" style={{ gap: 200 }}>
+          <section className="case-gap flex flex-col w-full" style={{ gap: 200 }}>
             <Focus index={8} className="flex flex-col items-center w-full text-center" style={{ gap: 40 }}>
               <div className="flex flex-col items-center" style={{ gap: 20, maxWidth: 570 }}>
                 <H1>Research</H1>

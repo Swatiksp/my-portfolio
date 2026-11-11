@@ -1,8 +1,10 @@
 import { CompanyMarquee } from "./CompanyMarquee";
+import { ToolMarks } from "./ToolMarks";
+import { AboutCta } from "./AboutCta";
 import { TypeIn } from "./TypeIn";
 import logoMark from "@/assets/logo/logo.svg";
 import { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import linkedInIcon from "@/imports/Frame7/b9ce6f119974543779bbcad7563e234be8edd900.png";
 import {
   motion,
@@ -14,14 +16,19 @@ import {
   animate as motionAnimate,
   type MotionValue,
 } from "motion/react";
-import { PROJECTS } from "../data/projects";
+import { PROJECTS, isOpenable } from "../data/projects";
 import { FrostBitmap, useFrostBitmaps } from "../lib/frostBitmaps";
 import { GlyphCursorTrail } from "./GlyphCursorTrail";
 import { PrismCraftCard } from "./PrismCraftCard";
 import { HaloCraftCard } from "./HaloCraftCard";
 import { ProjectSCraftCard } from "./ProjectSCraftCard";
+import { ThesisCraftCard } from "./ThesisCraftCard";
+import { ShowcaseCraftCard } from "./ShowcaseCraftCard";
+import { MobileHomepage } from "./MobileHome";
+import { useIsMobile } from "../lib/useIsMobile";
 
 /* ───────────────────────── Design tokens (from Figma "Homepage") ───────────────────────── */
+const CRAFT_SLUGS = new Set(["prism", "halo-conversations", "project-s", "thesis", "microsoft-showcase"]);
 const COLORS = {
   forest: "#1f3d2b",
   cream: "#fbf6ec",
@@ -33,6 +40,9 @@ const COLORS = {
 const FONT_SANS = "'Roboto', sans-serif";
 const FONT_COND = "'Roboto Condensed', 'Roboto', sans-serif";
 const FONT_DING = "'Yarndings 12', sans-serif";
+
+// TODO: replace with the real LinkedIn profile URL.
+const LINKEDIN_URL = "https://www.linkedin.com/in/swatik-s-p-909bb9233/";
 
 const NAV_H = 66;
 const WRAPPER_SPRING = { type: "spring" as const, stiffness: 55, damping: 22 };
@@ -166,16 +176,6 @@ const CARD_GAP = 36;
 const GRID_TITLE_TOP = 86;
 const GRID_TOP_PAD = 152;
 
-// Staggered (closing) layout — tiles flank the centered text.
-const STAG_W_PCT = 22.7;
-const STAGGERED_DESIGN = [
-  { top: 116, left: 9.72 },
-  { top: 116, left: 67.57 },
-  { top: 414, left: -1.39 },
-  { top: 414, left: 78.68 },
-  { top: 712, left: (100 - STAG_W_PCT) / 2 },
-];
-
 interface Rect {
   top: number;
   left: number; // %
@@ -204,15 +204,7 @@ function buildLayouts(viewportW: number) {
   }));
   const gridTotalH = GRID_TOP_PAD + gridH * 3 + CARD_GAP * 2;
 
-  const stagH = cardHeight(toPx(STAG_W_PCT));
-  const staggered: Rect[] = STAGGERED_DESIGN.map((c) => ({
-    top: c.top,
-    left: c.left,
-    width: STAG_W_PCT,
-    height: stagH,
-  }));
-
-  return { staircase, grid, staggered, gridTotalH };
+  return { staircase, grid, gridTotalH };
 }
 
 function useViewport() {
@@ -313,7 +305,6 @@ function TileImage({
 function Card({
   index,
   isGrid,
-  isStaggered,
   layouts,
   onNavigate,
   dark,
@@ -325,7 +316,6 @@ function Card({
   index: number;
   viewportW: number;
   isGrid: boolean;
-  isStaggered: boolean;
   layouts: ReturnType<typeof buildLayouts>;
   onNavigate: (slug: string) => void;
   dark: boolean;
@@ -336,23 +326,18 @@ function Card({
   const last = PROJECTS.length - 1;
   const from = layouts.staircase[index];
   const toGrid = layouts.grid[last - index];
-  const toStag = layouts.staggered[last - index];
   const project = PROJECTS[last - index];
   const tileSrc = dark ? project.frost : project.image;
   const flatSrc = frostBitmaps[project.frost];
 
-  const delay = isStaggered
-    ? index * 0.06
-    : isGrid
-    ? index * 0.07
-    : (PROJECTS.length - 1 - index) * 0.05;
+  const delay = isGrid ? index * 0.07 : (PROJECTS.length - 1 - index) * 0.05;
 
-  const target = isStaggered ? toStag : isGrid ? toGrid : from;
+  const target = isGrid ? toGrid : from;
   const isRightCol = toGrid.left === GRID_COL_R;
-  const interactive = isGrid && !isStaggered;
-  const isHero = !isGrid && !isStaggered;
+  const interactive = isGrid && isOpenable(project);
+  const isHero = !isGrid;
   const faceStyle: React.CSSProperties = dark ? { ...glassFace, boxShadow: "none" } : isHero ? { ...glassFace, boxShadow: "none" } : glassFace;
-  const layoutKey = isStaggered ? "stag" : isGrid ? "grid" : "hero";
+  const layoutKey = isGrid ? "grid" : "hero";
   const layoutRef = useRef(layoutKey);
   const pendingAnims = useRef(0);
   const [flatten, setFlatten] = useState(false);
@@ -453,29 +438,29 @@ function Card({
           willChange: "transform",
         }}
         initial={false}
-        animate={{ rotateY: isStaggered ? 180 : isGrid ? 0 : 180 }}
+        animate={{ rotateY: isGrid ? 0 : 180 }}
         transition={{ type: "spring", stiffness: 80, damping: 18, delay: delay + 0.05 }}
         onAnimationStart={onAnimStart}
         onAnimationComplete={onAnimComplete}
         onClick={() => interactive && onNavigate(project.slug)}
       >
-        {/* Back face — image-only glass tile (staircase + staggered states) */}
+        {/* Back face — image-only glass tile (staircase) */}
         <div
           className="absolute inset-0 flex flex-col items-start"
           style={{
             ...faceStyle,
             boxShadow: isHero || dark ? "none" : glassFace.boxShadow,
             transform: "rotateY(180deg)",
-            // Hero staircase: padding grows with the tile (Figma). The closing layout keeps the standard 20px.
-            padding: isStaggered ? CARD_PAD : STAIRCASE_DESIGN[index].pad,
+            // Hero staircase: padding grows with the tile (Figma).
+            padding: STAIRCASE_DESIGN[index].pad,
           }}
         >
           <TileImage
             src={tileSrc}
             flatSrc={flatSrc}
             flatten={flatten}
-            aspect={isStaggered ? "16 / 9" : `1 / ${STAIR_IMAGE_RATIO}`}
-            flat={!isStaggered && index >= 3}
+            aspect={`1 / ${STAIR_IMAGE_RATIO}`}
+            flat={index >= 3}
             glaze
             moving={flatten}
             dark={dark}
@@ -483,7 +468,7 @@ function Card({
         </div>
 
         {/* Front face — live case studies keep the glass tile chrome and reveal the craft card. */}
-        {project.slug === "prism" || project.slug === "halo-conversations" || project.slug === "project-s" ? (
+        {CRAFT_SLUGS.has(project.slug) ? (
           <div
             className={`craft-card-face absolute inset-0 flex flex-col overflow-hidden${isRightCol ? " craft-chrome-end" : ""}`}
             style={faceStyle}
@@ -513,6 +498,10 @@ function Card({
                   <PrismCraftCard />
                 ) : project.slug === "project-s" ? (
                   <ProjectSCraftCard />
+                ) : project.slug === "thesis" ? (
+                  <ThesisCraftCard />
+                ) : project.slug === "microsoft-showcase" ? (
+                  <ShowcaseCraftCard />
                 ) : (
                   <HaloCraftCard />
                 )}
@@ -564,10 +553,16 @@ function Card({
 
 /* ───────────────────────── Page ───────────────────────── */
 export function Homepage() {
+  // Phones get their own single-column layout; the pinned scroll-driven staircase below is the desktop page.
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileHomepage /> : <DesktopHomepage />;
+}
+
+function DesktopHomepage() {
   const navigate = useNavigate();
   const [isGrid, setIsGrid] = useState(false);
-  const [isStaggered, setIsStaggered] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [aboutHover, setAboutHover] = useState(false); // hovering the footer ABOUT ME button lights up ABOUT in the nav
   const [wolf, setWolf] = useState(false); // easter egg: hovering GOWOLFPACK swaps the glyph for a wolf
   const wolfRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -582,7 +577,7 @@ export function Homepage() {
   }, []);
   const frostBitmaps = useFrostBitmaps(darkMode);
   useTileGlaze();
-  const look = useHeroLook(!isGrid && !isStaggered);
+  const look = useHeroLook(!isGrid);
   const lookRotateY = useTransform(look.x, (v) => v * LOOK_ROTATE_Y);
   const lookRotateX = useTransform(look.y, (v) => v * LOOK_ROTATE_X);
 
@@ -610,22 +605,14 @@ export function Homepage() {
   const animEnd = vh * 1.8;
   const maxGridScroll = Math.max(0, layouts.gridTotalH - contentH + 60);
   const maxScrollY = animEnd + maxGridScroll * 1.2;
-  const staggeredStart = maxScrollY + vh * 0.05;
-  const wrapperH = staggeredStart + vh * 1.5;
+  // The grid has finished scrolling at maxScrollY; one more screen of scroll lets the pinned stage release into the footer.
+  const wrapperH = maxScrollY + vh;
 
   const scrollYProgress = useTransform(scrollY, [0, animEnd], [0, 1], { clamp: true });
 
   const gridScrollY = useTransform(scrollY, [animEnd, maxScrollY], [0, -maxGridScroll], { clamp: true });
 
-  const staggeredOffset = useMotionValue(0);
-  const wrapperY = useTransform(
-    [gridScrollY, staggeredOffset] as const,
-    ([gY, sO]: number[]) => gY + sO
-  );
-
-  useEffect(() => {
-    motionAnimate(staggeredOffset, isStaggered ? maxGridScroll : 0, WRAPPER_SPRING);
-  }, [isStaggered, maxGridScroll]);
+  const wrapperY = gridScrollY;
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.28], [1, 0]);
   const heroX = useTransform(scrollYProgress, [0, 0.28], [0, -140]);
@@ -635,16 +622,21 @@ export function Homepage() {
     if (v < 0.28 && isGrid) setIsGrid(false);
   });
 
-  useMotionValueEvent(scrollY, "change", (v) => {
-    if (v > staggeredStart && !isStaggered) setIsStaggered(true);
-    if (v < staggeredStart - vh * 0.15 && isStaggered) setIsStaggered(false);
-  });
-
   const handleNavigate = (slug: string) => {
     navigate(`/projects/${slug}`);
   };
 
   const scrollTo = (top: number) => window.scrollTo({ top, behavior: "smooth" });
+
+  // arriving from another page's WORK link (/#work): open on the work grid
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash !== "#work") return;
+    const id = requestAnimationFrame(() => window.scrollTo({ top: animEnd }));
+    return () => cancelAnimationFrame(id);
+  }, [hash, animEnd]);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const scrollToAbout = () => navigate("/about");
 
   const heading = darkMode ? "#ffffff" : COLORS.black;
   const copy = darkMode ? "#ffffff" : COLORS.ink;
@@ -728,10 +720,14 @@ export function Homepage() {
               href="#about"
               onClick={(e) => {
                 e.preventDefault();
-                scrollTo(staggeredStart + 1);
+                scrollToAbout();
               }}
               className="hover:opacity-60 transition-opacity"
-              style={navLinkStyle}
+              style={
+                aboutHover
+                  ? { ...navLinkStyle, color: mark, textDecoration: "underline", textDecorationThickness: 2, textUnderlineOffset: 8 }
+                  : navLinkStyle
+              }
             >
               ABOUT
             </a>
@@ -920,6 +916,7 @@ export function Homepage() {
             >
               {/* My Craft title */}
               <motion.h2
+                initial={false}
                 className="absolute m-0 [text-box-trim:trim-both] [text-box-edge:cap_alphabetic]"
                 style={{
                   top: GRID_TITLE_TOP,
@@ -930,9 +927,9 @@ export function Homepage() {
                   letterSpacing: "-0.02em",
                   color: heading,
                 }}
-                animate={isGrid && !isStaggered ? { opacity: 1, x: 0 } : { opacity: 0, x: -48 }}
+                animate={isGrid ? { opacity: 1, x: 0 } : { opacity: 0, x: -48 }}
                 transition={
-                  isGrid && !isStaggered
+                  isGrid
                     ? { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.3 }
                     : { duration: 0.15, ease: "easeIn", delay: 0 }
                 }
@@ -945,7 +942,6 @@ export function Homepage() {
                   key={i}
                   index={i}
                   isGrid={isGrid}
-                  isStaggered={isStaggered}
                   layouts={layouts}
                   onNavigate={handleNavigate}
                   dark={darkMode}
@@ -957,82 +953,109 @@ export function Homepage() {
               ))}
             </motion.div>
 
-            {/* Closing statement, centered between the staggered tiles */}
-            <motion.div
-              className="absolute pointer-events-none"
-              style={{ left: "50%", top: "50%", x: "-50%", y: "-50%", width: 478 }}
-              animate={
-                isStaggered
-                  ? { opacity: 1, scale: 1, pointerEvents: "auto" }
-                  : { opacity: 0, scale: 0.92, pointerEvents: "none" }
-              }
-              transition={
-                isStaggered
-                  ? { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.25 }
-                  : { duration: 0.2, ease: "easeIn" }
-              }
-            >
-              <div className="flex flex-col gap-[20px] items-center">
-                <p
-                  className="text-center m-0 leading-normal"
-                  style={{ fontFamily: FONT_SANS, fontWeight: 400, fontSize: "26px", lineHeight: "40px", color: heading }}
-                >
-                  A text here that describes what this portfolio entails and elaborates on its curation.
-                </p>
-                <div className="flex gap-[11px] items-center">
-                  <button style={primaryButton}>About me</button>
-                  <button className="flex items-center gap-[10px]" style={primaryButton}>
-                    Let's Connect
-                    <img src={linkedInIcon} alt="LinkedIn" className="w-[17px] h-[16px] object-cover" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
       <footer
-        className="relative w-full flex flex-col gap-[60px] px-[80px] pt-[40px] pb-[80px] overflow-hidden"
-        style={{ borderTop: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(42,32,24,0.1)" }}
+        className="relative w-full flex flex-col overflow-hidden"
+        style={{
+          padding: "72px 80px 32px",
+          gap: 64,
+          borderTop: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(42,32,24,0.1)",
+        }}
       >
-        <div className="flex items-start justify-between w-full">
-          <div className="flex items-center gap-[10px]">
-            <div className="shrink-0" style={{ width: 33, height: 33, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }} />
+        <div
+          ref={aboutRef}
+          id="about"
+          className="flex items-center justify-between w-full"
+          style={{ gap: 32, flexWrap: "wrap", paddingBottom: 56, borderBottom: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(42,32,24,0.1)" }}
+        >
+          <div className="flex flex-col" style={{ gap: 12, maxWidth: 640 }}>
             <p
-              className="m-0 whitespace-nowrap"
-              style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: "40px", letterSpacing: "-0.02em", color: heading }}
+              className="m-0"
+              style={{
+                fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
+                fontWeight: 400,
+                fontSize: "44px",
+                lineHeight: "50px",
+                letterSpacing: "-0.02em",
+                color: heading,
+              }}
             >
-              Swatik SP
+              Want to know more about me?
             </p>
           </div>
-          <div className="flex flex-col gap-[20px]">
-            {["About me", "My work"].map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="hover:opacity-60 transition-opacity"
-                style={{ fontFamily: FONT_SANS, fontWeight: 400, fontSize: "16px", color: copy, textDecoration: "none" }}
-              >
-                {link}
+          <AboutCta buttonStyle={primaryButton} dark={darkMode} onHoverChange={setAboutHover} onClick={() => navigate("/about")} />
+        </div>
+
+        <div className="flex items-end justify-between w-full" style={{ gap: 48, flexWrap: "wrap" }}>
+          <div className="flex flex-col" style={{ gap: 20, maxWidth: 640 }}>
+            <p
+              className="m-0"
+              style={{
+                fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
+                fontWeight: 400,
+                fontSize: "52px",
+                lineHeight: "57.6px",
+                letterSpacing: "-0.02em",
+                color: heading,
+              }}
+            >
+              Let’s work together.
+            </p>
+            <div className="flex items-center">
+              <a href="mailto:spswatik@gmail.com" className="hover:opacity-85 transition-opacity" style={{ ...primaryButton, textDecoration: "none", display: "inline-block" }}>
+                SPSWATIK@GMAIL.COM
               </a>
-            ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-[10px]">
-            {["Let's work together!", "spswatik@gmail.com"].map((line) => (
-              <p key={line} className="m-0" style={{ fontFamily: FONT_SANS, fontWeight: 400, fontSize: "16px", color: copy }}>
-                {line}
-              </p>
-            ))}
+
+          <div className="flex flex-col" style={{ gap: 14, alignItems: "flex-start", minWidth: 160 }}>
+            <span style={{ ...navLinkStyle, color: muted, cursor: "default" }}>EXPLORE</span>
+            <a
+              href="#work"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollTo(animEnd);
+              }}
+              className="hover:opacity-60 transition-opacity"
+              style={navLinkStyle}
+            >
+              WORK
+            </a>
+            <a
+              href="#about"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToAbout();
+              }}
+              className="hover:opacity-60 transition-opacity"
+              style={navLinkStyle}
+            >
+              ABOUT
+            </a>
+            <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="hover:opacity-60 transition-opacity" style={navLinkStyle}>
+              LINKEDIN ↗
+            </a>
+            <button type="button" onClick={() => scrollTo(0)} className="hover:opacity-60 transition-opacity" style={navLinkStyle}>
+              BACK TO TOP ↑
+            </button>
           </div>
         </div>
-        <p
-          className="text-center w-full m-0"
-          style={{ fontFamily: FONT_SANS, fontWeight: 400, fontSize: "16px", color: muted }}
+
+        <div
+          className="w-full"
+          style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 24, paddingTop: 20, borderTop: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(42,32,24,0.1)" }}
         >
-          Built on Figma
-        </p>
+          <div className="flex items-center" style={{ gap: 10 }}>
+            <div className="shrink-0" style={{ width: 28, height: 28, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }} />
+            <span style={{ fontFamily: FONT_SANS, fontWeight: 500, fontSize: "15px", color: heading }}>Swatik SP</span>
+          </div>
+          <ToolMarks size={28} color={muted} fontFamily={FONT_SANS} labelSize={14} />
+          <span style={{ fontFamily: FONT_SANS, fontSize: "14px", color: muted, justifySelf: "end", textAlign: "right" }}>© 2026 Swatik SP. All rights reserved.</span>
+        </div>
       </footer>
     </div>
   );

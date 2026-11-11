@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import iconChip from "@/assets/concept/icon-chip.svg";
 import btnExport from "@/assets/concept/btn-export.svg";
@@ -580,25 +581,41 @@ const UNREVIEWED = [
   ["D-05", "Show sign-in errors as a banner at the top of the screen.", "Decisions"],
 ];
 
+const EXPORT_TABS = ["Working spec", "Original, unchanged", "Export to Copilot"] as const;
+
 export function ExportScene({ q }: { q: number }) {
-  // first the working spec (every change), then the export itself
-  const tab = ramp(q, 0.42, 0.52); // 0 = working spec, 1 = export
-  const scroll = ramp(q, 0.12, 0.4) * 60 + ramp(q, 0.6, 0.95) * 150;
-  const Tab = ({ label, on }: { label: string; on: boolean }) => (
-    <span
-      style={{
-        padding: "10px 0",
-        marginRight: 24,
-        fontSize: 14,
-        fontWeight: on ? 500 : 400,
-        color: on ? "#ecedef" : "#9096a0",
-        borderBottom: `2px solid ${on ? "#4457f0" : "transparent"}`,
-        transition: "all 200ms ease",
-      }}
-    >
-      {label}
-    </span>
-  );
+  // The working spec stays put while the lines added during review load in underneath it (that list alone scrolls
+  // inside its own clipped frame if it runs long). Then the tab underline slides to Export to Copilot, and the
+  // export shows every change.
+  const tab = ramp(q, 0.46, 0.56); // 0 = working spec, 1 = export
+  const outA = 1 - clamp(tab * 2); // the working spec fades out first, then the export fades in, so they never overlap
+  const inA = clamp(tab * 2 - 1);
+  const exportScroll = ramp(q, 0.62, 0.95) * 150;
+
+  // the sliding tab underline, and how far the review list has to travel to show its last line
+  const tabRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const listBox = useRef<HTMLDivElement>(null);
+  const listInner = useRef<HTMLDivElement>(null);
+  const [marks, setMarks] = useState({ x0: 0, w0: 0, x2: 0, w2: 0, overflow: 0 });
+  useLayoutEffect(() => {
+    const t0 = tabRefs.current[0];
+    const t2 = tabRefs.current[2];
+    const box = listBox.current;
+    const inner = listInner.current;
+    if (!t0 || !t2 || !box || !inner) return;
+    const next = {
+      x0: t0.offsetLeft,
+      w0: t0.offsetWidth,
+      x2: t2.offsetLeft,
+      w2: t2.offsetWidth,
+      overflow: Math.max(0, inner.offsetHeight - box.clientHeight),
+    };
+    if (Object.keys(next).some((k) => Math.abs(next[k as keyof typeof next] - marks[k as keyof typeof marks]) > 0.5)) setMarks(next);
+  });
+  const listScroll = ramp(q, 0.1, 0.4) * marks.overflow;
+  const fadeTop = listScroll > 2 ? 22 : 0;
+  const fadeBottom = marks.overflow - listScroll > 2 ? 26 : 0;
+
   return (
     <div
       style={{
@@ -629,10 +646,27 @@ export function ExportScene({ q }: { q: number }) {
         </div>
         <span style={{ padding: "10px 24px", fontSize: 14, background: "#25282c", borderRadius: 999 }}>Close</span>
       </div>
-      <div style={{ display: "flex", alignItems: "center", borderBottom: "1px solid #2b2e33" }}>
-        <Tab label="Working spec" on={tab <= 0.5} />
-        <Tab label="Original, unchanged" on={false} />
-        <Tab label="Export to Copilot" on={tab > 0.5} />
+      <div style={{ position: "relative", display: "flex", alignItems: "center", borderBottom: "1px solid #2b2e33" }}>
+        {EXPORT_TABS.map((label, i) => {
+          const on = i === 0 ? tab <= 0.5 : i === 2 ? tab > 0.5 : false;
+          return (
+            <span
+              key={label}
+              ref={(el) => {
+                tabRefs.current[i] = el;
+              }}
+              style={{
+                padding: "10px 0",
+                marginRight: 24,
+                fontSize: 14,
+                fontWeight: on ? 500 : 400,
+                color: on ? "#ecedef" : "#9096a0",
+              }}
+            >
+              {label}
+            </span>
+          );
+        })}
         <span
           style={{
             marginLeft: -8,
@@ -645,47 +679,81 @@ export function ExportScene({ q }: { q: number }) {
         >
           Ready
         </span>
+        <span
+          aria-hidden
+          style={{
+            position: "absolute",
+            bottom: -1,
+            height: 2,
+            left: marks.x0 + (marks.x2 - marks.x0) * tab,
+            width: marks.w0 + (marks.w2 - marks.w0) * tab,
+            background: "#4457f0",
+          }}
+        />
       </div>
 
       <div style={{ position: "relative", flex: 1, minHeight: 0 }}>
-        {/* working spec: every change */}
-        <div style={{ position: "absolute", inset: 0, opacity: 1 - tab, transform: `translateY(${-scroll * (1 - tab)}px)` }}>
-          <div style={{ padding: "10px 12px", background: "#1f222e", border: "1px solid #2b2e33", borderRadius: 12, fontSize: 12, lineHeight: "18px" }}>
+        {/* working spec: your text stays put, the lines added during review load in below it */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            opacity: outA,
+            pointerEvents: "none",
+          }}
+        >
+          <div style={{ flex: "none", padding: "10px 12px", background: "#1f222e", border: "1px solid #2b2e33", borderRadius: 12, fontSize: 12, lineHeight: "18px" }}>
             <b style={{ display: "block", marginBottom: 4 }}>Your original text, unchanged</b>
             {SPEC_ORIGINAL}
           </div>
-          <div style={{ margin: "16px 0 8px", fontSize: 13 }}>
+          <div style={{ flex: "none", margin: "16px 0 8px", fontSize: 13 }}>
             Added during review <span style={{ color: "#9096a0" }}>· {ADDED.length + UNREVIEWED.length}</span>
           </div>
-          {[...ADDED, ...UNREVIEWED].map(([id, text, meta], i) => {
-            const mine = i < ADDED.length;
-            const k = ramp(q, 0.02 + i * 0.03, 0.12 + i * 0.03);
-            return (
-              <div
-                key={id}
-                style={{
-                  display: "flex",
-                  gap: 16,
-                  padding: "12px 0",
-                  borderTop: "1px solid #2b2e33",
-                  opacity: k,
-                  transform: `translateY(${(1 - k) * 10}px)`,
-                }}
-              >
-                <span style={{ width: 40, fontWeight: 600, fontSize: 14 }}>{id}</span>
-                <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-                  <span style={{ fontSize: 14 }}>“{text}”</span>
-                  <span style={{ fontSize: 12, color: mine ? "#5ccb8a" : "#9096a0" }}>
-                    {mine ? meta : `${meta} · Unreviewed · in the digest`}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+          <div
+            ref={listBox}
+            style={{
+              position: "relative",
+              flex: 1,
+              minHeight: 0,
+              overflow: "hidden",
+              WebkitMaskImage: `linear-gradient(to bottom, transparent 0, #000 ${fadeTop}px, #000 calc(100% - ${fadeBottom}px), transparent 100%)`,
+              maskImage: `linear-gradient(to bottom, transparent 0, #000 ${fadeTop}px, #000 calc(100% - ${fadeBottom}px), transparent 100%)`,
+            }}
+          >
+            <div ref={listInner} style={{ transform: `translateY(${-listScroll}px)` }}>
+              {[...ADDED, ...UNREVIEWED].map(([id, text, meta], i) => {
+                const mine = i < ADDED.length;
+                const k = ramp(q, 0.02 + i * 0.03, 0.12 + i * 0.03);
+                return (
+                  <div
+                    key={id}
+                    style={{
+                      display: "flex",
+                      gap: 16,
+                      padding: "12px 0",
+                      borderTop: "1px solid #2b2e33",
+                      opacity: k,
+                      transform: `translateY(${(1 - k) * 10}px)`,
+                    }}
+                  >
+                    <span style={{ width: 40, fontWeight: 600, fontSize: 14 }}>{id}</span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
+                      <span style={{ fontSize: 14 }}>“{text}”</span>
+                      <span style={{ fontSize: 12, color: mine ? "#5ccb8a" : "#9096a0" }}>
+                        {mine ? meta : `${meta} · Unreviewed · in the digest`}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         {/* export preview */}
-        <div style={{ position: "absolute", inset: 0, opacity: tab, transform: `translateY(${(1 - tab) * 14}px)` }}>
+        <div style={{ position: "absolute", inset: 0, opacity: inA, transform: `translateY(${(1 - inA) * 14}px)` }}>
           <div
             style={{
               padding: "14px 20px",
@@ -701,7 +769,7 @@ export function ExportScene({ q }: { q: number }) {
             Every must-approve item is approved. Unreviewed lines and Still open items go along as suggestions.
           </div>
           <div style={{ overflow: "hidden", height: 470, borderRadius: 12, background: "#1f222e" }}>
-            <div style={{ padding: "16px 20px", fontSize: 13, lineHeight: "20px", transform: `translateY(${-scroll * tab}px)` }}>
+            <div style={{ padding: "16px 20px", fontSize: 13, lineHeight: "20px", transform: `translateY(${-exportScroll * tab}px)` }}>
               <p style={{ margin: "0 0 14px" }}>Title: Add sign-in to the Repair Tracker mobile app using our company-approved authentication library.</p>
               <b>## Spec (original text, unchanged)</b>
               <p style={{ margin: "6px 0 14px" }}>{SPEC_ORIGINAL}</p>

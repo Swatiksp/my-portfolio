@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useIsMobile } from "../lib/useIsMobile";
 import { createPortal } from "react-dom";
 
 const SANS = "'Roboto', sans-serif";
@@ -63,11 +64,14 @@ function Overlay({
   const barLeft = anchor.left + Wc / 2 < vw / 2; // the bar goes on the outer side
   const pad = 10;
   const side = BAR_GAP + BAR_W;
-  const regionLeft = anchor.left - pad - (barLeft ? side : 0);
+  // A phone has no room beside the screen for the bar: it is dropped, and the flow is swiped instead.
+  const phone = Math.min(anchor.left, vw - (anchor.left + Wc)) < side + pad;
+  const sideW = phone ? 0 : side;
+  const regionLeft = anchor.left - pad - (barLeft ? sideW : 0);
   const regionTop = anchor.top + Hc / 2 - reach - pad;
-  const regionW = Wc + side + pad * 2;
+  const regionW = Wc + sideW + pad * 2;
   const regionH = reach * 2 + pad * 2 + 40;
-  const flowX = pad + (barLeft ? side : 0); // left edge of the front screen inside the region
+  const flowX = pad + (barLeft ? sideW : 0); // left edge of the front screen inside the region
   const frontTop = pad + reach - Hc / 2; // top edge of the front screen inside the region
 
   /* ease the flow toward its target */
@@ -145,6 +149,22 @@ function Overlay({
     drag.current = null;
     go(Math.round(target.current));
   };
+  // phone: drag anywhere on the flow to move through the screens
+  const swipe = useRef<{ y: number; p: number } | null>(null);
+  const onSwipeDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!phone || (e.target as HTMLElement).closest(".version-close")) return;
+    swipe.current = { y: e.clientY, p: target.current };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onSwipeMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!swipe.current) return;
+    go(swipe.current.p - (e.clientY - swipe.current.y) / (Hc * 0.7));
+  };
+  const onSwipeUp = () => {
+    if (!swipe.current) return;
+    swipe.current = null;
+    go(Math.round(target.current));
+  };
   const onTrackDown = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
     go(Math.round(((e.clientY - r.top - thumbH / 2) / (trackH - thumbH)) * (n - 1)));
@@ -210,6 +230,10 @@ function Overlay({
         aria-label="All screens in this version"
         onMouseEnter={onEnter}
         onMouseLeave={onLeave}
+        onPointerDown={onSwipeDown}
+        onPointerMove={onSwipeMove}
+        onPointerUp={onSwipeUp}
+        onPointerCancel={onSwipeUp}
         style={{
           position: "fixed",
           zIndex: 100,
@@ -219,6 +243,7 @@ function Overlay({
           height: regionH,
           opacity: shown ? 1 : 0,
           transition: "opacity 260ms ease",
+          touchAction: phone ? "none" : undefined,
         }}
       >
         {/* the flow: perspective is centred on the front screen */}
@@ -252,6 +277,7 @@ function Overlay({
             borderRadius: 10,
             background: "rgba(255,255,255,0.38)",
             cursor: "pointer",
+            display: phone ? "none" : undefined,
           }}
         >
           <div
@@ -289,6 +315,7 @@ function Overlay({
           }}
         >
           {active + 1} of {n} · {screens[active].label}
+          {phone ? " · swipe" : ""}
         </p>
 
         {/* for touch, where there is no hover to leave */}
@@ -338,6 +365,7 @@ export function VersionPreview({
   thumbIndex?: number;
 }) {
   const id = useId();
+  const verb = useIsMobile() ? "Tap" : "Hover";
   const thumbRef = useRef<HTMLButtonElement>(null);
   const [mounted, setMounted] = useState(false);
   const [shown, setShown] = useState(false);
@@ -459,7 +487,7 @@ export function VersionPreview({
             fontWeight: 500,
           }}
         >
-          Hover to see {screens.length} screens
+          {verb} to see {screens.length} screens
         </span>
       </button>
       <figcaption style={{ fontFamily: SANS, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.5)", textAlign: "center" }}>

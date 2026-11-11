@@ -251,7 +251,7 @@ export function HaloHifiStages() {
             className="flex w-full items-center max-lg:flex-col max-lg:items-start lg:w-[calc(100%+5rem)]"
             style={{ gap: 16 }}
           >
-            <div className="grid shrink-0" style={{ width: "min(100%, 200px)" }}>
+            <div className="m-fullw grid shrink-0" style={{ width: "min(100%, 200px)" }}>
               {STEPS.map((step, i) => {
                 const header = shift(i, index, t, 18);
                 const body = shift(i, index, bodyT, 26);
@@ -273,7 +273,7 @@ export function HaloHifiStages() {
                         {step.stage}
                       </p>
                       <h2
-                        className="m-0"
+                        className="m-0 m-h2"
                         style={{
                           fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
                           fontWeight: 400,
@@ -299,7 +299,7 @@ export function HaloHifiStages() {
             </div>
 
             <div
-              className="relative min-w-0"
+              className="m-noflex relative min-w-0"
               style={{ flex: "1 1 820px", filter: "drop-shadow(0px 4px 10px rgba(0,0,0,0.18))" }}
             >
               <img src={macbook} alt="" className="block w-full h-auto" />

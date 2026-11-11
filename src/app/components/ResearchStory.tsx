@@ -15,6 +15,7 @@ const CLUSTERS = [
       "Context sits in other repos the agent cannot see",
     ],
     idea: "This became the context compiler.",
+    glow: "glow-red",
   },
   {
     name: "Architectural guardrails",
@@ -43,6 +44,7 @@ const CLUSTERS = [
       "Agents give no “why” for architectural choices",
     ],
     idea: "This became assumption gating.",
+    glow: "glow-violet",
   },
 ];
 
@@ -73,7 +75,9 @@ export function PainClusters() {
         return (
           <Reveal key={c.name} delay={(i % 2) * 0.08}>
             <div
+              className={built ? `glow-card ${c.glow}` : undefined}
               style={{
+                ["--glow-delay" as string]: built ? (c.glow === "glow-violet" ? "-3.5s" : "0s") : undefined,
                 height: "100%",
                 boxSizing: "border-box",
                 padding: 24,
@@ -81,7 +85,7 @@ export function PainClusters() {
                 flexDirection: "column",
                 gap: 16,
                 borderRadius: 15,
-                border: built ? `2px solid ${INK}` : "1px solid rgba(0,0,0,0.14)",
+                border: built ? "1px solid var(--g-edge)" : "1px solid rgba(0,0,0,0.14)",
                 background: "#fff",
                 fontFamily: SANS,
                 opacity: built ? 1 : 0.62,

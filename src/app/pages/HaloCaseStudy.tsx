@@ -1,17 +1,17 @@
-import logoMark from "@/assets/logo/logo.svg";
+import { SiteNav } from "../components/SiteNav";
 import { useContext } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { TypeIn } from "../components/TypeIn";
 import { CaseHero, HeroPill } from "../components/CaseHero";
 import herohBg from "@/assets/craft-poster/h-bg.webp";
 import herohShot from "@/assets/craft-poster/h-shot.webp";
-import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Focus, FocusCtx, LensDrift, revealText, SectionFocusProvider } from "../components/SectionReveal";
 import { PROJECTS } from "../data/projects";
 import { StepScrollScene } from "../components/StepScrollScene";
 import { EdgeGlyphs } from "../components/EdgeGlyphs";
 import { SectionProgressBar, PROGRESS_BAR_HEIGHT } from "../components/SectionProgressBar";
+import { useIsMobile } from "../lib/useIsMobile";
 import { HaloWireframeHover } from "../components/HaloWireframeHover";
 import { HaloTaskFlow } from "../components/HaloTaskFlow";
 import { HaloHifiStages } from "../components/HaloHifiStages";
@@ -433,6 +433,7 @@ function PersonaCard({ person }: { person: Persona }) {
 }
 
 function DesignExecution() {
+  const isMobile = useIsMobile();
   return (
     <div className="flex flex-col w-full" style={{ gap: 20 }}>
       <div className="flex flex-col" style={{ gap: 20 }}>
@@ -441,7 +442,7 @@ function DesignExecution() {
           <LensDrift text="Low & high fidelity wireframes" />
         </p>
         <p className="m-0" style={T.muted}>
-          <LensDrift text="Hover a frame to enlarge it" />
+          <LensDrift text={isMobile ? "Tap a frame to enlarge it" : "Hover a frame to enlarge it"} />
         </p>
       </div>
       <div className="halo-soft">
@@ -454,53 +455,17 @@ function DesignExecution() {
 const HERO_DESC = "Reimagining Microsoft Copilot to generate tailor-made presentations that streamline conversations between sales executives and clients";
 
 export function HaloCaseStudy() {
-  const navigate = useNavigate();
   const tags = PROJECTS.find((p) => p.slug === "halo-conversations")?.tags ?? [];
 
-  const navLink: CSSProperties = {
-    fontFamily: NAV,
-    fontWeight: 500,
-    fontSize: 13,
-    lineHeight: "24px",
-    letterSpacing: "1.04px",
-    color: C.ink,
-  };
 
   return (
     <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "#FFFFFF" }}>
       <EdgeGlyphs />
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between"
-        style={{
-          height: NAV_H,
-          paddingLeft: 71,
-          paddingRight: 80,
-          paddingBottom: 1,
-          background: "rgba(255,255,255,0.92)",
-          borderBottom: "1px solid rgba(42,32,24,0.1)",
-        }}
-      >
-        <button
-          aria-label="Back to portfolio"
-          onClick={() => navigate("/")}
-          className="shrink-0 border-none cursor-pointer p-0"
-          style={{ width: 44, height: 44, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
-        />
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-[8px] bg-transparent border-none cursor-pointer p-0 hover:opacity-60 transition-opacity"
-          style={navLink}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-            <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          BACK TO PORTFOLIO
-        </button>
-      </nav>
+      <SiteNav current="work" />
 
       <SectionFocusProvider>
         <motion.main
-          className="mx-auto w-full flex flex-col"
+          className="case-main mx-auto w-full flex flex-col"
           style={{
             maxWidth: 1440,
             padding: `${NAV_H + PROGRESS_BAR_HEIGHT + 128}px 80px 40vh`,
@@ -511,7 +476,7 @@ export function HaloCaseStudy() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
         >
-          <div className="flex flex-col w-full" style={{ gap: 200 }}>
+          <div className="case-gap flex flex-col w-full" style={{ gap: 200 }}>
             <Focus as="header" index={0} className="flex flex-col gap-[40px] items-start w-full">
               <CaseHero bg={herohBg} shot={herohShot} shotAlt="Halo Conversations launch page in Microsoft Copilot" glyph="#bfe3ff" bgRotate={0}>
                 <h1
@@ -630,7 +595,7 @@ export function HaloCaseStudy() {
                 <LensDrift text="Features that turn a client brief into a tailored deck without leaving Microsoft’s stack." />
               </p>
               <div
-                className="grid w-full text-left"
+                className="case-one-col grid w-full text-left"
                 style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 20 }}
               >
                 {FEATURES.map((feat) => (

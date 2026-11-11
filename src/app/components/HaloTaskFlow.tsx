@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef } from "react";
+import { useIsMobile } from "../lib/useIsMobile";
 const FONT = "'Roboto', sans-serif";
 
 const C = {
@@ -157,6 +159,13 @@ function EdgeLabel({
 }
 
 export function HaloTaskFlow() {
+  // On a phone the chart is wider than the screen: start with its spine (and the Talk / Type branches) in view.
+  const mobile = useIsMobile();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (el && mobile) el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
+  }, [mobile]);
   const home = { x: CX - 110, y: 16, w: 220, h: 50 };
   const inRx = 92;
   const inRy = 56;
@@ -196,7 +205,8 @@ export function HaloTaskFlow() {
   const arrow = "url(#halo-flow-arrow)";
 
   return (
-    <div className="w-full" style={{ overflowX: "auto" }}>
+    <div className="w-full">
+    <div ref={scrollRef} className="w-full" style={{ overflowX: "auto" }}>
       <svg
         viewBox={`0 0 ${vbW} ${vbH}`}
         role="img"
@@ -328,6 +338,12 @@ export function HaloTaskFlow() {
         <Process x={found.x} y={found.y} w={found.w} h={found.h} lines={["Found solutions", "to pitch"]} />
         <Pill x={end.x} y={end.y} w={end.w} h={end.h} lines={["Back to homepage"]} />
       </svg>
+    </div>
+      {mobile && (
+        <p className="m-0" style={{ marginTop: 10, fontFamily: FONT, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.5)", textAlign: "center" }}>
+          Swipe sideways to follow both paths.
+        </p>
+      )}
     </div>
   );
 }

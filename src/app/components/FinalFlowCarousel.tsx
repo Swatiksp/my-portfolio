@@ -15,6 +15,7 @@ import colton5 from "@/assets/final-flow/colton-5.jpg";
 import colton6 from "@/assets/final-flow/colton-6.jpg";
 import colton7 from "@/assets/final-flow/colton-7.jpg";
 import colton8 from "@/assets/final-flow/colton-8.jpg";
+import { useIsMobile } from "../lib/useIsMobile";
 
 const FOREST = "#1f3d2b";
 const CREAM = "#fbf6ec";
@@ -173,14 +174,28 @@ const FLAT: Flat[] = SECTIONS.flatMap((section, sectionIndex) =>
 const FIRST_INDEX = SECTIONS.map((_, i) => FLAT.findIndex((f) => f.sectionIndex === i));
 const N = FLAT.length;
 
-const BASE_H = 360; // stage height of the spotlighted frame
-const STAGE_TOP = 68;
-const GAP = 28;
 const SIDE_SCALE = 0.7;
 const SIDE_OPACITY = 0.45;
 const FINAL_SCALE = 1;
 const OTHER_SCALE = 0.84; // the teammates' screens play a little smaller, so the final workflow stands out
-const widthOf = (f: Flat) => BASE_H * f.aspect;
+
+/** Stage geometry. Desktop keeps the design numbers; a phone sizes the frames to the width it has. */
+function geometry(containerW: number | null) {
+  const phone = containerW !== null;
+  const baseH = phone ? Math.round((containerW * 0.8) / (1800 / 1101)) : 360; // stage height of the spotlighted frame
+  const stageTop = phone ? 56 : 68;
+  const captionH = phone ? 78 : 44;
+  return {
+    phone,
+    baseH,
+    stageTop,
+    gap: phone ? 14 : 28,
+    captionH,
+    height: phone ? stageTop + baseH + 14 + captionH + 14 + 54 + 14 : 604,
+    widthOf: (f: Flat) => baseH * f.aspect,
+  };
+}
+type Geo = ReturnType<typeof geometry>;
 
 /**
  * Auto-scrolling walkthrough of the finalized flow. Screens play Diya's first, then Swatik's (the final workflow,
@@ -190,6 +205,7 @@ const widthOf = (f: Flat) => BASE_H * f.aspect;
  */
 export function FinalFlowCarousel() {
   const reduceMotion = useReducedMotion();
+  const mobile = useIsMobile();
   // Starts on Swatik's concept, the one I want people looking at.
   const [{ active, prev }, setPos] = useState({ active: FIRST_INDEX[1], prev: FIRST_INDEX[1] });
   const goTo = (n: number) => setPos((s) => (s.active === n ? s : { active: n, prev: s.active }));
@@ -197,8 +213,21 @@ export function FinalFlowCarousel() {
 
   const cur = FLAT[active];
 
-  // It keeps running while off screen, so each time it scrolls back into view it restarts on Swatik's concept.
   const rootRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !mobile) return;
+    const measure = () => setWidth(el.clientWidth);
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    measure();
+    return () => ro.disconnect();
+  }, [mobile]);
+  const geo = useMemo(() => geometry(mobile && width > 0 ? width : null), [mobile, width]);
+  const { baseH, stageTop, gap: GAP, widthOf } = geo;
+
+  // It keeps running while off screen, so each time it scrolls back into view it restarts on Swatik's concept.
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
@@ -240,7 +269,7 @@ export function FinalFlowCarousel() {
         const sign = Math.sign(o);
         const near = (widthOf(centre) * scaleOf(centre, true)) / 2 + GAP + (widthOf(FLAT[active + sign] ?? f) * SIDE_SCALE) / 2;
         // Neighbours sit beside the centre frame; anything further out waits off-stage.
-        x = sign * (near + (Math.abs(o) - 1) * 420);
+        x = sign * (near + (Math.abs(o) - 1) * (geo.phone ? 260 : 420));
       }
       const target = {
         x,
@@ -255,7 +284,7 @@ export function FinalFlowCarousel() {
           }
         : { animate: target, transition: { duration: dur, ease } };
     });
-  }, [active, prev, reduceMotion]);
+  }, [active, prev, reduceMotion, geo]);
 
   return (
     <div
@@ -264,10 +293,10 @@ export function FinalFlowCarousel() {
       role="region"
       aria-roledescription="carousel"
       aria-label="The finalized workflow: concepts by Diya Franklin, Swatik and Colton Hendrix"
-      style={{ background: "transparent", borderRadius: 15, height: 604 }}
+      style={{ background: "transparent", borderRadius: 15, height: geo.height }}
     >
       {/* Section headings */}
-      <div className="absolute flex items-end justify-center gap-[32px]" style={{ top: 16, left: 28, right: 28, zIndex: 5 }} role="tablist" aria-label="Sections">
+      <div className="absolute flex items-end justify-center" style={{ top: 16, left: geo.phone ? 8 : 28, right: geo.phone ? 8 : 28, gap: geo.phone ? 18 : 32, zIndex: 5 }} role="tablist" aria-label="Sections">
         {SECTIONS.map((s, i) => {
           const selected = i === cur.sectionIndex;
           return (
@@ -281,7 +310,7 @@ export function FinalFlowCarousel() {
               style={{
                 fontFamily: SANS,
                 fontWeight: selected ? 500 : 400,
-                fontSize: 22,
+                fontSize: geo.phone ? 17 : 22,
                 lineHeight: "30px",
                 color: selected ? INK : MUTED,
                 opacity: selected || s.final ? 1 : 0.55,
@@ -290,7 +319,7 @@ export function FinalFlowCarousel() {
                 outlineColor: FOREST,
               }}
             >
-              {s.heading}
+              {geo.phone ? s.person.split(" ")[0] : s.heading}
               {s.final && (
                 <span
                   style={{
@@ -306,7 +335,7 @@ export function FinalFlowCarousel() {
                     borderRadius: 999,
                   }}
                 >
-                  Primary concept
+                  {geo.phone ? "Primary" : "Primary concept"}
                 </span>
               )}
               {selected && (
@@ -324,7 +353,7 @@ export function FinalFlowCarousel() {
       </div>
 
       {/* Stage */}
-      <div className="absolute left-0 right-0" style={{ top: STAGE_TOP, height: BASE_H }} aria-live="off">
+      <div className="absolute left-0 right-0" style={{ top: stageTop, height: baseH }} aria-live="off">
         {FLAT.map((f, i) => {
           const isActive = i === active;
           const near = Math.abs(i - active) <= 1;
@@ -344,7 +373,7 @@ export function FinalFlowCarousel() {
                 top: 0,
                 marginLeft: -w / 2,
                 width: w,
-                height: BASE_H,
+                height: baseH,
                 zIndex: isActive ? 2 : 1,
                 pointerEvents: near ? "auto" : "none",
                 cursor: near && !isActive ? "pointer" : "default",
@@ -393,7 +422,7 @@ export function FinalFlowCarousel() {
       {/* Caption */}
       <div
         className="absolute left-0 right-0 text-center"
-        style={{ top: STAGE_TOP + BASE_H + 14, minHeight: 44 }}
+        style={{ top: stageTop + baseH + 14, minHeight: geo.captionH, paddingInline: geo.phone ? 4 : 0 }}
         aria-live={reduceMotion ? "polite" : "off"}
       >
         <p
@@ -406,57 +435,65 @@ export function FinalFlowCarousel() {
         </p>
       </div>
 
-      {/* Filmstrip: every screen, grouped by section. The underline under the active one is the timer. */}
-      <div className="absolute left-0 right-0 flex justify-center items-end" style={{ bottom: 22, gap: 28 }}>
-        {SECTIONS.map((s, si) => (
-          <div key={s.id} className="flex items-end" style={{ gap: 6 }}>
-            {s.screens.map((sc, k) => {
-              const idx = FIRST_INDEX[si] + k;
-              const isActive = idx === active;
-              const w = s.thumbH * ASPECTS[s.id][k];
-              return (
-                <button
-                  key={sc.image}
-                  type="button"
-                  aria-label={`Show ${s.person}, screen ${k + 1}: ${sc.title}`}
-                  aria-current={isActive ? "true" : undefined}
-                  onClick={() => goTo(idx)}
-                  className="border-0 bg-transparent p-0 cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2 flex flex-col"
-                  style={{ width: w, gap: 5, outlineColor: FOREST }}
-                >
-                  <img
-                    src={sc.image}
-                    alt=""
-                    draggable={false}
-                    className="block"
-                    style={{
-                      width: w,
-                      height: s.thumbH,
-                      borderRadius: 5,
-                      objectFit: "cover",
-                      opacity: isActive ? 1 : 0.6,
-                      outline: isActive ? `2px solid ${FOREST}` : "1px solid rgba(0,0,0,0.12)",
-                      outlineOffset: isActive ? 1 : 0,
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-                      transition: "opacity 250ms ease",
-                    }}
-                  />
-                  <span className="block w-full overflow-hidden" style={{ height: 3, borderRadius: 3, background: "rgba(31,61,43,0.16)" }}>
-                    {idx < active && <span className="block w-full h-full" style={{ background: FOREST }} />}
-                    {isActive && (
-                      <span
-                        key={`${active}-${prev}`}
-                        className="concept-progress-fill block w-full h-full"
-                        style={{ background: FOREST, animationDuration: `${s.dwell}ms` }}
-                        onAnimationEnd={next}
-                      />
-                    )}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        ))}
+      {/* Filmstrip: every screen, grouped by section. The underline under the active one is the timer.
+          A phone shows only the section being played, so the thumbnails stay big enough to tap. */}
+      <div
+        className="absolute left-0 right-0 flex justify-center items-end"
+        style={{ bottom: geo.phone ? 14 : 22, gap: 28, paddingInline: geo.phone ? 4 : 0 }}
+      >
+        {SECTIONS.map((s, si) => {
+          if (geo.phone && si !== cur.sectionIndex) return null;
+          return (
+            <div key={s.id} className="flex items-end" style={{ gap: 6, width: geo.phone ? "100%" : undefined }}>
+              {s.screens.map((sc, k) => {
+                const idx = FIRST_INDEX[si] + k;
+                const isActive = idx === active;
+                const w = s.thumbH * ASPECTS[s.id][k];
+                return (
+                  <button
+                    key={sc.image}
+                    type="button"
+                    aria-label={`Show ${s.person}, screen ${k + 1}: ${sc.title}`}
+                    aria-current={isActive ? "true" : undefined}
+                    onClick={() => goTo(idx)}
+                    className="border-0 bg-transparent p-0 cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2 flex flex-col"
+                    style={geo.phone ? { flex: "1 1 0", minWidth: 0, gap: 5, outlineColor: FOREST } : { width: w, gap: 5, outlineColor: FOREST }}
+                  >
+                    <img
+                      src={sc.image}
+                      alt=""
+                      draggable={false}
+                      className="block"
+                      style={{
+                        width: geo.phone ? "100%" : w,
+                        height: geo.phone ? "auto" : s.thumbH,
+                        aspectRatio: geo.phone ? `${ASPECTS[s.id][k]}` : undefined,
+                        borderRadius: 5,
+                        objectFit: "cover",
+                        opacity: isActive ? 1 : 0.6,
+                        outline: isActive ? `2px solid ${FOREST}` : "1px solid rgba(0,0,0,0.12)",
+                        outlineOffset: isActive ? 1 : 0,
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                        transition: "opacity 250ms ease",
+                      }}
+                    />
+                    <span className="block w-full overflow-hidden" style={{ height: 3, borderRadius: 3, background: "rgba(31,61,43,0.16)" }}>
+                      {idx < active && <span className="block w-full h-full" style={{ background: FOREST }} />}
+                      {isActive && (
+                        <span
+                          key={`${active}-${prev}`}
+                          className="concept-progress-fill block w-full h-full"
+                          style={{ background: FOREST, animationDuration: `${s.dwell}ms` }}
+                          onAnimationEnd={next}
+                        />
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

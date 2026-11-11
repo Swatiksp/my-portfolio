@@ -17,6 +17,8 @@ export interface Project {
   tags: string[];
   image: string;
   frost: string;
+  /** "soon": the case study is still being written, so the card is shown but can't be opened. */
+  status?: "soon";
 }
 
 export const PROJECTS: Project[] = [
@@ -49,20 +51,24 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 3,
-    slug: "project-four",
-    title: "Project Four",
-    desc: "A placeholder description for the fourth project in the portfolio collection.",
-    tags: ["Dashboard", "Data Viz"],
-    image: tile4,
-    frost: frost4,
+    slug: "microsoft-showcase",
+    title: "Microsoft Showcase",
+    desc: "Website UI design for Microsoft’s federated sales enablement platform, bringing sellers’ tools and content into one place.",
+    tags: ["Website UI Design", "Sales Enablement"],
+    image: tile5,
+    frost: frost5,
+    status: "soon",
   },
   {
     id: 4,
-    slug: "project-five",
-    title: "Project Five",
-    desc: "A placeholder description for the fifth project in the portfolio collection.",
-    tags: ["Interaction Design"],
-    image: tile5,
-    frost: frost5,
+    slug: "thesis",
+    title: "Thesis Project",
+    desc: "A health wearable interface that helps patients living with both diabetes and thyroid conditions break their data down into actionable insights.",
+    tags: ["Health Wearable Interface", "M Health", "Data Visualization", "Agentic AI"],
+    image: tile4,
+    frost: frost4,
+    status: "soon",
   },
 ];
+
+export const isOpenable = (p: Project) => p.status !== "soon";

@@ -169,7 +169,7 @@ export function FinalConceptGallery() {
         </button>
 
         {/* Caption */}
-        <div className="flex items-end justify-between gap-[16px]" style={{ paddingTop: 16, minHeight: 48 }} aria-live={reduceMotion ? "polite" : "off"}>
+        <div className="m-col flex items-end justify-between gap-[16px]" style={{ paddingTop: 16, minHeight: 48 }} aria-live={reduceMotion ? "polite" : "off"}>
           <div>
             <p
               className="m-0"
@@ -181,7 +181,7 @@ export function FinalConceptGallery() {
               {current.title}
             </p>
           </div>
-          <p className="m-0" style={{ fontFamily: SANS, fontSize: 14, lineHeight: "20px", color: MUTED, maxWidth: 420, textAlign: "right" }}>
+          <p className="m-left m-0" style={{ fontFamily: SANS, fontSize: 14, lineHeight: "20px", color: MUTED, maxWidth: 420, textAlign: "right" }}>
             {current.note}
           </p>
         </div>
@@ -248,7 +248,7 @@ export function FinalConceptGallery() {
                 role="dialog"
                 aria-modal="true"
                 aria-label={`${current.title}, screen ${active + 1} of ${n}`}
-                className="fixed inset-0 flex flex-col items-center justify-center"
+                className="m-lightbox fixed inset-0 flex flex-col items-center justify-center"
                 style={{ zIndex: 100, background: "rgba(24, 18, 12, 0.88)", padding: "40px 72px" }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

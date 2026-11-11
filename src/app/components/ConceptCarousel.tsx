@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import v1Step1 from "@/assets/concepts/concept-3-step-1.png";
 import v1Step2 from "@/assets/concepts/concept-3-step-2.png";
@@ -6,6 +6,7 @@ import v1Step3 from "@/assets/concepts/concept-3-step-3.png";
 import v2Step1 from "@/assets/concepts/v2-step-1.png";
 import v2Step2 from "@/assets/concepts/v2-step-2.png";
 import v2Step3 from "@/assets/concepts/v2-step-3.png";
+import { useIsMobile } from "../lib/useIsMobile";
 
 const FOREST = "#1f3d2b";
 const INK = "#000000";
@@ -74,19 +75,32 @@ const VERSIONS: readonly Version[] = [
   },
 ];
 
-const SLIDE_W = 462;
-const SLIDE_H = 300; // keeps the 1812:1178 ratio of the Figma frames
 const SIDE_SCALE = 0.88;
 const SIDE_OPACITY = 0.5;
-const GAP = 24;
-const STEP_X = SLIDE_W / 2 + GAP + (SLIDE_W * SIDE_SCALE) / 2; // distance between slide centres
 const SLIDE_TOP = 56;
+
+/** Slide size and spacing. Desktop keeps the Figma numbers; a phone scales the frame to the width it has. */
+function geometry(containerW: number | null) {
+  const phone = containerW !== null;
+  const w = phone ? Math.round(containerW * 0.78) : 462;
+  const h = Math.round((w * 300) / 462); // keeps the 1812:1178 ratio of the Figma frames
+  const gap = phone ? 12 : 24;
+  return {
+    phone,
+    w,
+    h,
+    stepX: w / 2 + gap + (w * SIDE_SCALE) / 2, // distance between slide centres
+    captionH: phone ? 84 : 42,
+    height: phone ? SLIDE_TOP + h + 14 + 84 + 10 + 14 + 12 : 448,
+  };
+}
+type Geo = ReturnType<typeof geometry>;
 
 /** -1 = previous (left), 0 = current, 1 = next (right) */
 const offsetOf = (i: number, active: number) => ((((i - active + 1) % 3) + 3) % 3) - 1;
 
 /** One version's screens, with caption and a segmented progress bar that doubles as the autoplay timer. */
-function VersionStage({ slides, onComplete }: { slides: readonly Slide[]; onComplete: () => void }) {
+function VersionStage({ slides, onComplete, geo }: { slides: readonly Slide[]; onComplete: () => void; geo: Geo }) {
   const reduceMotion = useReducedMotion();
   const [{ active, prev }, setPos] = useState({ active: 0, prev: 0 });
   const last = slides.length - 1;
@@ -102,7 +116,7 @@ function VersionStage({ slides, onComplete }: { slides: readonly Slide[]; onComp
         const offset = offsetOf(i, active);
         const centre = offset === 0;
         const target = {
-          x: offset * STEP_X,
+          x: offset * geo.stepX,
           scale: centre ? 1 : SIDE_SCALE,
           opacity: centre ? 1 : SIDE_OPACITY,
         };
@@ -117,13 +131,13 @@ function VersionStage({ slides, onComplete }: { slides: readonly Slide[]; onComp
             }
           : { animate: target, transition: { duration: dur, ease } };
       }),
-    [slides, active, prev, reduceMotion],
+    [slides, active, prev, reduceMotion, geo.stepX],
   );
 
   return (
     <>
       {/* Slides */}
-      <div className="absolute left-0 right-0" style={{ top: SLIDE_TOP, height: SLIDE_H }} aria-live="off">
+      <div className="absolute left-0 right-0" style={{ top: SLIDE_TOP, height: geo.h }} aria-live="off">
         {slides.map((s, i) => {
           const isActive = offsetOf(i, active) === 0;
           const { animate, transition } = motionProps[i];
@@ -138,9 +152,9 @@ function VersionStage({ slides, onComplete }: { slides: readonly Slide[]; onComp
               className="absolute"
               style={{
                 left: "50%",
-                marginLeft: -SLIDE_W / 2,
-                width: SLIDE_W,
-                height: SLIDE_H,
+                marginLeft: -geo.w / 2,
+                width: geo.w,
+                height: geo.h,
                 zIndex: isActive ? 2 : 1,
                 cursor: isActive ? "default" : "pointer",
                 borderRadius: 12,
@@ -173,9 +187,13 @@ function VersionStage({ slides, onComplete }: { slides: readonly Slide[]; onComp
       {/* Caption + progress */}
       <div
         className="absolute flex flex-col gap-[10px]"
-        style={{ top: SLIDE_TOP + SLIDE_H + 14, left: "50%", marginLeft: -SLIDE_W / 2, width: SLIDE_W }}
+        style={
+          geo.phone
+            ? { top: SLIDE_TOP + geo.h + 14, left: 0, right: 0 }
+            : { top: SLIDE_TOP + geo.h + 14, left: "50%", marginLeft: -geo.w / 2, width: geo.w }
+        }
       >
-        <div aria-live={reduceMotion ? "polite" : "off"} style={{ minHeight: 42, textAlign: "center" }}>
+        <div aria-live={reduceMotion ? "polite" : "off"} style={{ minHeight: geo.captionH, textAlign: "center" }}>
           <p
             className="m-0"
             style={{ fontFamily: SANS, fontWeight: 600, fontSize: 12, lineHeight: "16px", letterSpacing: "1.1px", textTransform: "uppercase", color: FOREST }}
@@ -226,6 +244,19 @@ function VersionStage({ slides, onComplete }: { slides: readonly Slide[]; onComp
 export function ConceptCarousel() {
   const [{ version, dir }, setVersion] = useState({ version: 0, dir: 1 });
   const reduceMotion = useReducedMotion();
+  const mobile = useIsMobile();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !mobile) return;
+    const measure = () => setWidth(el.clientWidth);
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    measure();
+    return () => ro.disconnect();
+  }, [mobile]);
+  const geo = useMemo(() => geometry(mobile && width > 0 ? width : null), [mobile, width]);
 
   // Warm the cache so the other version's screens are ready when it takes over.
   useEffect(() => {
@@ -249,11 +280,12 @@ export function ConceptCarousel() {
 
   return (
     <div
+      ref={rootRef}
       className="relative w-full overflow-hidden"
       role="region"
       aria-roledescription="carousel"
       aria-label="Concept 3 wireframes, version one and version two"
-      style={{ background: "transparent", borderRadius: 0, height: 448 }}
+      style={{ background: "transparent", borderRadius: 0, height: geo.height }}
     >
       {/* Version switcher */}
       <div className="absolute flex items-center justify-center gap-[28px]" style={{ top: 16, left: 0, right: 0, zIndex: 5 }} role="tablist" aria-label="Wireframe versions">
@@ -306,7 +338,7 @@ export function ConceptCarousel() {
           exit="exit"
           transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
-          <VersionStage slides={VERSIONS[version].slides} onComplete={nextVersion} />
+          <VersionStage slides={VERSIONS[version].slides} onComplete={nextVersion} geo={geo} />
         </motion.div>
       </AnimatePresence>
     </div>

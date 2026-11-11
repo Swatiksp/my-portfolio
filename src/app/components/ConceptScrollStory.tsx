@@ -912,7 +912,7 @@ export function ConceptScrollStory() {
             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", whiteSpace: "nowrap", minWidth: 38 }}>
               {active + 1} / {N}
             </span>
-            <div className="max-sm:hidden" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div className="flex items-center max-sm:hidden" style={{ gap: 6 }}>
               {STEPS.map((st, i) => (
                 <button
                   key={st.title}

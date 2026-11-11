@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { PROJECTS } from "../data/projects";
 import { EdgeGlyphs } from "../components/EdgeGlyphs";
+import { useIsMobile } from "../lib/useIsMobile";
 
 function ArrowLeft() {
   return (
@@ -14,6 +15,7 @@ function ArrowLeft() {
 export function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const phone = useIsMobile();
   const project = PROJECTS.find((p) => p.slug === slug);
 
   if (!project) {
@@ -37,7 +39,7 @@ export function ProjectDetail() {
 
       {/* Navbar */}
       <nav
-        className="fixed top-0 left-0 right-0 z-50 h-[66px] flex items-center justify-between px-[80px]"
+        className="fixed top-0 left-0 right-0 z-50 h-[66px] flex items-center justify-between px-[80px] max-md:px-[16px]"
         style={{
           background: "rgba(251,246,236,0.92)",
           borderBottom: "1px solid rgba(42,32,24,0.1)",
@@ -57,7 +59,7 @@ export function ProjectDetail() {
       {/* Hero image */}
       <motion.div
         className="w-full bg-[#d9d9d9]"
-        style={{ marginTop: 66, height: "55vh" }}
+        style={{ marginTop: 66, height: phone ? "36vh" : "55vh" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -65,7 +67,7 @@ export function ProjectDetail() {
 
       {/* Content */}
       <motion.div
-        className="mx-auto px-[80px] py-[80px]"
+        className="mx-auto px-[80px] py-[80px] max-md:px-[20px] max-md:py-[48px]"
         style={{ maxWidth: 1120 }}
         initial={{ opacity: 0, y: 32 }}
         animate={{ opacity: 1, y: 0 }}
@@ -97,7 +99,7 @@ export function ProjectDetail() {
             fontFamily: "'Playfair Display', serif",
             fontStyle: "italic",
             fontWeight: 600,
-            fontSize: "64px",
+            fontSize: phone ? "42px" : "64px",
             lineHeight: 1.1,
             color: "#000",
           }}
@@ -133,7 +135,7 @@ export function ProjectDetail() {
 
         {/* Process */}
         <Section title="My Approach">
-          <div className="grid gap-[40px]" style={{ gridTemplateColumns: "1fr 1fr" }}>
+          <div className="grid gap-[40px]" style={{ gridTemplateColumns: phone ? "1fr" : "1fr 1fr" }}>
             {["Research & Discovery", "Ideation", "Prototyping", "Testing & Iteration"].map((phase) => (
               <div key={phase}>
                 <h3

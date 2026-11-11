@@ -16,7 +16,7 @@ function rand(i: number, j: number) {
  */
 type GlyphCell = { x: number; y: number; col: number; row: number; base: number; glyph: string };
 
-function GlyphField() {
+export function GlyphField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

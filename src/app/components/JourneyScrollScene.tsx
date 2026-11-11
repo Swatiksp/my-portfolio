@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import journeyBg from "@/assets/prism/journey-bg.png";
 import journeyMapFull from "@/assets/prism/journey-map-full.png";
+import { ExpandableImage } from "./ExpandableImage";
+import { useIsMobile } from "../lib/useIsMobile";
 
 /* ───────────── User journey map: scroll-driven scene ─────────────
    Figma: "The idea for journey map" (node 783:42034), five states.
@@ -52,7 +54,24 @@ function useReducedMotion() {
 
 export function JourneyScrollScene({ heading, mapAlt }: { heading: ReactNode; mapAlt: string }) {
   const reduced = useReducedMotion();
+  const mobile = useIsMobile();
+  if (mobile) return <MobileJourney heading={heading} mapAlt={mapAlt} />;
   return reduced ? <StaticJourney heading={heading} mapAlt={mapAlt} /> : <ScrubbedJourney heading={heading} mapAlt={mapAlt} />;
+}
+
+/** Phones: nothing is pinned. The map is far too detailed to read at 350px, so it sits on its backdrop and opens full screen. */
+function MobileJourney({ heading, mapAlt }: { heading: ReactNode; mapAlt: string }) {
+  return (
+    <div className="flex flex-col gap-[20px] w-full">
+      {heading}
+      <div
+        className="w-full"
+        style={{ borderRadius: CARD_RADIUS, backgroundImage: `url(${journeyBg})`, backgroundSize: "cover", backgroundPosition: "center", padding: 14, boxSizing: "border-box" }}
+      >
+        <ExpandableImage src={journeyMapFull} alt={mapAlt} width={2200} height={4164} radius={12} />
+      </div>
+    </div>
+  );
 }
 
 /** Reduced motion: no pinning, just the full map on its backdrop. */

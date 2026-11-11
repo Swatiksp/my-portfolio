@@ -241,6 +241,97 @@ body {
   opacity: 0;
   transition: opacity 0.4s ease;
 }
+.poster-brand-trio {
+  gap: 2.6cqw;
+}
+.poster-brand-trio img {
+  height: 3.2cqw;
+  filter: brightness(0) invert(1);
+}
+.poster-brand-trio img:last-child {
+  height: 4.2cqw;
+}
+.poster-tags-wrap {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.prism-craft-enter-face.prism-craft-enter-soon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border-radius: 50%;
+  line-height: 0;
+}
+.poster-screen-note {
+  /* centred in the part of the screen that shows: from the top of the frame to the bottom edge of the card */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 41cqw;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: pre-line;
+  margin: 0;
+  padding-inline: 8cqw;
+  text-align: center;
+  pointer-events: none;
+  font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: 5.2cqw;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.55s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .poster:hover .poster-screen-note {
+    transform: translateY(-1.7cqw);
+    transition: transform 0.22s ease-out;
+  }
+}
+.poster-mobile .poster-screen-note {
+  top: 52cqw;
+  font-size: 6.4cqw;
+}
+.prism-craft-enter-soon .gears-icon {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+}
+.gear {
+  animation: gear-cw 6s linear infinite;
+}
+.gear-small {
+  animation-name: gear-ccw;
+  animation-duration: 3.6s;
+}
+/* On the hover cursor the gears only turn while the card is hovered. */
+.prism-craft-enter .gear {
+  animation-play-state: paused;
+}
+.craft-card-face:hover .prism-craft-enter .gear {
+  animation-play-state: running;
+}
+@keyframes gear-cw {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes gear-ccw {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gear {
+    animation: none;
+  }
+}
 .poster-s {
   --bg-rot: 180deg;
 }
@@ -282,6 +373,50 @@ body {
     transition-delay: 0.07s;
   }
 }
+/* Phone-sized poster (homepage on a phone). The card is ~300px wide, so the cqw sizes above would make the pills
+   and brand unreadable; this wrapper gives them a larger share of the card and leaves more room above the interface. */
+.poster-mobile .poster-top {
+  top: 6.4cqw;
+  padding-inline: 6cqw;
+}
+.poster-mobile .poster-brand {
+  height: 7cqw;
+}
+.poster-mobile .poster-brand-prism {
+  height: 8cqw;
+}
+.poster-mobile .poster-brand-ibm img {
+  height: 6cqw;
+}
+.poster-mobile .poster-brand-trio {
+  gap: 4cqw;
+}
+.poster-mobile .poster-brand-trio img {
+  height: 5cqw;
+}
+.poster-mobile .poster-brand-trio img:last-child {
+  height: 6.6cqw;
+}
+.poster-mobile .poster-brand-mark {
+  font-size: 5.4cqw;
+}
+.poster-mobile .poster-headline {
+  margin-top: 3cqw;
+  max-width: 88cqw;
+  font-size: 8.4cqw;
+}
+.poster-mobile .poster-tags {
+  gap: 2cqw;
+  margin-top: 3.6cqw;
+}
+.poster-mobile .poster-tag {
+  font-size: 3.4cqw;
+  padding: 1.6cqw 3.2cqw;
+}
+.poster-mobile .poster-shot {
+  top: 52cqw;
+}
+
 .prism-craft-enter {
   position: absolute;
   top: 0;
@@ -392,7 +527,7 @@ body {
   -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
 }
-.company-track { display: flex; align-items: center; gap: 44px; width: max-content; padding-right: 44px; animation: company-scroll 32s linear infinite; will-change: transform; }
+.company-track { display: flex; align-items: center; gap: 44px; width: max-content; padding-right: 44px; animation: company-scroll 20s linear infinite; will-change: transform; }
 .company-logo {
   height: 30px; width: auto; flex: none; display: block; user-select: none;
   filter: grayscale(1); opacity: .6; mix-blend-mode: multiply;
@@ -409,4 +544,251 @@ body {
 .type-char {
   display: inline-block; transform-origin: 0 100%;
   animation: type-char 340ms cubic-bezier(.22, .9, .3, 1) both;
+}
+/* a line that is not on screen yet waits, invisible, at the start of its animation */
+.type-hold .type-char { animation-play-state: paused; }
+
+/* The photo flow dealing in: each card grows up from a small shape on its baseline, the same move the letters make.
+   Only the starting point is described, so the card ends exactly where the flow has put it. `scale` and `translate` are
+   separate from `transform`, which the flow drives itself. */
+@keyframes flow-card-in {
+  from { opacity: 0; scale: 0.7 0.3; translate: 0 36px; }
+}
+.flow-card-in { animation: flow-card-in 760ms cubic-bezier(.22, .9, .3, 1) backwards; animation-delay: var(--in-delay, 0ms); }
+@media (prefers-reduced-motion: reduce) { .flow-card-in { animation: none; } }
+
+/* ── Glowing edge: a soft highlight with a long tail travels around the border of a card ── */
+@property --glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes glow-spin {
+  to { --glow-angle: 360deg; }
+}
+.glow-card {
+  position: relative;
+  isolation: isolate;
+  --g-tail: #ff9a8c;
+  --g-mid: #d92d20;
+  --g-head: #ffffff;
+  --g-peak: #ff5a47;
+  --g-edge: rgba(180, 35, 24, 0.32);
+  --glow-angle: 0deg;
+}
+/* Colours from the SpecTrim spec map: its red "gap" and the purple/indigo of the AI-made parts. */
+.glow-red { --g-tail: #ff9a8c; --g-mid: #d92d20; --g-peak: #ff5a47; --g-edge: rgba(180, 35, 24, 0.32); }
+.glow-violet { --g-tail: #5060e8; --g-mid: #8838f8; --g-peak: #a86bff; --g-edge: rgba(136, 56, 248, 0.32); }
+.glow-card::before,
+.glow-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: inherit;
+  animation: glow-spin 7s linear infinite;
+  animation-delay: var(--glow-delay, 0s);
+}
+/* the bright stroke on the border */
+.glow-card::before {
+  inset: -1px;
+  border-radius: 16px;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent 0deg,
+    transparent 230deg,
+    var(--g-tail) 292deg,
+    var(--g-mid) 332deg,
+    var(--g-peak) 347deg,
+    color-mix(in srgb, var(--g-head) 70%, var(--g-peak)) 353deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--g-mid) 35%, transparent));
+  z-index: 2;
+}
+/* the wash of light just inside the stroke: a wider, blurred ring that hugs the edge */
+.glow-card::after {
+  inset: 0;
+  padding: 5px;
+  z-index: -1;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent 0deg,
+    transparent 250deg,
+    color-mix(in srgb, var(--g-mid) 30%, transparent) 322deg,
+    color-mix(in srgb, var(--g-mid) 50%, transparent) 350deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  filter: blur(11px);
+  opacity: 0.55;
+  clip-path: inset(0 round 15px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow-card::before,
+  .glow-card::after { animation: none; --glow-angle: 0deg; }
+}
+
+/* ───────────────────────── Phone layout (iPhone width and below) ─────────────────────────
+   Everything here sits inside the max-width query, so desktop and tablet are untouched. The case-study pages
+   style most of their layout inline, so these rules use !important on the few classes added as hooks. */
+@media (max-width: 767px) {
+  .case-nav {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .site-nav-links { gap: 18px !important; }
+  .site-nav-link { font-size: 13px !important; letter-spacing: 1.04px !important; }
+  .site-nav-btn { padding: 8px 12px !important; font-size: 12px !important; line-height: 20px !important; }
+  .site-nav-long { display: none; }
+  .case-main {
+    padding: 96px 20px 20vh !important;
+    gap: 88px !important;
+  }
+  .case-gap {
+    gap: 88px !important;
+  }
+  /* two-column desktop grids become one column; the three-up meta rows become two */
+  .case-main [style*="grid-template-columns"],
+  .case-main .case-stack {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .case-main [style*="repeat(3"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .case-main .case-one-col {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  /* small helpers for components */
+  .m-col {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .m-left {
+    text-align: left !important;
+    max-width: none !important;
+  }
+  .m-lightbox {
+    padding: 64px 12px 80px !important;
+  }
+  /* Case-study hero: the interface sits at the top and the copy flows underneath it, so a long title never runs
+     into the screenshot. (A query container can't restyle itself, so the hero's own rules live here.) */
+  .case-hero {
+    aspect-ratio: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: 72cqw;
+  }
+  .case-hero-copy {
+    position: relative;
+    right: auto;
+    left: auto;
+    bottom: auto;
+    margin: 0 14px 14px;
+    width: auto;
+    gap: 14px;
+  }
+  .case-hero-copy h1 {
+    font-size: 13cqw !important;
+    line-height: 1.04 !important;
+  }
+  .m-fullw {
+    width: 100% !important;
+  }
+  .m-noflex {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+  }
+  .m-h2 {
+    font-size: 32px !important;
+    line-height: 36px !important;
+  }
+}
+
+/* ── ABOUT ME button with a looping "cursor click" glyph ── */
+.about-cta {
+  position: relative;
+  display: inline-block;
+}
+.about-cta-btn {
+  animation: about-press 3.8s ease-in-out infinite;
+}
+.about-cta-glyph {
+  /* the arrow's tip (top-left) lands on the middle of the button, arriving from below and to the right */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -0.17em;
+  margin-top: -0.1em;
+  z-index: 2;
+  pointer-events: none;
+  line-height: 0;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+  transform-origin: 17% 9%;
+  animation: about-cursor 3.8s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+.about-cta:hover .about-cta-btn,
+.about-cta:hover .about-cta-glyph {
+  animation: none;
+}
+.about-cta:hover .about-cta-glyph {
+  opacity: 0;
+}
+@keyframes about-cursor {
+  0% { opacity: 0; transform: translate(2.6em, 2.4em) scale(1); }
+  14% { opacity: 1; }
+  40% { opacity: 1; transform: translate(0, 0) scale(1); }
+  46% { transform: translate(0, 0) scale(0.82); }
+  53% { transform: translate(0, 0) scale(1); }
+  76% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(2.6em, 2.4em) scale(1); }
+}
+@keyframes about-press {
+  0%, 42%, 56%, 100% { transform: scale(1); filter: none; }
+  47%, 51% { transform: scale(0.95); filter: brightness(1.25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-cta-btn { animation: none; }
+  .about-cta-glyph { animation: none; opacity: 1; transform: none; }
+}
+
+
+/* ── About page: Yarndings 12 rows in the top left and top right corners, the photo flow between them ── */
+.cover-flow { position: relative; }
+.about-top { --g: clamp(26px, 3.125vw, 60px); --top: 90px; position: relative; width: 100%; overflow-x: clip; overflow-y: visible; padding-top: var(--top); }
+.about-glyphs { position: absolute; top: var(--top); left: 0; right: 0; pointer-events: none; user-select: none; z-index: 0; height: calc(var(--g) * 7.5); }
+.about-glyph {
+  display: block; flex: none; width: var(--g); height: var(--g); text-align: center; overflow: hidden;
+  font-family: 'Yarndings 12', sans-serif; font-size: var(--g); line-height: var(--g); color: #f2ddcc;
+}
+.about-glyph-scatter { position: absolute; }
+.about-title { position: absolute; z-index: 2; left: 50%; top: calc(var(--top) + var(--g) * 4.4 - 138px); transform: translateX(-50%); white-space: nowrap; margin: 0; } /* 58px above the photo flow: its height and a gap */
+.about-top-flow { position: relative; z-index: 1; margin: calc(var(--g) * 4.4 - 80px) auto 0; width: min(calc(var(--g) * 26), 100%); height: calc(var(--g) * 8); }
+.about-tab {
+  font-family: 'Roboto', sans-serif; font-weight: 700; white-space: nowrap;
+  background: transparent; color: #000; border: 0.917px solid rgba(0,0,0,.22); cursor: default; user-select: none;
+}
+/* Pin 365, Creative Guns, Kuwaka Tech: small outlined pills */
+.about-tab-small { font-size: 9.172px; line-height: 18.344px; padding: 4.586px 18.344px; border-radius: 18.344px; }
+/* Accenture and NC State: where I have worked the longest. Highlighted, not buttons, and the same width. */
+.about-pill { display: inline-flex; align-items: center; justify-content: center; width: 210.756px; box-sizing: border-box; font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 13.758px; line-height: 18.344px; padding: 9.172px 18.344px; border-radius: 18.344px; background: #1f3d2b; color: #fbf6ec; cursor: default; user-select: none; }
+@media (max-width: 767px) {
+  .about-main { padding: 72px 16px 96px !important; gap: 64px !important; }
+  .about-column { gap: 64px !important; }
+  .about-bio { font-size: 17px !important; line-height: 28px !important; }
+  /* the small tabs are too small to tap on a phone */
+  .about-tab-small { font-size: 13px; line-height: 18px; padding: 8px 16px; }
+  .about-pill { width: 160px; }
+  .about-glyph:nth-child(n+6) { display: none; }
+  .about-glyph-scatter { display: block !important; }
+  .about-glyph-far { display: none !important; }
+  .about-title { top: calc(var(--top) + var(--g) * 7.5 - 38px); }
+  .about-top-flow { margin-top: calc(var(--g) * 7.5 + 20px); width: 100%; height: 280px; }
 }

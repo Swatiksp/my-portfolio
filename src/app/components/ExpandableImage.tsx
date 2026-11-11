@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useIsMobile } from "../lib/useIsMobile";
 
 const SANS = "'Roboto', sans-serif";
 
@@ -25,6 +26,7 @@ export function ExpandableImage({
 }) {
   const [open, setOpen] = useState(false);
   const [full, setFull] = useState(false);
+  const verb = useIsMobile() ? "Tap" : "Click";
 
   useEffect(() => {
     if (!open) return;
@@ -94,7 +96,7 @@ export function ExpandableImage({
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M7 1h4v4M5 11H1V7M11 1 7.5 4.5M1 11l3.5-3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Click to enlarge
+          {verb} to enlarge
         </span>
       </button>
       {caption && (
@@ -126,7 +128,7 @@ export function ExpandableImage({
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <span style={{ color: "rgba(255,255,255,0.65)" }}>{full ? "Click the image to fit the screen" : "Click the image for full size"}</span>
+              <span style={{ color: "rgba(255,255,255,0.65)" }}>{full ? `${verb} the image to fit the screen` : `${verb} the image for full size`}</span>
               <button
                 type="button"
                 onClick={close}

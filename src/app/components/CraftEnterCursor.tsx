@@ -1,4 +1,5 @@
 import { useEffect, useRef, type RefObject } from "react";
+import { GearsIcon } from "./GearsIcon";
 
 /**
  * ENTER follows the pointer while a My Craft card is hovered, replacing the system cursor.
@@ -45,10 +46,10 @@ export function useCraftEnterCursor() {
   return { rootRef, enterRef };
 }
 
-export function CraftEnterLabel({ labelRef }: { labelRef: RefObject<HTMLSpanElement | null> }) {
+export function CraftEnterLabel({ labelRef, soon = false }: { labelRef: RefObject<HTMLSpanElement | null>; soon?: boolean }) {
   return (
     <span ref={labelRef} className="prism-craft-enter" aria-hidden>
-      <span className="prism-craft-enter-face">ENTER</span>
+      <span className={`prism-craft-enter-face${soon ? " prism-craft-enter-soon" : ""}`}>{soon ? <GearsIcon size={26} /> : "ENTER"}</span>
     </span>
   );
 }

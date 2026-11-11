@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useReducedMotion } from "motion/react";
+import { useIsMobile } from "../lib/useIsMobile";
 
 /* ───────────── Pinned step-scroll scene ─────────────
    Figma: "Idea for The problem, what we learned and the turning point" (node 818:3621).
@@ -32,7 +33,62 @@ type Props = {
 
 export function StepScrollScene(props: Props) {
   const reduced = useReducedMotion();
+  const mobile = useIsMobile();
+  if (mobile) return <StackedScene {...props} />;
   return reduced ? <StaticScene {...props} /> : <ScrubbedScene {...props} />;
+}
+
+/** Phones: nothing is pinned. The copy sits above the steps, and the step nearest the middle of the screen is the active one. */
+function StackedScene({ left, count, renderStep, gap = 20 }: Props) {
+  const [active, setActive] = useState(0);
+  const refs = useRef<(HTMLDivElement | null)[]>([]);
+  useEffect(() => {
+    let raf = 0;
+    const apply = () => {
+      raf = 0;
+      const mid = window.innerHeight * 0.55;
+      let best = 0;
+      let bestDist = Infinity;
+      refs.current.slice(0, count).forEach((el, i) => {
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const d = mid < r.top ? r.top - mid : mid > r.bottom ? mid - r.bottom : 0;
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      });
+      setActive((a) => (a === best ? a : best));
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+    apply();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [count]);
+  return (
+    <div className="w-full flex flex-col" style={{ gap: 32 }}>
+      <div>{left}</div>
+      <div className="flex flex-col" style={{ gap: gap + 8 }}>
+        {Array.from({ length: count }, (_, i) => (
+          <div
+            key={i}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+          >
+            {renderStep(i, i === active)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 const GRID = { display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", columnGap: 20 } as const;

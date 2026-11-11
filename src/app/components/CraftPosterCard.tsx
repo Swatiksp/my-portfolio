@@ -8,6 +8,8 @@ import { CraftEnterLabel, useCraftEnterCursor } from "./CraftEnterCursor";
  */
 export function CraftPosterCard({
   variant,
+  soon = false,
+  screenNote,
   bg,
   shot,
   shotAlt,
@@ -15,11 +17,15 @@ export function CraftPosterCard({
   headline,
   tags,
 }: {
-  variant: "s" | "p" | "h";
-  bg: string;
+  variant: "s" | "p" | "h" | "t" | "m";
+  /** The case study isn't ready: a construction icon follows the pointer instead of ENTER. */
+  soon?: boolean;
+  /** Text set on the interface frame while it's still a blank gradient. */
+  screenNote?: string;
+  bg?: string;
   shot: string;
   shotAlt: string;
-  brand: ReactNode;
+  brand: ReactNode | null;
   headline: ReactNode;
   tags: string[];
 }) {
@@ -69,11 +75,11 @@ export function CraftPosterCard({
 
   return (
     <div ref={rootRef} className={`poster poster-${variant}`}>
-      <img src={bg} alt="" className="poster-bg" decoding="async" />
+      {bg && <img src={bg} alt="" className="poster-bg" decoding="async" />}
       <div className="poster-top">
         {brand}
         <h3 className="poster-headline">{headline}</h3>
-        <div className="poster-tags">
+        <div className={`poster-tags${soon ? " poster-tags-wrap" : ""}`}>
           {tags.map((t) => (
             <span key={t} className="poster-tag">
               {t}
@@ -84,7 +90,8 @@ export function CraftPosterCard({
       <div className="poster-shot">
         <img src={shot} alt={shotAlt} decoding="async" />
       </div>
-      <CraftEnterLabel labelRef={enterRef} />
+      {screenNote && <p className="poster-screen-note">{screenNote}</p>}
+      <CraftEnterLabel labelRef={enterRef} soon={soon} />
     </div>
   );
 }

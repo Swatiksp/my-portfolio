@@ -1,11 +1,10 @@
-import logoMark from "@/assets/logo/logo.svg";
+import { SiteNav } from "../components/SiteNav";
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { TypeIn } from "../components/TypeIn";
 import { CaseHero, HeroPill } from "../components/CaseHero";
 import heropBg from "@/assets/craft-poster/p-bg.webp";
 import heropShot from "@/assets/craft-poster/p-shot.webp";
-import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Focus, FocusCtx, LensDrift, revealText, SectionFocusProvider } from "../components/SectionReveal";
 import { PROJECTS } from "../data/projects";
@@ -19,6 +18,7 @@ import { MarcusPersonaCard, MeetMarcusStrip } from "../components/MarcusPersona"
 import { JourneyScrollScene } from "../components/JourneyScrollScene";
 import { StepScrollScene } from "../components/StepScrollScene";
 import { EdgeGlyphs } from "../components/EdgeGlyphs";
+import { useIsMobile } from "../lib/useIsMobile";
 import { SectionProgressBar, PROGRESS_BAR_HEIGHT } from "../components/SectionProgressBar";
 import evidenceBg from "@/assets/final-outcomes/bg.jpg";
 
@@ -227,15 +227,15 @@ function HighlightedQuote({ quote, highlight }: { quote: string; highlight: stri
 }
 
 /** Interview excerpts for the hovered pain point. Copy stays on the existing excerpts. */
-function EvidencePanel({ painPoint }: { painPoint: PainPoint }) {
+function EvidencePanel({ painPoint, compact = false }: { painPoint: PainPoint; compact?: boolean }) {
   return (
     <div
-      id="pain-point-evidence"
+      id={compact ? undefined : "pain-point-evidence"}
       role="region"
       aria-live="polite"
       aria-label={`Interview excerpts for: ${painPoint.title}`}
       className="relative w-full overflow-hidden"
-      style={{ borderRadius: 15, height: 624 }}
+      style={{ borderRadius: 15, height: compact ? "auto" : 624 }}
     >
       {/* Figma "Evidence Panel": photo, then a #1f3d2b @ 60% layer with a background blur of 50 (CSS 25). */}
       <div
@@ -243,9 +243,9 @@ function EvidencePanel({ painPoint }: { painPoint: PainPoint }) {
         className="absolute"
         style={{
           left: 0,
-          top: -168,
-          width: 1280,
-          height: 1095,
+          top: compact ? 0 : -168,
+          width: compact ? "100%" : 1280,
+          height: compact ? "100%" : 1095,
           backgroundImage: `url(${evidenceBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -257,7 +257,7 @@ function EvidencePanel({ painPoint }: { painPoint: PainPoint }) {
         style={{ background: "rgba(31,61,43,0.6)" }}
       />
 
-      <div className="absolute inset-0 flex flex-col" style={{ padding: 20, overflowY: "auto" }}>
+      <div className={compact ? "relative flex flex-col" : "absolute inset-0 flex flex-col"} style={{ padding: compact ? 14 : 20, overflowY: compact ? "visible" : "auto" }}>
         <motion.div
           key={painPoint.title}
           className="flex flex-col flex-1"
@@ -277,7 +277,7 @@ function EvidencePanel({ painPoint }: { painPoint: PainPoint }) {
             </span>
           </motion.div>
 
-          <div className="flex flex-col" style={{ gap: 20, margin: "auto 0" }}>
+          <div className="flex flex-col" style={{ gap: compact ? 12 : 20, margin: compact ? "14px 0 0" : "auto 0" }}>
             {painPoint.excerpts.map((ex) => (
               <motion.figure
                 key={ex.quote}
@@ -405,7 +405,7 @@ function PrismProgressBar() {
 
 
 export function PrismCaseStudy() {
-  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const tags = PROJECTS.find((p) => p.slug === "prism")?.tags ?? [];
   const [activePain, setActivePain] = useState(0);
   const painListRef = useRef<HTMLDivElement>(null);
@@ -430,50 +430,15 @@ export function PrismCaseStudy() {
     return () => ro.disconnect();
   }, [activePain]);
 
-  const navLink: CSSProperties = {
-    fontFamily: NAV,
-    fontWeight: 500,
-    fontSize: 13,
-    lineHeight: "24px",
-    letterSpacing: "1.04px",
-    color: C.ink,
-  };
 
   return (
     <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "#FFFFFF" }}>
       <EdgeGlyphs />
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between"
-        style={{
-          height: NAV_H,
-          paddingLeft: 71,
-          paddingRight: 80,
-          paddingBottom: 1,
-          background: "rgba(255,255,255,0.92)",
-          borderBottom: "1px solid rgba(42,32,24,0.1)",
-        }}
-      >
-        <button
-          aria-label="Back to portfolio"
-          onClick={() => navigate("/")}
-          className="shrink-0 border-none cursor-pointer p-0"
-          style={{ width: 44, height: 44, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
-        />
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-[8px] bg-transparent border-none cursor-pointer p-0 hover:opacity-60 transition-opacity"
-          style={navLink}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-            <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          BACK TO PORTFOLIO
-        </button>
-      </nav>
+      <SiteNav current="work" />
 
       <SectionFocusProvider>
       <motion.main
-        className="mx-auto w-full flex flex-col"
+        className="case-main mx-auto w-full flex flex-col"
         style={{
           maxWidth: 1440,
           padding: `${NAV_H + PROGRESS_BAR_HEIGHT + 128}px 80px 40vh`,
@@ -484,7 +449,7 @@ export function PrismCaseStudy() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
       >
-        <div className="flex flex-col w-full" style={{ gap: 200 }}>
+        <div className="case-gap flex flex-col w-full" style={{ gap: 200 }}>
         {/* ── Header + overview (one story beat, so the hero stays sharp) ── */}
         <Focus as="header" index={0} className="flex flex-col gap-[40px] items-start w-full">
           <CaseHero bg={heropBg} shot={heropShot} shotAlt="Prism workspace for intelligence editors" glyph="#ffd7a6" bgRotate={0}>
@@ -656,7 +621,7 @@ export function PrismCaseStudy() {
         </Focus>
 
         {/* ── What we learned ── */}
-        <section className="flex flex-col w-full" style={{ gap: 200 }}>
+        <section className="case-gap flex flex-col w-full" style={{ gap: 200 }}>
           <Focus index={8} className="flex flex-col items-center w-full text-center" style={{ gap: 40 }}>
             <H1>Here’s a little more about Marcus</H1>
             <div className="w-full text-left">
@@ -705,9 +670,9 @@ export function PrismCaseStudy() {
 
           <Focus index={11} className="flex flex-col gap-[20px] w-full">
             <H1>Five pains we designed against</H1>
-            <p className="m-0" style={{ ...T.muted, fontSize: 16, lineHeight: "24px" }}>Hover over each item to see excerpts from the interviews for that area.</p>
-            <div className="grid grid-cols-[minmax(0,630fr)_minmax(0,650fr)] gap-x-[40px] w-full items-start" style={{ marginTop: 0 }}>
-              <EvidencePanel painPoint={PAIN_POINTS[activePain]} />
+            <p className="m-0" style={{ ...T.muted, fontSize: 16, lineHeight: "24px" }}>{isMobile ? "Tap" : "Hover over"} each item to see excerpts from the interviews for that area.</p>
+            <div className="case-stack grid grid-cols-[minmax(0,630fr)_minmax(0,650fr)] gap-x-[40px] w-full items-start" style={{ marginTop: 0 }}>
+              {!isMobile && <EvidencePanel painPoint={PAIN_POINTS[activePain]} />}
               <div ref={painListRef} className="relative flex flex-col gap-[24px]" style={{ paddingLeft: 20, paddingTop: 0 }}>
                 {painBar && (
                   <motion.div
@@ -754,6 +719,8 @@ export function PrismCaseStudy() {
                         <span style={{ ...T.painTitle, fontWeight: active ? 700 : 400 }}>{pp.title}</span>
                       </div>
                       <P>{pp.desc}</P>
+                      {/* on a phone the interview excerpts open under the pain point that was tapped */}
+                      {isMobile && active && <EvidencePanel painPoint={pp} compact />}
                     </div>
                   );
                 })}
@@ -794,7 +761,7 @@ export function PrismCaseStudy() {
             </p>
           </div>
           <div className="flex flex-col gap-[20px] items-start w-full">
-            <div className="grid grid-cols-[305px_1fr] gap-[20px] w-full items-start">
+            <div className="case-stack grid grid-cols-[305px_1fr] gap-[20px] w-full items-start">
               <div className="flex flex-col gap-[26px]" style={{ padding: "20px 0" }}>
                 <div className="relative">
                   {/* Green stroke to the left of the active concept (Figma 816:3474: 6px wide, radius 10, #133e2b). */}
@@ -827,7 +794,7 @@ export function PrismCaseStudy() {
                 <LensDrift text="Two prototypes. I presented the canvas." />
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-[32px] w-full items-start">
+            <div className="case-stack grid grid-cols-3 gap-[32px] w-full items-start">
               {[
                 { title: "Canvas", note: "Tiers in space, sources on the left, flags on the right. Document view as backup." },
                 { title: "Flag to source", note: "Click a flag and see the sentence, the source, and a suggested fix." },
