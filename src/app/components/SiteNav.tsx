@@ -1,19 +1,31 @@
 import type { CSSProperties } from "react";
 import { useNavigate } from "react-router";
 import logoMark from "@/assets/logo/logo.svg";
+import { useTheme } from "../lib/theme";
 
-const FOREST = "#1f3d2b";
-const CREAM = "#fbf6ec";
 const COND = "'Roboto Condensed', 'Roboto', sans-serif";
 
 export const NAV_HEIGHT = 66;
 
+// the dark bar's tokens, for a page that goes dark on its own while the site theme is light
+const DARK_TOKENS = {
+  "--ink": "#ffffff",
+  "--forest": "#9ad4b1",
+  "--btn-bg": "#ffffff",
+  "--btn-fg": "#000000",
+  "--nav-bg": "rgba(11,12,14,0.92)",
+  "--nav-line": "rgba(255,255,255,0.12)",
+} as CSSProperties;
+
 /**
- * The navigation bar from the homepage (logo, WORK, ABOUT, VIEW RESUME), for every other page. The dark-mode switch
- * stays on the homepage, which is the only page that has a dark side. `current` underlines the section you are in.
+ * The navigation bar from the homepage (logo, DARK MODE, WORK, ABOUT, VIEW RESUME), for every other page. DARK MODE
+ * flips the site-wide theme (see lib/theme). `current` underlines the section you are in. Colours come from the theme
+ * tokens in index.css, so the bar follows light / dark by itself. `dark` shows the bar dark whatever the site theme is
+ * (Project S dissolves its page to dark for the high-fidelity section and the bar goes with it).
  */
-export function SiteNav({ current }: { current?: "work" | "about" }) {
+export function SiteNav({ current, dark: darkOverride = false }: { current?: "work" | "about"; dark?: boolean }) {
   const navigate = useNavigate();
+  const { dark, toggle } = useTheme();
 
   const link = (active: boolean): CSSProperties => ({
     fontFamily: COND,
@@ -21,7 +33,7 @@ export function SiteNav({ current }: { current?: "work" | "about" }) {
     fontSize: 14,
     lineHeight: "24px",
     letterSpacing: "1.12px",
-    color: active ? FOREST : "#000",
+    color: active ? "var(--forest)" : "var(--ink)",
     textDecoration: active ? "underline" : "none",
     textDecorationThickness: 2,
     textUnderlineOffset: 8,
@@ -29,6 +41,7 @@ export function SiteNav({ current }: { current?: "work" | "about" }) {
     border: "none",
     padding: 0,
     cursor: "pointer",
+    transition: "color 500ms ease, opacity 150ms ease",
   });
 
   return (
@@ -39,8 +52,10 @@ export function SiteNav({ current }: { current?: "work" | "about" }) {
         paddingLeft: 71,
         paddingRight: 80,
         paddingBottom: 1,
-        background: "rgba(255,255,255,0.92)",
-        borderBottom: "1px solid rgba(42,32,24,0.1)",
+        background: "var(--nav-bg)",
+        borderBottom: "1px solid var(--nav-line)",
+        transition: "background 500ms ease, border-color 500ms ease",
+        ...(darkOverride ? DARK_TOKENS : null),
       }}
     >
       <button
@@ -50,6 +65,10 @@ export function SiteNav({ current }: { current?: "work" | "about" }) {
         style={{ width: 44, height: 44, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
       />
       <div className="site-nav-links flex items-center" style={{ gap: 40 }}>
+        <button type="button" onClick={toggle} aria-pressed={dark} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} className="site-nav-link hover:opacity-60 transition-opacity" style={link(false)}>
+          {dark ? "LIGHT" : "DARK"}
+          <span className="site-nav-long"> MODE</span>
+        </button>
         <button type="button" onClick={() => navigate("/#work")} className="site-nav-link hover:opacity-60 transition-opacity" style={link(current === "work")} aria-current={current === "work" ? "page" : undefined}>
           WORK
         </button>
@@ -59,7 +78,7 @@ export function SiteNav({ current }: { current?: "work" | "about" }) {
         <button
           type="button"
           className="site-nav-btn hover:opacity-85 transition-opacity"
-          style={{ background: FOREST, color: CREAM, fontFamily: COND, fontWeight: 700, fontSize: 14, lineHeight: "24px", letterSpacing: "1.12px", borderRadius: 4, border: "none", padding: "10px 20px", cursor: "pointer", whiteSpace: "nowrap" }}
+          style={{ background: "var(--btn-bg)", color: "var(--btn-fg)", fontFamily: COND, fontWeight: 700, fontSize: 14, lineHeight: "24px", letterSpacing: "1.12px", borderRadius: 4, border: "none", padding: "10px 20px", cursor: "pointer", whiteSpace: "nowrap" }}
         >
           <span className="site-nav-long">VIEW </span>RESUME
         </button>

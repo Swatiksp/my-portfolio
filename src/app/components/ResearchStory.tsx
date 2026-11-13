@@ -1,8 +1,8 @@
 import { motion, useReducedMotion } from "motion/react";
 
 const SANS = "'Roboto', sans-serif";
-const INK = "#000";
-const MUTED = "rgba(0,0,0,0.5)";
+const INK = "var(--ink)";
+const MUTED = "rgba(var(--ink-rgb),0.5)";
 
 /* The four clusters from the research mind map. Two of them became the two ideas. */
 const CLUSTERS = [
@@ -85,8 +85,8 @@ export function PainClusters() {
                 flexDirection: "column",
                 gap: 16,
                 borderRadius: 15,
-                border: built ? "1px solid var(--g-edge)" : "1px solid rgba(0,0,0,0.14)",
-                background: "#fff",
+                border: built ? "1px solid var(--g-edge)" : "1px solid var(--rule-14)",
+                background: "var(--card)",
                 fontFamily: SANS,
                 opacity: built ? 1 : 0.62,
               }}

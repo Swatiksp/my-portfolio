@@ -25,15 +25,15 @@ import evidenceBg from "@/assets/final-outcomes/bg.jpg";
 
 /* ───────────────────────── Design tokens (Figma "Prism case study — live", node 766:1250) ───────────────────────── */
 const C = {
-  forest: "#1f3d2b",
+  forest: "var(--forest)",
   prism: "#396f4e",
-  ink: "#000000",
-  cream: "#fbf6ec",
+  ink: "var(--ink)",
+  cream: "var(--cream)",
   evidence: "#fbf6ef",
-  sand: "#f3e7d4",
-  line: "#e5daca",
+  sand: "var(--sand)",
+  line: "var(--line)",
   rule: "#536454",
-  bar: "#133e2b",
+  bar: "var(--bar)",
 };
 const MONO = "'Roboto Condensed', 'Roboto', sans-serif";
 const SANS = "'Roboto', sans-serif";
@@ -59,7 +59,7 @@ const T = {
     lineHeight: "16px",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(0,0,0,0.42)",
+    color: "rgba(var(--ink-rgb),0.42)",
   },
   storyMetaLabel: {
     fontFamily: SANS,
@@ -68,10 +68,10 @@ const T = {
     lineHeight: "16px",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(0,0,0,0.42)",
+    color: "rgba(var(--ink-rgb),0.42)",
   },
   metaValue: { fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "22px", color: C.ink },
-  muted: { fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.45)" },
+  muted: { fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: "rgba(var(--ink-rgb),0.45)" },
   heading2: {
     fontFamily: SANS,
     fontWeight: 400,
@@ -211,7 +211,7 @@ function HighlightedQuote({ quote, highlight }: { quote: string; highlight: stri
       {quote.slice(0, at)}
       <mark
         style={{
-          background: C.forest,
+          background: "#1f3d2b", // sits on the white quote card, which stays light
           color: "#ffffff",
           fontWeight: 700,
           borderRadius: 2,
@@ -295,7 +295,7 @@ function EvidencePanel({ painPoint, compact = false }: { painPoint: PainPoint; c
               >
                 <blockquote
                   className="m-0"
-                  style={{ fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "25px", color: C.ink }}
+                  style={{ fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "25px", color: "#000000" }}
                 >
                   “<HighlightedQuote quote={ex.quote} highlight={ex.highlight} />”
                 </blockquote>
@@ -307,7 +307,7 @@ function EvidencePanel({ painPoint, compact = false }: { painPoint: PainPoint; c
                     lineHeight: "16px",
                     letterSpacing: "1.1px",
                     textTransform: "uppercase",
-                    color: C.ink,
+                    color: "#000000",
                   }}
                 >
                   Marcus Interview {ex.interview}
@@ -322,7 +322,7 @@ function EvidencePanel({ painPoint, compact = false }: { painPoint: PainPoint; c
   );
 }
 
-const STEP_DIM = "rgba(0,0,0,0.25)";
+const STEP_DIM = "rgba(var(--ink-rgb),0.25)";
 const SCENE_MAX = 1167;
 
 const PROBLEM_STEPS = [
@@ -433,7 +433,7 @@ export function PrismCaseStudy() {
 
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "#FFFFFF" }}>
+    <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "var(--page)" }}>
       <EdgeGlyphs />
       <SiteNav current="work" />
 

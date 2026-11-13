@@ -38,20 +38,20 @@ import v2e from "@/assets/versions/v2-8e-plan-approved.png";
 
 
 const C = {
-  forest: "#1f3d2b",
+  forest: "var(--forest)",
   prism: "#396f4e",
-  ink: "#000000",
-  cream: "#fbf6ec",
-  sand: "#f3e7d4",
-  line: "#e5daca",
-  bar: "#133e2b",
+  ink: "var(--ink)",
+  cream: "var(--cream)",
+  sand: "var(--sand)",
+  line: "var(--line)",
+  bar: "var(--bar)",
 };
 const MONO = "'Roboto Condensed', 'Roboto', sans-serif";
 const SANS = "'Roboto', sans-serif";
 const NAV = "'Plus Jakarta Sans', sans-serif";
 
 const NAV_H = 66;
-const STEP_DIM = "rgba(0,0,0,0.25)";
+const STEP_DIM = "rgba(var(--ink-rgb),0.25)";
 const SCENE_MAX = 1167;
 
 const T = {
@@ -72,7 +72,7 @@ const T = {
     lineHeight: "16px",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(0,0,0,0.42)",
+    color: "rgba(var(--ink-rgb),0.42)",
   },
   storyMetaLabel: {
     fontFamily: SANS,
@@ -81,10 +81,10 @@ const T = {
     lineHeight: "16px",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(0,0,0,0.42)",
+    color: "rgba(var(--ink-rgb),0.42)",
   },
   metaValue: { fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "22px", color: C.ink },
-  muted: { fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.45)" },
+  muted: { fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: "rgba(var(--ink-rgb),0.45)" },
   heading2: {
     fontFamily: SANS,
     fontWeight: 400,
@@ -438,7 +438,7 @@ export function ProductSCaseStudy() {
 
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "#FFFFFF", overflowX: "clip" }}>
+    <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "var(--page)", overflowX: "clip" }}>
       {/* the dark screen: fades in and out behind the content */}
       <div
         aria-hidden
@@ -446,7 +446,7 @@ export function ProductSCaseStudy() {
         style={{ background: "#0b0c0e", opacity: dark ? 1 : 0, transition: "opacity 500ms ease", zIndex: 0 }}
       />
       <EdgeGlyphs />
-      <SiteNav current="work" />
+      <SiteNav current="work" dark={dark} />
 
       <SectionFocusProvider>
         <motion.main
@@ -548,7 +548,7 @@ export function ProductSCaseStudy() {
                   maxWidth: 912,
                   gap: 20,
                   padding: "20px 0",
-                  background: "#fff",
+                  background: "var(--card)", // white in light mode
                   borderRadius: 10,
                   boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)",
                 }}

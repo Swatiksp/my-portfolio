@@ -5,25 +5,28 @@ import { AboutCta } from "./AboutCta";
 import { ToolMarks } from "./ToolMarks";
 import { useIsMobile } from "../lib/useIsMobile";
 import { EMAIL, LINKEDIN_URL } from "../lib/links";
+import { useTheme } from "../lib/theme";
 
-const FOREST = "#1f3d2b";
-const CREAM = "#fbf6ec";
-const BLACK = "#000000";
-const INK = "#2a2018";
-const MUTED = "#7b6a58";
-const LINE = "rgba(42,32,24,0.1)";
+// Theme tokens (index.css): they hold the original light colours and flip in dark mode.
+const FOREST = "var(--btn-bg)";
+const CREAM = "var(--btn-fg)";
+const BLACK = "var(--ink)";
+const INK = "var(--ink-2)";
+const MUTED = "var(--muted)";
+const LINE = "var(--nav-line)";
 const SERIF = "'Newsreader', 'Iowan Old Style', Georgia, serif";
 const SANS = "'Roboto', sans-serif";
 const COND = "'Roboto Condensed', 'Roboto', sans-serif";
 
 /**
  * The footer from the homepage, for every other page: the ABOUT ME prompt, "Let's work together" with the email, the
- * explore links and the credits. The light version only (the dark side is the homepage's). `showAbout={false}` drops
- * the ABOUT ME prompt, for the About page itself.
+ * explore links and the credits. Colours come from the theme tokens, so it follows light / dark. `showAbout={false}`
+ * drops the ABOUT ME prompt, for the About page itself.
  */
 export function SiteFooter({ showAbout = true }: { showAbout?: boolean }) {
   const navigate = useNavigate();
   const mobile = useIsMobile();
+  const { dark } = useTheme();
 
   const navLink: CSSProperties = {
     fontFamily: COND,
@@ -63,12 +66,12 @@ export function SiteFooter({ showAbout = true }: { showAbout?: boolean }) {
   return (
     <footer
       className="relative w-full flex flex-col overflow-hidden"
-      style={{ padding: mobile ? "48px 24px 28px" : "72px 80px 32px", gap: mobile ? 40 : 64, borderTop: `1px solid ${LINE}`, background: "#ffffff", boxSizing: "border-box", zIndex: 2 }} // above the fixed edge glyphs on the case studies
+      style={{ padding: mobile ? "48px 24px 28px" : "72px 80px 32px", gap: mobile ? 40 : 64, borderTop: `1px solid ${LINE}`, background: "var(--page)", boxSizing: "border-box", zIndex: 2 }} // above the fixed edge glyphs on the case studies
     >
       {showAbout && (
         <div className="flex items-center justify-between w-full" style={{ gap: 32, flexWrap: "wrap", paddingBottom: mobile ? 36 : 56, borderBottom: `1px solid ${LINE}`, flexDirection: mobile ? "column" : "row", alignItems: mobile ? "flex-start" : "center" }}>
           <p style={{ ...bigHeading(mobile ? 36 : 44, mobile ? "42px" : "50px"), maxWidth: 640 }}>Want to know more about me?</p>
-          <AboutCta buttonStyle={button} dark={false} glyphSize={mobile ? 22 : 24} onClick={goAbout} />
+          <AboutCta buttonStyle={button} dark={dark} glyphSize={mobile ? 22 : 24} onClick={goAbout} />
         </div>
       )}
 

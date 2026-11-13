@@ -1,3 +1,4 @@
+import { useTheme } from "../lib/theme";
 import { LINKEDIN_URL } from "../lib/links";
 import { CompanyMarquee } from "./CompanyMarquee";
 import { ToolMarks } from "./ToolMarks";
@@ -560,7 +561,7 @@ export function Homepage() {
 function DesktopHomepage() {
   const navigate = useNavigate();
   const [isGrid, setIsGrid] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const { dark: darkMode, toggle: toggleDark } = useTheme();
   const [aboutHover, setAboutHover] = useState(false); // hovering the footer ABOUT ME button lights up ABOUT in the nav
   const [wolf, setWolf] = useState(false); // easter egg: hovering GOWOLFPACK swaps the glyph for a wolf
   const wolfRef = useRef<HTMLDivElement>(null);
@@ -697,7 +698,7 @@ function DesktopHomepage() {
           <div className="flex items-center gap-[40px]">
             <button
               type="button"
-              onClick={() => setDarkMode((v) => !v)}
+              onClick={toggleDark}
               className="hover:opacity-60 transition-opacity"
               style={navLinkStyle}
               aria-pressed={darkMode}

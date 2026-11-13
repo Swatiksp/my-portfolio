@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 import cardBg from "@/assets/final-outcomes/bg.jpg";
 
-const INK = "#000000";
+const INK = "var(--ink)";
 const SANS = "'Roboto', sans-serif";
 
 // The recordings were slow enough to read as stills, so they play faster.
@@ -149,7 +149,7 @@ function OutcomeVideoCard({
         </p>
         <p
           className="m-0"
-          style={{ fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "24px", color: "rgba(0,0,0,0.72)" }}
+          style={{ fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "24px", color: "rgba(var(--ink-rgb),0.72)" }}
         >
           {copy}
         </p>
@@ -186,7 +186,7 @@ function OutcomeVideoCard({
             bottom: 10,
             padding: 10,
             borderRadius: 20,
-            background: "rgba(255,255,255,0.5)",
+            background: "var(--glass)",
             boxShadow: "0 16px 40px rgba(89,51,13,0.24)",
           }}
         >

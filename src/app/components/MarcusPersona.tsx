@@ -4,9 +4,12 @@ import { useReducedMotion } from "motion/react";
 import marcusPhoto from "@/assets/prism/marcus-persona.png";
 import { PROGRESS_BAR_HEIGHT } from "./SectionProgressBar";
 
-const FOREST = "#1f3d2b";
-const INK = "#000000";
-const LINE = "#e5daca";
+// Theme tokens (index.css): original light colours, flipped in dark mode.
+const FOREST = "var(--forest)"; // green used as text
+const PILL = "var(--btn-bg)"; // solid pill / badge fill
+const PILL_FG = "var(--btn-fg)"; // text on the solid fill
+const INK = "var(--ink)";
+const LINE = "var(--line)";
 const SANS = "'Roboto', sans-serif";
 const MONO = "'Roboto Condensed', 'Roboto', sans-serif";
 
@@ -139,8 +142,8 @@ function ToolChip({ children }: { children: string }) {
     <span
       className="whitespace-nowrap"
       style={{
-        background: FOREST,
-        color: "#ffffff",
+        background: PILL,
+        color: PILL_FG,
         fontFamily: SANS,
         fontWeight: 500,
         fontSize: 12,
@@ -173,8 +176,8 @@ function PersonCard({
         gap: 4,
         padding: "16px 20px",
         borderRadius: 15,
-        background: highlight ? FOREST : "#fbf6ec",
-        color: highlight ? "#ffffff" : INK,
+        background: highlight ? PILL : "var(--cream)",
+        color: highlight ? PILL_FG : INK,
         boxSizing: "border-box",
       }}
     >
@@ -293,8 +296,8 @@ function MeetMarcusOrbit({ t }: { t: number }) {
                 transform: `translate(-50%, -50%) scale(${s}) rotate(${pill.r}deg)`,
                 transformOrigin: "center center",
                 zIndex: 1,
-                background: FOREST,
-                color: "#ffffff",
+                background: PILL,
+                color: PILL_FG,
                 fontFamily: SANS,
                 fontWeight: 500,
                 fontSize: 17,
@@ -319,7 +322,7 @@ function MeetMarcusOrbit({ t }: { t: number }) {
             boxShadow: photoShadow,
             zIndex: 4,
             transform: "translateZ(0)",
-            background: FOREST,
+            background: "#1f3d2b",
           }}
         >
           <img
@@ -469,7 +472,7 @@ export function MarcusPersonaCard() {
             />
           </div>
           <div className="flex justify-center" aria-hidden>
-            <span style={{ width: 2, height: 28, background: "#8a7a66" }} />
+            <span style={{ width: 2, height: 28, background: "var(--muted)" }} />
           </div>
           <PersonCard
             name="Marcus"
@@ -478,7 +481,7 @@ export function MarcusPersonaCard() {
             highlight
           />
           <div className="flex justify-center" aria-hidden>
-            <span style={{ width: 2, height: 28, background: "#8a7a66" }} />
+            <span style={{ width: 2, height: 28, background: "var(--muted)" }} />
           </div>
           <PersonCard
             name="Jordan"

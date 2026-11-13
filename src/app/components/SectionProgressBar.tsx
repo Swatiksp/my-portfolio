@@ -1,3 +1,4 @@
+import { useTheme } from "../lib/theme";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /* Case study section bar: pinned under the site nav. Story segments sit first
@@ -35,7 +36,7 @@ export function SectionProgressBar({
   activeIndex,
   onSelect,
   offsetTop = 66,
-  dark = false,
+  dark: darkProp = false,
 }: {
   items: ProgressItem[];
   activeIndex: number;
@@ -43,6 +44,8 @@ export function SectionProgressBar({
   offsetTop?: number;
   dark?: boolean;
 }) {
+  const { dark: siteDark } = useTheme();
+  const dark = darkProp || siteDark; // the page may turn the bar dark itself (Project S); site dark mode does too
   const segRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const rowRef = useRef<HTMLDivElement>(null);
   const [fill, setFill] = useState<{ left: number; width: number } | null>(null);

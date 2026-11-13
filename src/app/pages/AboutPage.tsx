@@ -12,16 +12,18 @@ import museum from "@/assets/companies/museum-of-life-and-science.png";
 import bathAndBodyWorks from "@/assets/companies/bath-and-body-works.png";
 import usSteel from "@/assets/companies/us-steel.png";
 import { CoverFlow } from "../components/CoverFlow";
+import { useTheme } from "../lib/theme";
 import { LINKEDIN_URL, RESUME_URL } from "../lib/links";
 import { TypeInView } from "../components/TypeInView";
 import { typeDuration } from "../components/TypeIn";
 import type { FlowItem } from "../components/CoverFlow";
 
-const FOREST = "#1f3d2b";
-const CREAM = "#fbf6ec";
-const INK = "#000000";
-const MUTED = "rgba(0,0,0,0.55)";
-const LINE = "rgba(0,0,0,0.14)";
+// Theme tokens (index.css): the original light colours, flipped in dark mode.
+const FOREST = "var(--btn-bg)";
+const CREAM = "var(--btn-fg)";
+const INK = "var(--ink)";
+const MUTED = "var(--ink-55)";
+const LINE = "var(--rule-14)";
 const SERIF = "'Newsreader', 'Iowan Old Style', Georgia, serif";
 const SANS = "'Roboto', sans-serif";
 const COND = "'Roboto Condensed', 'Roboto', sans-serif";
@@ -196,6 +198,7 @@ function WorkExperience() {
 }
 
 function Brands() {
+  const { dark } = useTheme();
   return (
     <section className="flex flex-col items-center" style={{ gap: 20 }} aria-labelledby="brands">
       <h2 id="brands" style={heading}>
@@ -205,7 +208,7 @@ function Brands() {
         {BRANDS.map((b) => (
           <li key={b.name} className="flex items-center justify-center" style={{ minHeight: 40, minWidth: 96 }}>
             {b.src ? (
-              <img src={b.src} alt={b.name} draggable={false} className="company-logo" style={{ height: b.h ?? 34 }} />
+              <img src={b.src} alt={b.name} draggable={false} className={`company-logo${dark ? " company-logo-dark" : ""}`} style={{ height: b.h ?? 34 }} />
             ) : (
               <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: MUTED, whiteSpace: "nowrap" }}>{b.name}</span>
             )}
@@ -232,7 +235,7 @@ export function AboutPage() {
   }, []);
 
   return (
-    <div className="w-full" style={{ background: "#fff", color: INK, minHeight: "100vh", fontFamily: SANS }}>
+    <div className="w-full" style={{ background: "var(--page)", color: INK, minHeight: "100vh", fontFamily: SANS }}>
       <SiteNav current="about" />
 
       {/* no card: the glyph rows sit on the page itself, in the top corners, and the photos fan out between them */}

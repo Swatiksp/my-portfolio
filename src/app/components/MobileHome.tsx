@@ -1,3 +1,4 @@
+import { useTheme } from "../lib/theme";
 import { LINKEDIN_URL } from "../lib/links";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
@@ -30,7 +31,7 @@ const CRAFT = new Set(["prism", "halo-conversations", "project-s", "thesis", "mi
 
 export function MobileHomepage() {
   const navigate = useNavigate();
-  const [dark, setDark] = useState(false);
+  const { dark, toggle: toggleDark } = useTheme();
 
   // white page in light mode, black in dark, like the desktop page
   useEffect(() => {
@@ -112,7 +113,7 @@ export function MobileHomepage() {
           style={{ width: 36, height: 36, background: `url("${logoMark}") center / cover no-repeat`, borderRadius: 4 }}
         />
         <div className="flex items-center" style={{ gap: 18 }}>
-          <button type="button" onClick={() => setDark((v) => !v)} aria-pressed={dark} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} style={navLink}>
+          <button type="button" onClick={toggleDark} aria-pressed={dark} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} style={navLink}>
             {dark ? "LIGHT" : "DARK"}
           </button>
           <button type="button" onClick={() => goTo("work")} style={navLink}>

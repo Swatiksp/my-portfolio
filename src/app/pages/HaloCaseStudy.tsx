@@ -26,20 +26,20 @@ import ideaPerformance from "@/assets/halo/ideas/performance-optimization.png";
 import ideaDemos from "@/assets/halo/ideas/interactive-demos.png";
 
 const C = {
-  forest: "#1f3d2b",
+  forest: "var(--forest)",
   prism: "#396f4e",
-  ink: "#000000",
-  cream: "#fbf6ec",
-  sand: "#f3e7d4",
-  line: "#e5daca",
-  bar: "#133e2b",
+  ink: "var(--ink)",
+  cream: "var(--cream)",
+  sand: "var(--sand)",
+  line: "var(--line)",
+  bar: "var(--bar)",
 };
 const MONO = "'Roboto Condensed', 'Roboto', sans-serif";
 const SANS = "'Roboto', sans-serif";
 const NAV = "'Plus Jakarta Sans', sans-serif";
 
 const NAV_H = 66;
-const STEP_DIM = "rgba(0,0,0,0.25)";
+const STEP_DIM = "rgba(var(--ink-rgb),0.25)";
 const SCENE_MAX = 1167;
 
 const T = {
@@ -60,7 +60,7 @@ const T = {
     lineHeight: "16px",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(0,0,0,0.42)",
+    color: "rgba(var(--ink-rgb),0.42)",
   },
   storyMetaLabel: {
     fontFamily: SANS,
@@ -69,10 +69,10 @@ const T = {
     lineHeight: "16px",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(0,0,0,0.42)",
+    color: "rgba(var(--ink-rgb),0.42)",
   },
   metaValue: { fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "22px", color: C.ink },
-  muted: { fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.45)" },
+  muted: { fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: "rgba(var(--ink-rgb),0.45)" },
   heading2: {
     fontFamily: SANS,
     fontWeight: 400,
@@ -460,7 +460,7 @@ export function HaloCaseStudy() {
 
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "#FFFFFF" }}>
+    <div className="min-h-screen" style={{ fontFamily: SANS, color: C.ink, background: "var(--page)" }}>
       <EdgeGlyphs />
       <SiteNav current="work" />
 
@@ -608,7 +608,7 @@ export function HaloCaseStudy() {
                     <img
                       src={feat.image}
                       alt={feat.title}
-                      className="block"
+                      className="block theme-lineart"
                       style={{ width: "100%", maxWidth: 320, height: "auto", alignSelf: "center", objectFit: "contain" }}
                     />
                     <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "24px", color: C.ink }}>

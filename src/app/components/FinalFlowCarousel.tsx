@@ -17,11 +17,13 @@ import colton7 from "@/assets/final-flow/colton-7.jpg";
 import colton8 from "@/assets/final-flow/colton-8.jpg";
 import { useIsMobile } from "../lib/useIsMobile";
 
-const FOREST = "#1f3d2b";
-const CREAM = "#fbf6ec";
-const INK = "#000000";
-const MUTED = "#5c4a38";
-const SAND = "#f3e7d4";
+// Theme tokens (index.css) flip in dark mode. PILL / PILL_FG are the solid fill and the text on it.
+const FOREST = "var(--forest)";
+const PILL = "var(--btn-bg)";
+const CREAM = "var(--btn-fg)";
+const INK = "var(--ink)";
+const MUTED = "var(--muted)";
+const SAND = "var(--sand)";
 const SANS = "'Roboto', sans-serif";
 
 interface Screen {
@@ -323,7 +325,7 @@ export function FinalFlowCarousel() {
               {s.final && (
                 <span
                   style={{
-                    background: FOREST,
+                    background: PILL,
                     color: CREAM,
                     fontFamily: SANS,
                     fontWeight: 600,
@@ -399,7 +401,7 @@ export function FinalFlowCarousel() {
                     top: 10,
                     left: "50%",
                     transform: "translateX(-50%)", // sits in the empty middle of the screen's top bar
-                    background: FOREST,
+                    background: PILL,
                     color: CREAM,
                     fontFamily: SANS,
                     fontWeight: 600,
@@ -471,13 +473,13 @@ export function FinalFlowCarousel() {
                         borderRadius: 5,
                         objectFit: "cover",
                         opacity: isActive ? 1 : 0.6,
-                        outline: isActive ? `2px solid ${FOREST}` : "1px solid rgba(0,0,0,0.12)",
+                        outline: isActive ? `2px solid ${FOREST}` : "1px solid var(--rule-14)",
                         outlineOffset: isActive ? 1 : 0,
                         boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
                         transition: "opacity 250ms ease",
                       }}
                     />
-                    <span className="block w-full overflow-hidden" style={{ height: 3, borderRadius: 3, background: "rgba(31,61,43,0.16)" }}>
+                    <span className="block w-full overflow-hidden" style={{ height: 3, borderRadius: 3, background: "var(--track)" }}>
                       {idx < active && <span className="block w-full h-full" style={{ background: FOREST }} />}
                       {isActive && (
                         <span

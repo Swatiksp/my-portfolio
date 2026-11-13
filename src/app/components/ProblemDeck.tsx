@@ -34,7 +34,7 @@ function Card({
         flexDirection: "column",
         alignItems: "center",
         gap: 20,
-        background: "#fff",
+        background: "var(--card)",
         borderRadius: 10,
         filter: "drop-shadow(0px 2px 5px rgba(0,0,0,0.08))",
         ...style,
@@ -63,7 +63,7 @@ function Card({
           fontSize: 18,
           lineHeight: "28.8px",
           letterSpacing: "0.26px",
-          color: "#000",
+          color: "var(--ink)",
           textAlign: "center",
         }}
       >
