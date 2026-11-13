@@ -1,3 +1,4 @@
+import { SiteFooter } from "../components/SiteFooter";
 import { SiteNav } from "../components/SiteNav";
 import { useContext, useEffect, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
@@ -840,6 +841,7 @@ export function ProductSCaseStudy() {
         </motion.main>
         <ProductSProgressBar dark={dark} />
       </SectionFocusProvider>
+      <SiteFooter />
     </div>
   );
 }

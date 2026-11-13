@@ -1,3 +1,4 @@
+import { LINKEDIN_URL } from "../lib/links";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import linkedInIcon from "@/imports/Frame7/b9ce6f119974543779bbcad7563e234be8edd900.png";
@@ -24,7 +25,6 @@ const FONT_SANS = "'Roboto', sans-serif";
 const FONT_COND = "'Roboto Condensed', 'Roboto', sans-serif";
 const FONT_DING = "'Yarndings 12', sans-serif";
 const SERIF = "'Newsreader', 'Iowan Old Style', Georgia, serif";
-const LINKEDIN_URL = "https://www.linkedin.com/in/swatik-s-p-909bb9233/";
 
 const CRAFT = new Set(["prism", "halo-conversations", "project-s", "thesis", "microsoft-showcase"]);
 

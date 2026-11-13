@@ -1,3 +1,4 @@
+import { LINKEDIN_URL } from "../lib/links";
 import { CompanyMarquee } from "./CompanyMarquee";
 import { ToolMarks } from "./ToolMarks";
 import { AboutCta } from "./AboutCta";
@@ -41,8 +42,6 @@ const FONT_SANS = "'Roboto', sans-serif";
 const FONT_COND = "'Roboto Condensed', 'Roboto', sans-serif";
 const FONT_DING = "'Yarndings 12', sans-serif";
 
-// TODO: replace with the real LinkedIn profile URL.
-const LINKEDIN_URL = "https://www.linkedin.com/in/swatik-s-p-909bb9233/";
 
 const NAV_H = 66;
 const WRAPPER_SPRING = { type: "spring" as const, stiffness: 55, damping: 22 };

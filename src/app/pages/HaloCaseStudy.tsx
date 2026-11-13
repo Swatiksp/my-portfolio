@@ -1,3 +1,4 @@
+import { SiteFooter } from "../components/SiteFooter";
 import { SiteNav } from "../components/SiteNav";
 import { useContext } from "react";
 import type { CSSProperties, ReactNode } from "react";
@@ -655,6 +656,7 @@ export function HaloCaseStudy() {
         </motion.main>
         <HaloProgressBar />
       </SectionFocusProvider>
+      <SiteFooter />
     </div>
   );
 }

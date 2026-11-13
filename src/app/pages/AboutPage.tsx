@@ -1,3 +1,4 @@
+import { SiteFooter } from "../components/SiteFooter";
 import { SiteNav } from "../components/SiteNav";
 import type { CSSProperties } from "react";
 import { useEffect } from "react";
@@ -11,6 +12,7 @@ import museum from "@/assets/companies/museum-of-life-and-science.png";
 import bathAndBodyWorks from "@/assets/companies/bath-and-body-works.png";
 import usSteel from "@/assets/companies/us-steel.png";
 import { CoverFlow } from "../components/CoverFlow";
+import { LINKEDIN_URL, RESUME_URL } from "../lib/links";
 import { TypeInView } from "../components/TypeInView";
 import { typeDuration } from "../components/TypeIn";
 import type { FlowItem } from "../components/CoverFlow";
@@ -24,9 +26,6 @@ const SERIF = "'Newsreader', 'Iowan Old Style', Georgia, serif";
 const SANS = "'Roboto', sans-serif";
 const COND = "'Roboto Condensed', 'Roboto', sans-serif";
 
-// TODO: replace with the real links once they exist
-const LINKEDIN_URL = "https://www.linkedin.com/in/swatik-s-p-909bb9233/";
-const RESUME_URL = "#";
 
 /* ------------------------------ content ------------------------------ */
 
@@ -274,6 +273,7 @@ export function AboutPage() {
           </section>
         </div>
       </motion.main>
+      <SiteFooter showAbout={false} />
     </div>
   );
 }

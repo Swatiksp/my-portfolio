@@ -1,3 +1,4 @@
+import { SiteFooter } from "../components/SiteFooter";
 import { SiteNav } from "../components/SiteNav";
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
@@ -852,6 +853,7 @@ export function PrismCaseStudy() {
       </motion.main>
       <PrismProgressBar />
       </SectionFocusProvider>
+      <SiteFooter />
     </div>
   );
 }
