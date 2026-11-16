@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
+import { useNearViewport } from "../lib/useNearViewport";
 import cardBg from "@/assets/final-outcomes/bg.jpg";
 
 const INK = "var(--ink)";
@@ -107,6 +108,7 @@ export function OutcomeVideoCards() {
           title={v.title}
           copy={v.copy}
           src={v.src}
+          playWhenReady={!reduceMotion && i === active}
           cardRef={(el) => {
             cardRefs.current[i] = el;
           }}
@@ -123,17 +125,31 @@ function OutcomeVideoCard({
   title,
   copy,
   src,
+  playWhenReady,
   cardRef,
   videoRef,
 }: {
   title: string;
   copy: string;
   src: string;
+  /** This card is the one on screen. The parent starts it when that changes, but the source may arrive a moment later. */
+  playWhenReady: boolean;
   cardRef: (el: HTMLDivElement | null) => void;
   videoRef: (el: HTMLVideoElement | null) => void;
 }) {
+  // Safari downloads a whole video as soon as it has a source, whatever preload says, so a card only gets its
+  // source once it is close to the screen.
+  const holderRef = useRef<HTMLDivElement | null>(null);
+  const near = useNearViewport(holderRef, "2000px 0px");
   return (
-    <div ref={cardRef} className="flex flex-col items-center w-full" style={{ gap: 20 }}>
+    <div
+      ref={(el) => {
+        holderRef.current = el;
+        cardRef(el);
+      }}
+      className="flex flex-col items-center w-full"
+      style={{ gap: 20 }}
+    >
       <div className="flex flex-col items-center text-center" style={{ gap: 10, maxWidth: 573 }}>
         <p
           className="m-0"
@@ -160,7 +176,7 @@ function OutcomeVideoCard({
         className="relative w-full overflow-hidden"
         style={{ aspectRatio: `${MEDIA_W} / ${MEDIA_H}`, borderRadius: 20 }}
       >
-        <img
+        <img decoding="async"
           src={cardBg}
           alt=""
           draggable={false}
@@ -193,12 +209,16 @@ function OutcomeVideoCard({
           <div className="relative w-full h-full overflow-hidden" style={{ borderRadius: 10 }}>
             <video
               ref={videoRef}
-              src={src}
+              src={near ? src : undefined}
+              poster={src.replace("/final-outcomes/", "/final-outcomes/posters/").replace(/\.mp4$/, ".jpg")}
               muted
               loop
               playsInline
               preload="metadata"
               onLoadedMetadata={(e) => { e.currentTarget.playbackRate = PLAYBACK_RATE; }}
+              onLoadedData={(e) => {
+                if (playWhenReady) e.currentTarget.play().catch(() => {});
+              }}
               disablePictureInPicture
               aria-label={title}
               className="absolute inset-0 block"

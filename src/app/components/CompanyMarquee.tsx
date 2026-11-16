@@ -19,7 +19,7 @@ const LOGOS = [
 export const CompanyMarquee = memo(function CompanyMarquee({ dark }: { dark: boolean }) {
   const row = (hidden: boolean) =>
     LOGOS.map((l) => (
-      <img
+      <img decoding="async"
         key={l.name + (hidden ? "-b" : "")}
         src={l.src}
         alt={hidden ? "" : l.name}

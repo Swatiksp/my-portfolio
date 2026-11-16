@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { useReducedMotion } from "motion/react";
-import marcusPhoto from "@/assets/prism/marcus-persona.png";
+import marcusPhoto from "@/assets/prism/marcus-persona.webp";
 import { PROGRESS_BAR_HEIGHT } from "./SectionProgressBar";
 
 // Theme tokens (index.css): original light colours, flipped in dark mode.
@@ -325,7 +325,7 @@ function MeetMarcusOrbit({ t }: { t: number }) {
             background: "#1f3d2b",
           }}
         >
-          <img
+          <img decoding="async" loading="lazy"
             src={marcusPhoto}
             alt="Marcus, intelligence analytic editor"
             className="absolute inset-0 size-full"
@@ -415,7 +415,7 @@ export function MarcusPersonaCard() {
             className="relative shrink-0 overflow-hidden"
             style={{ width: 340, maxWidth: "100%", aspectRatio: "340 / 521", borderRadius: 15, boxShadow: photoShadow }}
           >
-            <img
+            <img decoding="async" loading="lazy"
               src={marcusPhoto}
               alt="Marcus, intelligence analytic editor"
               className="absolute inset-0 size-full"

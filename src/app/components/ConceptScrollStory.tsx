@@ -141,7 +141,7 @@ function AddSpecScene({ chars = SPEC_TEXT.length }: { chars?: number }) {
           }}
         >
           <span style={{ fontWeight: 500, fontSize: 13, color: "#fff", whiteSpace: "nowrap" }}>Map this spec</span>
-          <img src={iconChip} alt="" width={34} height={33} draggable={false} style={{ display: "block" }} />
+          <img decoding="async" src={iconChip} alt="" width={34} height={33} draggable={false} style={{ display: "block" }} />
         </div>
       </div>
     </div>
@@ -213,8 +213,8 @@ function SpecLiveCard({ width = 256, ready = false }: { width?: number; ready?: 
         repairs assigned to them.
       </p>
       <div style={{ display: "flex", gap: 10 }}>
-        <img src={btnOpen} alt="" width={30} height={30} draggable={false} style={{ display: "block" }} />
-        <img
+        <img decoding="async" src={btnOpen} alt="" width={30} height={30} draggable={false} style={{ display: "block" }} />
+        <img decoding="async"
           src={ready ? btnExportReady : btnExport}
           alt=""
           width={30}
@@ -322,7 +322,7 @@ function PartLabel({ part, green = false }: { part: Part; green?: boolean }) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <img src={green ? dotAccept : part.dot} alt="" width={8} height={8} draggable={false} style={{ display: "block" }} />
+        <img decoding="async" src={green ? dotAccept : part.dot} alt="" width={8} height={8} draggable={false} style={{ display: "block" }} />
         <span style={{ fontWeight: 500, fontSize: 13, color: "#ecedef", whiteSpace: "nowrap" }}>{part.name}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -374,7 +374,7 @@ function MapScene({
       }}
     >
       {/* pentagon + spokes */}
-      <img
+      <img decoding="async"
         src={pentagonSvg}
         alt=""
         draggable={false}
@@ -424,7 +424,7 @@ function MapScene({
               pointerEvents: "none",
             }}
           >
-            <img
+            <img decoding="async"
               src={r.src}
               alt=""
               draggable={false}

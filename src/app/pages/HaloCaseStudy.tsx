@@ -367,7 +367,7 @@ function PersonaCard({ person }: { person: Persona }) {
     >
       <div className="grid w-full items-start max-md:grid-cols-1" style={{ gridTemplateColumns: "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: 24 }}>
         <div className="relative overflow-hidden" style={{ borderRadius: 12, minHeight: 280, background: BW.panel }}>
-          <img src={person.photo} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: "50% 18%" }} />
+          <img decoding="async" loading="lazy" src={person.photo} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: "50% 18%" }} />
           <div
             className="absolute inset-0"
             style={{ background: "linear-gradient(180deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.92) 78%, #ffffff 100%)" }}
@@ -605,7 +605,7 @@ export function HaloCaseStudy() {
                     className="flex flex-col items-start"
                     style={{ gap: 12, background: C.cream, borderRadius: 15, padding: 20, minHeight: 160 }}
                   >
-                    <img
+                    <img decoding="async"
                       src={feat.image}
                       alt={feat.title}
                       className="block theme-lineart"

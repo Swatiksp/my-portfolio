@@ -208,7 +208,7 @@ function Brands() {
         {BRANDS.map((b) => (
           <li key={b.name} className="flex items-center justify-center" style={{ minHeight: 40, minWidth: 96 }}>
             {b.src ? (
-              <img src={b.src} alt={b.name} draggable={false} className={`company-logo${dark ? " company-logo-dark" : ""}`} style={{ height: b.h ?? 34 }} />
+              <img decoding="async" src={b.src} alt={b.name} draggable={false} className={`company-logo${dark ? " company-logo-dark" : ""}`} style={{ height: b.h ?? 34 }} />
             ) : (
               <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: MUTED, whiteSpace: "nowrap" }}>{b.name}</span>
             )}

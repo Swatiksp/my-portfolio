@@ -1,10 +1,10 @@
 import { useState } from "react";
-import img99 from "@/assets/halo/frames/99.png";
+import img99 from "@/assets/halo/frames/99.webp";
 import img100 from "@/assets/halo/frames/100.png";
 import img101 from "@/assets/halo/frames/101.png";
 import img102 from "@/assets/halo/frames/102.png";
 import img103 from "@/assets/halo/frames/103.png";
-import img104 from "@/assets/halo/frames/104.png";
+import img104 from "@/assets/halo/frames/104.webp";
 
 /** Figma component 291:1294 — 2×3 grid; hover enlarges one frame, neighbors fade. */
 const CANVAS = { w: 1360, h: 569.5 };
@@ -61,7 +61,7 @@ export function HaloWireframeHover() {
             }}
             aria-label={`Enlarge ${frame.alt}`}
           >
-            <img src={frame.src} alt={enlarged || active == null ? frame.alt : ""} className="absolute inset-0 w-full h-full object-cover" />
+            <img decoding="async" loading="lazy" src={frame.src} alt={enlarged || active == null ? frame.alt : ""} className="absolute inset-0 w-full h-full object-cover" />
           </button>
         );
       })}

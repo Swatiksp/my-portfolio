@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNearViewport } from "../lib/useNearViewport";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import s1 from "@/assets/final-concept/final-1.jpg";
@@ -82,6 +83,8 @@ const SCREENS: readonly Screen[] = [
  */
 export function FinalConceptGallery() {
   const reduceMotion = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const near = useNearViewport(rootRef);
   const [active, setActive] = useState(0);
   const [prev, setPrev] = useState(0);
   const [open, setOpen] = useState(false);
@@ -109,11 +112,12 @@ export function FinalConceptGallery() {
   );
 
   useEffect(() => {
+    if (!near) return;
     SCREENS.forEach((s) => {
       const img = new Image();
       img.src = s.image;
     });
-  }, []);
+  }, [near]);
 
   useEffect(() => {
     if (!open) return;
@@ -132,7 +136,7 @@ export function FinalConceptGallery() {
   }, [open, close, step]);
 
   return (
-    <div className="flex flex-col gap-[16px] w-full">
+    <div ref={rootRef} className="flex flex-col gap-[16px] w-full">
       <div
         className="concept-carousel relative w-full overflow-hidden"
         role="region"
@@ -157,7 +161,7 @@ export function FinalConceptGallery() {
           <AnimatePresence initial={false} mode="popLayout">
             <motion.img
               key={current.image}
-              src={current.image}
+              src={near ? current.image : undefined}
               alt={current.alt}
               draggable={false}
               className="absolute inset-0 block w-full h-full object-cover select-none"
@@ -202,8 +206,8 @@ export function FinalConceptGallery() {
                 className="flex-1 min-w-0 border-0 bg-transparent p-0 cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2 flex flex-col"
                 style={{ gap: 6, outlineColor: FOREST }}
               >
-                <img
-                  src={s.image}
+                <img decoding="async"
+                  src={near ? s.image : undefined}
                   alt=""
                   draggable={false}
                   className="block w-full"
@@ -257,7 +261,7 @@ export function FinalConceptGallery() {
                 transition={{ duration: reduceMotion ? 0 : 0.2 }}
                 onClick={close}
               >
-                <img
+                <img decoding="async"
                   src={current.image}
                   alt={current.alt}
                   draggable={false}

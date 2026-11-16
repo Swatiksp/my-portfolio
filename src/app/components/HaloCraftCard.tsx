@@ -12,7 +12,7 @@ export function HaloCraftCard() {
       shotAlt="Halo Conversations launch page in Microsoft Copilot"
       brand={
         <div className="poster-brand">
-          <img src={logo} alt="Halo Conversations" />
+          <img decoding="async" src={logo} alt="Halo Conversations" />
         </div>
       }
       headline={

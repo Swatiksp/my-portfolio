@@ -149,7 +149,7 @@ export function GapDialog({ q }: { q: number }) {
           return (
             <div key={c} style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
               <span style={{ position: "relative", width: 14, height: 14 }}>
-                <img src={radio} alt="" width={14} height={14} draggable={false} style={{ display: "block" }} />
+                <img decoding="async" src={radio} alt="" width={14} height={14} draggable={false} style={{ display: "block" }} />
                 <span
                   style={{
                     position: "absolute",
@@ -317,7 +317,7 @@ export function KeyScene({ q }: { q: number }) {
             <div style={{ width: 150, flexShrink: 0, display: "flex", justifyContent: "center" }}>
               {r.swatch ?? (
                 <span style={{ position: "relative", width: 30, height: 30 }}>
-                  <img
+                  <img decoding="async"
                     src={btnExport}
                     alt=""
                     width={30}
@@ -325,7 +325,7 @@ export function KeyScene({ q }: { q: number }) {
                     draggable={false}
                     style={{ position: "absolute", inset: 0, opacity: 1 - ready, transform: "rotate(90deg)" }}
                   />
-                  <img
+                  <img decoding="async"
                     src={btnExportReady}
                     alt=""
                     width={30}
@@ -455,7 +455,7 @@ export function ReviewListScene({ q }: { q: number }) {
           }}
         >
           <span style={{ flex: 1, textAlign: "center", fontWeight: 500, fontSize: 13, color: "#fff" }}>Export to Copilot</span>
-          <img src={iconChip} alt="" width={34} height={33} draggable={false} style={{ display: "block" }} />
+          <img decoding="async" src={iconChip} alt="" width={34} height={33} draggable={false} style={{ display: "block" }} />
         </div>
       </div>
 

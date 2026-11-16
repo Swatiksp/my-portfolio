@@ -48,7 +48,7 @@ const EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
 const HOLES_BY_STEP: ("hmw" | "idea1" | "idea4")[][] = [[], ["hmw"], ["idea1"], ["idea4"], ["hmw", "idea1", "idea4"]];
 
 // The map is exported from Figma as an SVG with live text, so it stays sharp at any zoom. It is drawn
-// inline (not as an <img>) so the page can supply the Inter font the text uses.
+// inline (not as an <img decoding="async">) so the page can supply the Inter font the text uses.
 const MAP_SVG = mindMapSvg.replace(
   /^<svg[^>]*>/,
   `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Research mind map: four pain clusters, twelve actions and five counter-evidence cards" style="display:block;font-family:Inter,'Roboto',sans-serif" fill="none">`,

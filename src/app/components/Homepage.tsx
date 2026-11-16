@@ -290,7 +290,7 @@ function TileImage({
       {useFlat && flatSrc ? (
         <FrostBitmap bitmap={flatSrc} radius={IMAGE_RADIUS} />
       ) : (
-        <img
+        <img decoding="async"
           src={src}
           alt=""
           draggable={false}

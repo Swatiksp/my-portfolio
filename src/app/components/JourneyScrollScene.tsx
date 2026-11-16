@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import journeyBg from "@/assets/prism/journey-bg.png";
-import journeyMapFull from "@/assets/prism/journey-map-full.png";
+import journeyBg from "@/assets/prism/journey-bg.webp";
+import journeyMapFull from "@/assets/prism/journey-map-full.webp";
 import { ExpandableImage } from "./ExpandableImage";
 import { useIsMobile } from "../lib/useIsMobile";
 
@@ -89,7 +89,7 @@ function StaticJourney({ heading, mapAlt }: { heading: ReactNode; mapAlt: string
           padding: `${MAP_START_TOP}px 0 ${MAP_END_GAP}px`,
         }}
       >
-        <img
+        <img decoding="async"
           src={journeyMapFull}
           alt={mapAlt}
           className="block mx-auto"
@@ -193,7 +193,7 @@ function ScrubbedJourney({ heading, mapAlt }: { heading: ReactNode; mapAlt: stri
           className="absolute left-0 right-0 overflow-hidden"
           style={{ top: cardTop, height: CARD_H, borderRadius: CARD_RADIUS, willChange: "transform", background: "#10382f" }}
         >
-          <img
+          <img decoding="async"
             ref={bgRef}
             src={journeyBg}
             alt=""
@@ -211,7 +211,7 @@ function ScrubbedJourney({ heading, mapAlt }: { heading: ReactNode; mapAlt: stri
           className="absolute left-0 right-0 pointer-events-none"
           style={{ top: cardTop, height: CARD_H, zIndex: 10, clipPath: `inset(-6000px -40px 0px -40px)` }}
         >
-          <img
+          <img decoding="async"
             ref={mapRef}
             src={journeyMapFull}
             alt={mapAlt}

@@ -230,7 +230,7 @@ export function MobileHomepage() {
                     </div>
                   ) : (
                     <>
-                      <img
+                      <img decoding="async"
                         src={dark ? project.frost : project.image}
                         alt=""
                         draggable={false}

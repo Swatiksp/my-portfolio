@@ -12,7 +12,7 @@ export function PrismCraftCard() {
       shotAlt="Prism workspace for intelligence editors"
       brand={
         <div className="poster-brand poster-brand-prism">
-          <img src={logo} alt="Prism" />
+          <img decoding="async" src={logo} alt="Prism" />
         </div>
       }
       headline={

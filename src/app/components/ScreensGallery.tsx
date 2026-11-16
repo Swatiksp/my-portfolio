@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import enterSpec from "@/assets/screens/enter-spec.png";
-import mapMinimized from "@/assets/screens/spec-map-minimized.png";
-import mapReviewList from "@/assets/screens/spec-map-review-list.png";
-import mapHover from "@/assets/screens/spec-map-hover.png";
+import mapMinimized from "@/assets/screens/spec-map-minimized.webp";
+import mapReviewList from "@/assets/screens/spec-map-review-list.webp";
+import mapHover from "@/assets/screens/spec-map-hover.webp";
 import requirements from "@/assets/screens/requirements.png";
 
 const SANS = "'Roboto', sans-serif";
@@ -182,7 +182,7 @@ export function ScreensGallery() {
                 transition: "opacity 300ms ease",
               }}
             >
-              <img
+              <img decoding="async"
                 src={s.src}
                 alt={`${s.title}: ${s.note}`}
                 width={s.w}

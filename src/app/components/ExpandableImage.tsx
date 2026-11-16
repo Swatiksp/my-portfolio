@@ -63,7 +63,7 @@ export function ExpandableImage({
           cursor: "zoom-in",
         }}
       >
-        <img
+        <img decoding="async"
           src={src}
           alt={alt}
           width={width}
@@ -148,7 +148,7 @@ export function ExpandableImage({
               </button>
             </div>
             <div style={{ flex: 1, minHeight: 0, overflow: "auto", display: "flex", justifyContent: "center", alignItems: full ? "flex-start" : "center", padding: "0 20px 20px" }}>
-              <img
+              <img decoding="async"
                 src={src}
                 alt={alt}
                 draggable={false}

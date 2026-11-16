@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNearViewport } from "../lib/useNearViewport";
 import { motion, useReducedMotion } from "motion/react";
 import diya1 from "@/assets/final-flow/diya-1.jpg";
 import diya2 from "@/assets/final-flow/diya-2.jpg";
@@ -216,6 +217,7 @@ export function FinalFlowCarousel() {
   const cur = FLAT[active];
 
   const rootRef = useRef<HTMLDivElement>(null);
+  const near = useNearViewport(rootRef);
   const [width, setWidth] = useState(0);
   useEffect(() => {
     const el = rootRef.current;
@@ -251,11 +253,12 @@ export function FinalFlowCarousel() {
 
   // Warm the cache so no screen pops in when it takes the spotlight.
   useEffect(() => {
+    if (!near) return;
     FLAT.forEach((f) => {
       const img = new Image();
       img.src = f.screen.image;
     });
-  }, []);
+  }, [near]);
 
   const slideProps = useMemo(() => {
     const scaleOf = (f: Flat, centre: boolean) => (centre ? (f.section.final ? FINAL_SCALE : OTHER_SCALE) : SIDE_SCALE);
@@ -392,7 +395,7 @@ export function FinalFlowCarousel() {
               animate={animate}
               transition={transition}
             >
-              <img src={f.screen.image} alt={isActive ? f.screen.alt : ""} draggable={false} className="block w-full h-full select-none" />
+              <img decoding="async" src={near ? f.screen.image : undefined} alt={isActive ? f.screen.alt : ""} draggable={false} className="block w-full h-full select-none" />
               {isActive && f.section.final && (
                 <span
                   aria-hidden
@@ -461,8 +464,8 @@ export function FinalFlowCarousel() {
                     className="border-0 bg-transparent p-0 cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2 flex flex-col"
                     style={geo.phone ? { flex: "1 1 0", minWidth: 0, gap: 5, outlineColor: FOREST } : { width: w, gap: 5, outlineColor: FOREST }}
                   >
-                    <img
-                      src={sc.image}
+                    <img decoding="async"
+                      src={near ? sc.image : undefined}
                       alt=""
                       draggable={false}
                       className="block"

@@ -20,9 +20,9 @@ export function ShowcaseCraftCard() {
       shotAlt=""
       brand={
         <div className="poster-brand poster-brand-trio">
-          <img src={accenture} alt="Accenture" />
-          <img src={microsoft} alt="Microsoft" />
-          <img src={avanade} alt="Avanade" />
+          <img decoding="async" src={accenture} alt="Accenture" />
+          <img decoding="async" src={microsoft} alt="Microsoft" />
+          <img decoding="async" src={avanade} alt="Avanade" />
         </div>
       }
       headline={

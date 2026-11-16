@@ -260,7 +260,7 @@ function Overlay({
         >
           {screens.map((sc, i) => (
             <div key={sc.src} style={cardStyle(i)}>
-              <img src={sc.src} alt={sc.label} width={1280} height={1000} draggable={false} style={{ display: "block", width: "100%", height: "100%" }} />
+              <img decoding="async" src={sc.src} alt={sc.label} width={1280} height={1000} draggable={false} style={{ display: "block", width: "100%", height: "100%" }} />
             </div>
           ))}
         </div>
@@ -460,7 +460,7 @@ export function VersionPreview({
           cursor: "default",
         }}
       >
-        <img
+        <img decoding="async"
           src={screens[thumbIndex].src}
           alt={`${title}: ${screens[thumbIndex].label}`}
           width={1280}

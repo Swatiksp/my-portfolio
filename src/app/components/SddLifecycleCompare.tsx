@@ -156,9 +156,9 @@ export function SddLifecycleCompare({ children }: { children: ReactNode | ((t: n
       onPointerCancel={onPointerUp}
     >
       <div className="relative w-full overflow-hidden" style={{ background: "#fff", borderRadius: 15 }}>
-        <img src={standardFlow} alt="Standard SDD lifecycle" className="block w-full h-auto" draggable={false} />
+        <img decoding="async" src={standardFlow} alt="Standard SDD lifecycle" className="block w-full h-auto" draggable={false} />
         <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${t * 100}%`, zIndex: 1 }}>
-          <img
+          <img decoding="async"
             src={compilerFlow}
             alt=""
             aria-hidden

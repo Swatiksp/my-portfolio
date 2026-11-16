@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { PROGRESS_BAR_HEIGHT } from "./SectionProgressBar";
-import launch from "@/assets/halo/screens/v201.png";
-import prepare from "@/assets/halo/screens/v200.png";
-import voices from "@/assets/halo/screens/v209.png";
-import listening from "@/assets/halo/screens/v208.png";
-import deckIndustry from "@/assets/halo/screens/v203.png";
-import deckAreas from "@/assets/halo/screens/v204.png";
-import generated from "@/assets/halo/screens/v205.png";
-import viewer from "@/assets/halo/screens/v65987.png";
+import launch from "@/assets/halo/screens/v201.webp";
+import prepare from "@/assets/halo/screens/v200.webp";
+import voices from "@/assets/halo/screens/v209.webp";
+import listening from "@/assets/halo/screens/v208.webp";
+import deckIndustry from "@/assets/halo/screens/v203.webp";
+import deckAreas from "@/assets/halo/screens/v204.webp";
+import generated from "@/assets/halo/screens/v205.webp";
+import viewer from "@/assets/halo/screens/v65987.webp";
 import finder from "@/assets/halo/screens/v206.png";
-import prompts from "@/assets/halo/screens/v207.png";
-import solutions from "@/assets/halo/screens/output.png";
-import macbook from "@/assets/halo/macbook-pro-14-silver.png";
+import prompts from "@/assets/halo/screens/v207.webp";
+import solutions from "@/assets/halo/screens/output.webp";
+import macbook from "@/assets/halo/macbook-pro-14-silver.webp";
 
 const MONO = "'Roboto Condensed', 'Roboto', sans-serif";
 const SANS = "'Roboto', sans-serif";
@@ -303,11 +303,11 @@ export function HaloHifiStages() {
               className="m-noflex relative min-w-0"
               style={{ flex: "1 1 820px", filter: "drop-shadow(0px 4px 10px rgba(0,0,0,0.18))" }}
             >
-              <img src={macbook} alt="" className="block w-full h-auto" />
+              <img decoding="async" src={macbook} alt="" className="block w-full h-auto" />
               {STEPS.map((step, i) => {
                 const screen = shift(i, index, t, 0);
                 return (
-                  <img
+                  <img decoding="async" loading="lazy"
                     key={step.id}
                     src={step.src}
                     alt={screen.opacity > 0.5 ? step.alt : ""}

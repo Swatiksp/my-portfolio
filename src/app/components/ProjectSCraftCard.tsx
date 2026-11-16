@@ -12,7 +12,7 @@ export function ProjectSCraftCard() {
       shotAlt="SpecTrim spec map with the review list"
       brand={
         <div className="poster-brand poster-brand-ibm">
-          <img src={ibm} alt="IBM" />
+          <img decoding="async" src={ibm} alt="IBM" />
         </div>
       }
       headline={

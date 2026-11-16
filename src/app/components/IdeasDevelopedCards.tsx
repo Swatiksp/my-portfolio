@@ -15,7 +15,7 @@ const COLS = [
     note: "Pan in any direction. Matching passages stay on screen.",
     art: (
       <div className="relative overflow-hidden bg-white" style={{ width: 300, height: 210, border: "1px solid #000", borderRadius: 16 }}>
-        <img src={canvasLine} alt="" />
+        <img decoding="async" src={canvasLine} alt="" />
         <span className="absolute whitespace-nowrap" style={{ ...LABEL, left: 46, top: 35 }}>
           SOURCE
         </span>
@@ -33,7 +33,7 @@ const COLS = [
     note: "The sentence, the source, and the policy behind the flag.",
     art: (
       <div className="relative overflow-hidden bg-white" style={{ width: 300, height: 210, border: "1px solid #000", borderRadius: 16 }}>
-        <img src={flagLine} alt="" />
+        <img decoding="async" src={flagLine} alt="" />
         <span className="absolute whitespace-nowrap" style={{ ...LABEL_W, left: 200.5, top: 28.5 }}>
           SOURCE
         </span>
@@ -48,7 +48,7 @@ const COLS = [
     note: "What’s due, sorted and filterable by status.",
     art: (
       <div className="relative overflow-hidden bg-white" style={{ width: 300, height: 210, border: "1px solid #000", borderRadius: 16 }}>
-        <img src={queueLine} alt="" />
+        <img decoding="async" src={queueLine} alt="" />
         <span className="absolute whitespace-nowrap" style={{ ...CHIP, left: 33, top: 42.5, color: "#ffffff" }}>
           All
         </span>
@@ -85,7 +85,7 @@ const COLS = [
         <span className="absolute whitespace-nowrap" style={{ ...CHIP_SM, left: 242, top: 167.5, color: "#000000" }}>
           Draft
         </span>
-        <img src={sortArrow} alt="" className="absolute" style={{ left: 256, top: 43 }} />
+        <img decoding="async" src={sortArrow} alt="" className="absolute" style={{ left: 256, top: 43 }} />
       </div>
     ),
   },

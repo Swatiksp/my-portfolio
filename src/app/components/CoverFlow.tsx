@@ -74,6 +74,9 @@ export function CoverFlow({
   const paintRef = useRef<(pv: number) => void>(() => {});
   const target = useRef(start);
   const pRef = useRef(start);
+  // The entrance fade runs from here (a per-card factor, 0 → 1), not as a CSS animation: Safari draws a card flat, with no
+  // tilt, for as long as an animation is running on it.
+  const introF = useRef<number[] | null>(intro ? [] : null);
   const raf = useRef(0);
   const snapTimer = useRef<number | undefined>(undefined);
   const drag = useRef<{ pos: number; p: number; moved: boolean } | null>(null);
@@ -117,6 +120,38 @@ export function CoverFlow({
     [loop, n],
   );
   useEffect(() => () => cancelAnimationFrame(raf.current), []);
+
+  const shown = box.w > 0;
+  useEffect(() => {
+    if (!intro || !shown) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      introF.current = null;
+      paintRef.current(pRef.current);
+      return;
+    }
+    // The flow also glides the last stretch into place while it fades in. Safari draws the cards flat (no tilt) from
+    // their first paint until they move once, so the entrance has to move them.
+    pRef.current = start - 0.45;
+    target.current = start;
+    raf.current = requestAnimationFrame(loop);
+    const t0 = performance.now();
+    const DUR = 760;
+    let id = 0;
+    const tick = (now: number) => {
+      let done = true;
+      introF.current = Array.from({ length: n }, (_, i) => {
+        const k = Math.min(Math.max((now - t0 - (200 + Math.abs(i - start) * 80)) / DUR, 0), 1);
+        if (k < 1) done = false;
+        return 1 - Math.pow(1 - k, 3);
+      });
+      paintRef.current(pRef.current);
+      if (done) introF.current = null;
+      else id = requestAnimationFrame(tick);
+    };
+    introF.current = Array.from({ length: n }, () => 0);
+    id = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(id);
+  }, [intro, shown, n, start, loop]);
 
   const snap = useCallback(() => {
     if (snapTimer.current) window.clearTimeout(snapTimer.current);
@@ -208,7 +243,7 @@ export function CoverFlow({
     const fade = a <= 3.2 ? 1 : clamp(1 - (a - 3.2) / 0.8, 0, 1);
     return {
       zIndex: 1000 - Math.round(a * 100) - (d < 0 ? 1 : 0),
-      opacity: fade,
+      opacity: fade * (introF.current ? (introF.current[i] ?? 0) : 1),
       transform: vertical
         ? `translate3d(0, ${off}px, ${back}px) rotateX(${tilt}deg)`
         : `translate3d(${off}px, 0, ${back}px) rotateY(${-tilt}deg)`,
@@ -299,8 +334,7 @@ export function CoverFlow({
             ref={(el) => {
               cardEls.current[i] = el;
             }}
-            className={intro ? "flow-card-in" : undefined}
-            style={intro ? ({ ...cardStyle(i), ["--in-delay" as string]: `${200 + Math.abs(i - start) * 80}ms` } as CSSProperties) : cardStyle(i)}
+            style={cardStyle(i)}
             aria-hidden={i !== active}
             onClick={() => {
               if (drag.current?.moved || i === active) return;

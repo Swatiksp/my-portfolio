@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import v1Step1 from "@/assets/concepts/concept-3-step-1.png";
-import v1Step2 from "@/assets/concepts/concept-3-step-2.png";
-import v1Step3 from "@/assets/concepts/concept-3-step-3.png";
-import v2Step1 from "@/assets/concepts/v2-step-1.png";
-import v2Step2 from "@/assets/concepts/v2-step-2.png";
-import v2Step3 from "@/assets/concepts/v2-step-3.png";
+import v1Step1 from "@/assets/concepts/concept-3-step-1.webp";
+import v1Step2 from "@/assets/concepts/concept-3-step-2.webp";
+import v1Step3 from "@/assets/concepts/concept-3-step-3.webp";
+import v2Step1 from "@/assets/concepts/v2-step-1.webp";
+import v2Step2 from "@/assets/concepts/v2-step-2.webp";
+import v2Step3 from "@/assets/concepts/v2-step-3.webp";
 import { useIsMobile } from "../lib/useIsMobile";
 
 // Theme tokens (index.css) flip in dark mode.
@@ -167,7 +167,7 @@ function VersionStage({ slides, onComplete, geo }: { slides: readonly Slide[]; o
               animate={animate}
               transition={transition}
             >
-              <img
+              <img decoding="async"
                 src={s.image}
                 alt={isActive ? s.alt : ""}
                 draggable={false}

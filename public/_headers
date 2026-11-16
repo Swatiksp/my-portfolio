@@ -1,0 +1,8 @@
+# Cloudflare Pages: cache the built files so repeat visits don't re-download them.
+# Everything under /assets has a content hash in its name, so it can be cached for good.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Videos keep the same file name, so cache them for a day.
+/videos/*
+  Cache-Control: public, max-age=86400

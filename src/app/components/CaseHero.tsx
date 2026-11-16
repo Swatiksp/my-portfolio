@@ -236,12 +236,12 @@ export function CaseHero({
 }) {
   return (
     <div className="case-hero" style={{ ["--glyph" as string]: glyph, ["--bg-rot" as string]: `${bgRotate}deg` }}>
-      <img className="case-hero-bg" src={bg} alt="" />
+      <img decoding="async" className="case-hero-bg" src={bg} alt="" />
       <GlyphField />
       <div className="case-hero-shade" aria-hidden />
       <div className="case-hero-copy">{children}</div>
       <div className="case-hero-shot">
-        <img src={shot} alt={shotAlt} />
+        <img decoding="async" src={shot} alt={shotAlt} />
       </div>
     </div>
   );

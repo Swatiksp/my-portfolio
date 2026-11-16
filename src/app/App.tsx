@@ -1,4 +1,3 @@
-import "../styles/fonts.css";
 import { RouterProvider } from "react-router";
 import { router } from "./routes";
 
