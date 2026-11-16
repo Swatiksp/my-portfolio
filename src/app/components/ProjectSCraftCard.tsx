@@ -1,6 +1,6 @@
 import bg from "@/assets/craft-poster/s-bg.webp";
 import shot from "@/assets/craft-poster/s-shot.webp";
-import ibm from "@/assets/craft-poster/ibm.png";
+import { SpecTer } from "./SpecTer";
 import { CraftPosterCard } from "./CraftPosterCard";
 
 export function ProjectSCraftCard() {
@@ -11,8 +11,8 @@ export function ProjectSCraftCard() {
       shot={shot}
       shotAlt="SpecTrim spec map with the review list"
       brand={
-        <div className="poster-brand poster-brand-ibm">
-          <img decoding="async" src={ibm} alt="IBM" />
+        <div className="poster-brand poster-brand-specter">
+          <SpecTer />
         </div>
       }
       headline={

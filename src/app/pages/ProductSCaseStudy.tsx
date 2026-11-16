@@ -520,7 +520,7 @@ export function ProductSCaseStudy() {
                         <TypeIn text="NC State GD 503" />
                       </p>
                       <p className="m-0" style={T.muted}>
-                        <TypeIn text="Brief provided by IBM" />
+                        <TypeIn text="Brief from a US tech and consulting company" />
                       </p>
                     </MetaCell>
                   </div>
@@ -573,7 +573,7 @@ export function ProductSCaseStudy() {
                   <B>SDD only works if the spec is complete, but specs rarely are</B>
                 </P>
                 <P style={{ fontSize: "var(--fs-h3, 24px)", lineHeight: "var(--lh-h3, 34px)" }}>
-                  AI agents fill the gaps with assumptions nobody sees, and IBM asked us to find a way to make SDD an
+                  AI agents fill the gaps with assumptions nobody sees, and our project sponsor, a large US-based IT and technology consulting company, asked us to find a way to make SDD an
                   effective method for coding.
                 </P>
               </div>
@@ -660,8 +660,8 @@ export function ProductSCaseStudy() {
             <Focus as="section" index={6} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
               <H1>Where it stands</H1>
               <P style={{ lineHeight: "var(--lh-body, 28px)", maxWidth: 570 }}>
-                This is an ongoing project. My user testing is not finished, and I present it to the stakeholders at IBM at the
-                IBM/NC State symposium on November 23.
+                This is an ongoing project. My user testing is not finished, and I present it to the sponsor's stakeholders at a
+                symposium with NC State on November 23.
               </P>
             </Focus>
           </div>
@@ -807,7 +807,7 @@ export function ProductSCaseStudy() {
                       <LensDrift text="This section is still being written." />
                     </p>
                     <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)" }}>
-                      <LensDrift text="My user testing is not finished. I present the work to the stakeholders at IBM at the IBM/NC State symposium on November 23, and I will add the results here after that." />
+                      <LensDrift text="My user testing is not finished. I present the work to the sponsor's stakeholders at a symposium with NC State on November 23, and I will add the results here after that." />
                     </p>
                   </SceneCopy>
                 }

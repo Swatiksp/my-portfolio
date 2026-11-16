@@ -1,20 +1,28 @@
 import { useEffect, useRef, useState } from "react";
-import enterSpec from "@/assets/screens/enter-spec.png";
-import mapMinimized from "@/assets/screens/spec-map-minimized.webp";
-import mapReviewList from "@/assets/screens/spec-map-review-list.webp";
-import mapHover from "@/assets/screens/spec-map-hover.webp";
-import requirements from "@/assets/screens/requirements.png";
+import typed from "@/assets/spectrim/flow-01-spec-map.webp";
+import long1 from "@/assets/spectrim/long-01-spec-map.webp";
+import long3 from "@/assets/spectrim/long-03-requirements-groups.webp";
+import a1 from "@/assets/spectrim/ai-01-reject-menu.webp";
+import a2 from "@/assets/spectrim/ai-02-thread.webp";
+import a3 from "@/assets/spectrim/ai-03-reply.webp";
+import a4 from "@/assets/spectrim/ai-04-rewrite.webp";
+import a5 from "@/assets/spectrim/ai-05-approve.webp";
+import resolved from "@/assets/spectrim/resolved.webp";
 
 const SANS = "'Roboto', sans-serif";
-const MONO = "'Roboto Condensed', 'Roboto', sans-serif";
 
-// 1440x960 frames, except Requirements which is 1280x800 (same 3:2 shape)
+// All 1920x1080. They always start with the spec map of a typed spec, then the long-document version, then "Talking to
+// the AI" (SpecTer comes up as the AI in the thread), and last the state where nothing is left to approve, review or check.
 const SCREENS = [
-  { src: enterSpec, title: "Enter the spec", note: "Paste a spec, then map it.", w: 1440, h: 960 },
-  { src: mapMinimized, title: "The spec map", note: "Review list minimised, the whole map in view.", w: 1440, h: 960 },
-  { src: mapReviewList, title: "The spec map with the review list", note: "Export is blocked until the must-approve items are done.", w: 1440, h: 960 },
-  { src: mapHover, title: "The spec card", note: "Hover the card to open the spec or export it.", w: 1440, h: 960 },
-  { src: requirements, title: "Requirements, opened up", note: "Lines grouped by priority, with the ones that need you first.", w: 1280, h: 800 },
+  { src: typed, title: "Spec map, typed spec", note: "After the AI compiles the spec, the map shows its five sections around the spec. Each tile counts what the AI added and what is still open.", w: 1920, h: 1080 },
+  { src: long1, title: "Spec map, long document", note: "The spec is a 14-page PDF. The AI found 26 gaps and combined them into 10 rows, so the Review list stays as short as for a typed spec.", w: 1920, h: 1080 },
+  { src: long3, title: "Requirements, 3 groups to decide", note: "The 8 gaps in this section are combined into 3 questions. Each group shows the document sections it comes from. Split breaks a group apart.", w: 1920, h: 1080 },
+  { src: a1, title: "Open the Reject menu", note: "On an item that blocks export, Reject opens a small menu. Hovering Reject and reply to the AI makes SpecTer peek from the header.", w: 1920, h: 1080 },
+  { src: a2, title: "The reply thread opens", note: "SpecTer comes up in the thread as the AI and asks: What would you change?", w: 1920, h: 1080 },
+  { src: a3, title: "Say what you would change", note: "The user types the change in their own words and sends it.", w: 1920, h: 1080 },
+  { src: a4, title: "The AI rewrites the line", note: "The reply becomes a spec line. Reply again, approve it, or leave the item out on purpose.", w: 1920, h: 1080 },
+  { src: a5, title: "Approve the AI’s line", note: "R-02 turns green, Spec activity logs it, and SpecTer is back in the header.", w: 1920, h: 1080 },
+  { src: resolved, title: "Everything resolved", note: "Nothing is left to approve, review or check, every tile reads Nothing open, and SpecTer is happy.", w: 1920, h: 1080 },
 ];
 
 const CARD_W = 880;
@@ -116,7 +124,7 @@ export function ScreensGallery() {
           The screens in the interface
         </h2>
         <p className="m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 28px)", color: "rgba(255,255,255,0.78)", maxWidth: 570 }}>
-          Here is how the high fidelity screens look inside the product.
+          A typed spec and a long document, talking to the AI, and the state where everything is resolved.
         </p>
       </div>
 
@@ -193,7 +201,7 @@ export function ScreensGallery() {
                   display: "block",
                   width: "100%",
                   height: "auto",
-                  borderRadius: 12,
+                  borderRadius: 6,
                   border: "1px solid rgba(255,255,255,0.12)",
                   boxShadow: "0 18px 40px rgba(0,0,0,0.5)",
                   userSelect: "none",

@@ -2,7 +2,6 @@ import { memo } from "react";
 import microsoft from "@/assets/companies/microsoft.webp";
 import accenture from "@/assets/companies/accenture.webp";
 import avanade from "@/assets/companies/avanade.svg";
-import ibm from "@/assets/companies/ibm.webp";
 import ncstate from "@/assets/companies/ncstate.webp";
 import las from "@/assets/companies/las.png";
 
@@ -10,7 +9,6 @@ const LOGOS = [
   { name: "Microsoft", src: microsoft },
   { name: "Accenture", src: accenture },
   { name: "Avanade", src: avanade },
-  { name: "IBM", src: ibm },
   { name: "NC State University", src: ncstate },
   { name: "Laboratory for Analytic Sciences", src: las },
 ];

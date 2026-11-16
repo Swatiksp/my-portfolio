@@ -560,234 +560,361 @@ export function ReviewListScene({ q }: { q: number }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Step 10: the export window                                          */
+/* Step 10: the export window (Spec document, Export tab).             */
+/* Drawn at the size of the product's own window: 1100 x 880.          */
+/* One window, three ways out: Copilot issue, Jira ticket, PDF.        */
 /* ------------------------------------------------------------------ */
+
+export const EXPORT_W = 1100;
+export const EXPORT_H = 880;
 
 const SPEC_ORIGINAL =
   "Add sign-in to the Repair Tracker mobile app using our company-approved authentication library. When a technician opens the app signed out, they see a Sign in screen with one button. Tapping it opens the company login page. After a successful login the technician returns to the app and lands on My Repairs, which lists the repairs assigned to them. Signed-out users should never see My Repairs. The app should keep the technician signed in between launches. Use the existing navigation and the folder structure under /features. Sign-out goes in the Settings screen.";
 
-const ADDED = [
-  ["R-01", "Sign-in finishes within 2 seconds on a normal connection.", "Answered by you · Requirements"],
-  ["R-02", "If the company login page has not loaded after 30 seconds, show a Try again button.", "Approved by you · Requirements"],
-  ["D-01", "Keep sessions for 12 hours.", "Approved by you · Decisions"],
-  ["D-02", "Add a column to the shared user table in api-core.", "Approved by you · Decisions"],
+// lines added during review, in the order the product lists them
+const REVIEW_LINES: [string, string][] = [
+  ["G-01", "Assumption: the company login page already works in a mobile browser."],
+  ["S-02", "Scope: the Repair Tracker mobile app only. No web sign-in."],
+  ["D-03", "Sessions use refresh tokens."],
+  ["D-04", "Store the token in app preferences."],
+  ["D-05", "Show sign-in errors as a banner at the top of the screen."],
+  ["D-06", "Use the company-approved authentication library."],
+  ["D-07", "Name the new screen SignIn."],
+  ["D-08", "Put new files under /features."],
+  ["D-09", "Log sign-in failures with the standard logger."],
+  ["E-03", "After two failed sign-ins, show a Contact IT link."],
+  ["A-01", "Check: sign-in works on the two most recent iOS and Android versions."],
+  ["N-02", "Technicians who already have an account get a default value in the new api-core column."],
+  ["D-01", "Sessions last 12 hours."],
+  ["D-02", "Add a column to the shared user table in api-core to hold the sign-in state."],
+  ["R-01", "Sign-in should feel quick."],
+  ["R-02", "If the company login page has not loaded after 30 seconds, show a Try again button."],
+  ["R-03", "Supervisors see the repairs of their team on My Repairs."],
 ];
 
-const UNREVIEWED = [
-  ["G-01", "Assumption: the company login page already works in a mobile browser.", "Goals"],
-  ["S-02", "Scope: the Repair Tracker mobile app only. No web sign-in.", "Scope"],
-  ["D-03", "Sessions use refresh tokens.", "Decisions"],
-  ["D-04", "Store the token in app preferences.", "Decisions"],
-  ["D-05", "Show sign-in errors as a banner at the top of the screen.", "Decisions"],
-];
+const ink = "#ecedef";
+const muted = "#9096a0";
+const line = "#2b2e33";
+const green = "#5ccb8a";
+const mono: CSSProperties = { fontFamily: PLEX_MONO, fontSize: 12, lineHeight: "18px", whiteSpace: "pre-wrap", color: ink };
 
-const EXPORT_TABS = ["Working spec", "Original, unchanged", "Export to Copilot"] as const;
+function JiraMark() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden>
+      <path d="M12.6 1.5 3.2 10.9a1 1 0 0 0 0 1.4l2.9 2.9 6.5-6.5 6.5 6.5 2.9-2.9a1 1 0 0 0 0-1.4L12.6 1.5Z" fill="#2684ff" transform="translate(-0.6 0)" />
+      <path d="M12 12.7 8.6 16.1l3.4 3.4 3.4-3.4L12 12.7Z" fill="#0052cc" />
+    </svg>
+  );
+}
+
+function Check({ on = true, size = 18 }: { on?: boolean; size?: number }) {
+  return (
+    <span
+      style={{
+        width: size,
+        height: size,
+        boxSizing: "border-box",
+        flexShrink: 0,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        border: `1.5px solid ${on ? ink : "#6b7078"}`,
+        borderRadius: 3,
+      }}
+    >
+      {on ? (
+        <svg width={size - 6} height={size - 6} viewBox="0 0 12 12" fill="none" aria-hidden>
+          <path d="m2.2 6.4 2.4 2.4 5-5.4" stroke={ink} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : null}
+    </span>
+  );
+}
+
+function Field({ label, children, style }: { label: string; children: ReactNode; style?: CSSProperties }) {
+  return (
+    <div style={{ position: "absolute", display: "flex", flexDirection: "column", gap: 8, ...style }}>
+      <span style={{ fontSize: 12, color: ink }}>{label}</span>
+      {children}
+    </div>
+  );
+}
+
+const input: CSSProperties = {
+  boxSizing: "border-box",
+  height: 40,
+  padding: "0 12px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  fontSize: 14,
+  border: `1px solid ${line}`,
+  borderRadius: 4,
+  background: "#0c0d0f",
+};
 
 export function ExportScene({ q }: { q: number }) {
-  // The working spec stays put while the lines added during review load in underneath it (that list alone scrolls
-  // inside its own clipped frame if it runs long). Then the tab underline slides to Export to Copilot, and the
-  // export shows every change.
-  const tab = ramp(q, 0.46, 0.56); // 0 = working spec, 1 = export
-  const outA = 1 - clamp(tab * 2); // the working spec fades out first, then the export fades in, so they never overlap
-  const inA = clamp(tab * 2 - 1);
-  const exportScroll = ramp(q, 0.62, 0.95) * 150;
+  // q 0..1: Copilot issue (its text scrolls to show every line added in review, then it is created), the cursor picks
+  // Jira ticket (fields filled in, created), then PDF (file name, parts to include, page preview, saved).
+  const toJira = ramp(q, 0.4, 0.46);
+  const toPdf = ramp(q, 0.74, 0.8);
+  const wA = 1 - toJira;
+  const wC = toPdf;
+  const wB = toJira - toPdf;
+  const w = [wA, wB, wC];
 
-  // the sliding tab underline, and how far the review list has to travel to show its last line
-  const tabRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const listBox = useRef<HTMLDivElement>(null);
-  const listInner = useRef<HTMLDivElement>(null);
-  const [marks, setMarks] = useState({ x0: 0, w0: 0, x2: 0, w2: 0, overflow: 0 });
-  useLayoutEffect(() => {
-    const t0 = tabRefs.current[0];
-    const t2 = tabRefs.current[2];
-    const box = listBox.current;
-    const inner = listInner.current;
-    if (!t0 || !t2 || !box || !inner) return;
-    const next = {
-      x0: t0.offsetLeft,
-      w0: t0.offsetWidth,
-      x2: t2.offsetLeft,
-      w2: t2.offsetWidth,
-      overflow: Math.max(0, inner.offsetHeight - box.clientHeight),
-    };
-    if (Object.keys(next).some((k) => Math.abs(next[k as keyof typeof next] - marks[k as keyof typeof marks]) > 0.5)) setMarks(next);
-  });
-  const listScroll = ramp(q, 0.1, 0.4) * marks.overflow;
-  const fadeTop = listScroll > 2 ? 22 : 0;
-  const fadeBottom = marks.overflow - listScroll > 2 ? 26 : 0;
+  const scrollA = ramp(q, 0.05, 0.28) * 24;
+  const scrollB = ramp(q, 0.48, 0.64) * 110;
+  const doneA = ramp(q, 0.3, 0.34);
+  const doneB = ramp(q, 0.66, 0.7);
+  const doneC = ramp(q, 0.94, 0.98);
+  const done = [doneA, doneB, doneC];
+
+  // the cursor: it appears, goes to the next card, clicks, and leaves
+  const c1 = ramp(q, 0.34, 0.4);
+  const c2 = ramp(q, 0.69, 0.745);
+  const cx = q < 0.55 ? 150 + (400 - 150) * c1 : 400 + (755 - 400) * c2;
+  const cy = q < 0.55 ? 330 + (205 - 330) * c1 : 205;
+  const cOpacity = clamp(ramp(q, 0.32, 0.35) * (1 - ramp(q, 0.44, 0.47)) + ramp(q, 0.67, 0.7) * (1 - ramp(q, 0.78, 0.81)));
+  const press = q < 0.55 ? ramp(q, 0.395, 0.41) * (1 - ramp(q, 0.41, 0.43)) : ramp(q, 0.74, 0.755) * (1 - ramp(q, 0.755, 0.775));
+
+  const cards = [
+    { name: "Copilot issue", sub: "Creates an issue Copilot can pick up" },
+    { name: "Jira ticket", sub: "Creates a ticket in your Jira project" },
+    { name: "PDF", sub: "A document to share or file" },
+  ];
+  const buttons = ["Create issue for Copilot", "Create Jira ticket", "Save PDF"];
+  const results = [
+    <>
+      Created: <u>Issue #482 created</u>
+    </>,
+    <>
+      Created: <u>RT-482 · Add sign-in to the Repair Tracker mobile app</u>
+    </>,
+    <>Saved: SpecTrim · Repair Tracker sign-in.pdf</>,
+  ];
 
   return (
     <div
       style={{
         position: "relative",
-        width: 900,
-        height: 720,
-        boxSizing: "border-box",
-        padding: 24,
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
+        width: EXPORT_W,
+        height: EXPORT_H,
         overflow: "hidden",
+        boxSizing: "border-box",
         background: "#0c0d0f",
         border: "1px solid #3a3e45",
-        borderRadius: 16,
+        borderRadius: 6,
         filter: "drop-shadow(0px 10px 14px rgba(0,0,0,0.5))",
         fontFamily: PLEX,
-        color: "#ecedef",
+        color: ink,
         textAlign: "left",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <span style={{ fontSize: 11, color: "#9096a0", letterSpacing: "0.3px" }}>
-            {tab > 0.5 ? "EXPORT PREVIEW" : "SPEC DOCUMENT"}
-          </span>
-          <span style={{ fontWeight: 500, fontSize: 24 }}>{tab > 0.5 ? "Export to Copilot" : "Your spec, as it stands"}</span>
-        </div>
-        <span style={{ padding: "10px 24px", fontSize: 14, background: "#25282c", borderRadius: 999 }}>Close</span>
-      </div>
-      <div style={{ position: "relative", display: "flex", alignItems: "center", borderBottom: "1px solid #2b2e33" }}>
-        {EXPORT_TABS.map((label, i) => {
-          const on = i === 0 ? tab <= 0.5 : i === 2 ? tab > 0.5 : false;
-          return (
-            <span
-              key={label}
-              ref={(el) => {
-                tabRefs.current[i] = el;
-              }}
-              style={{
-                padding: "10px 0",
-                marginRight: 24,
-                fontSize: 14,
-                fontWeight: on ? 500 : 400,
-                color: on ? "#ecedef" : "#9096a0",
-              }}
-            >
-              {label}
-            </span>
-          );
-        })}
-        <span
-          style={{
-            marginLeft: -8,
-            fontSize: 12,
-            padding: "3px 12px",
-            borderRadius: 6,
-            color: "#5ccb8a",
-            background: "#17301f",
-          }}
-        >
-          Ready
+      {/* header */}
+      <span style={{ position: "absolute", left: 25, top: 20, fontSize: 11, letterSpacing: "0.3px" }}>SPEC DOCUMENT</span>
+      <span style={{ position: "absolute", left: 25, top: 40, fontWeight: 500, fontSize: 22 }}>Your spec, as it stands</span>
+      <span style={{ position: "absolute", right: 26, top: 26, padding: "9px 16px", fontSize: 14, background: "#25282c", borderRadius: 999 }}>Close</span>
+
+      {/* tabs: Export is the open one */}
+      <div style={{ position: "absolute", left: 12, right: 12, top: 78, height: 36, borderBottom: `1px solid ${line}`, display: "flex", alignItems: "center", fontSize: 14 }}>
+        <span style={{ padding: "0 4px 0 4px", marginRight: 28, color: ink }}>Working spec</span>
+        <span style={{ marginRight: 28, color: ink }}>Original, unchanged</span>
+        <span style={{ position: "relative", display: "flex", alignItems: "center", gap: 8, height: "100%", fontWeight: 500 }}>
+          Export
+          <span style={{ fontSize: 12, fontWeight: 400, padding: "3px 8px", borderRadius: 10, color: green, background: "#17301f" }}>Ready</span>
+          <span aria-hidden style={{ position: "absolute", left: -16, right: -16, bottom: -1, height: 2, background: "#4457f0" }} />
         </span>
-        <span
-          aria-hidden
-          style={{
-            position: "absolute",
-            bottom: -1,
-            height: 2,
-            left: marks.x0 + (marks.x2 - marks.x0) * tab,
-            width: marks.w0 + (marks.w2 - marks.w0) * tab,
-            background: "#4457f0",
-          }}
-        />
       </div>
 
-      <div style={{ position: "relative", flex: 1, minHeight: 0 }}>
-        {/* working spec: your text stays put, the lines added during review load in below it */}
+      <span style={{ position: "absolute", left: 25, top: 136, fontSize: 11, letterSpacing: "0.6px" }}>SEND IT TO</span>
+
+      {/* the three ways out */}
+      {cards.map((c, i) => (
         <div
+          key={c.name}
           style={{
             position: "absolute",
-            inset: 0,
+            left: 25 + i * 353,
+            top: 163,
+            width: 341,
+            height: 70,
+            boxSizing: "border-box",
             display: "flex",
-            flexDirection: "column",
-            opacity: outA,
-            pointerEvents: "none",
+            alignItems: "center",
+            gap: 14,
+            padding: "0 14px",
+            borderRadius: 6,
+            border: `1px solid ${w[i] > 0.5 ? "#fff" : line}`,
+            background: w[i] > 0.5 ? "#16181c" : "#0c0d0f",
+            transition: "border-color 120ms",
           }}
         >
-          <div style={{ flex: "none", padding: "10px 12px", background: "#1f222e", border: "1px solid #2b2e33", borderRadius: 12, fontSize: 12, lineHeight: "18px" }}>
-            <b style={{ display: "block", marginBottom: 4 }}>Your original text, unchanged</b>
-            {SPEC_ORIGINAL}
-          </div>
-          <div style={{ flex: "none", margin: "16px 0 8px", fontSize: 13 }}>
-            Added during review <span style={{ color: "#9096a0" }}>· {ADDED.length + UNREVIEWED.length}</span>
-          </div>
-          <div
-            ref={listBox}
+          <span
             style={{
-              position: "relative",
-              flex: 1,
-              minHeight: 0,
-              overflow: "hidden",
-              WebkitMaskImage: `linear-gradient(to bottom, transparent 0, #000 ${fadeTop}px, #000 calc(100% - ${fadeBottom}px), transparent 100%)`,
-              maskImage: `linear-gradient(to bottom, transparent 0, #000 ${fadeTop}px, #000 calc(100% - ${fadeBottom}px), transparent 100%)`,
+              width: 40,
+              height: 40,
+              borderRadius: 6,
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: i === 0 ? "#25282c" : i === 1 ? "#fff" : "#9a9cf8",
+              color: i === 0 ? "#9096a0" : "#262a86",
+              fontFamily: i === 0 ? PLEX_MONO : PLEX,
+              fontWeight: 600,
+              fontSize: i === 0 ? 13 : 11,
             }}
           >
-            <div ref={listInner} style={{ transform: `translateY(${-listScroll}px)` }}>
-              {[...ADDED, ...UNREVIEWED].map(([id, text, meta], i) => {
-                const mine = i < ADDED.length;
-                const k = ramp(q, 0.02 + i * 0.03, 0.12 + i * 0.03);
-                return (
-                  <div
-                    key={id}
-                    style={{
-                      display: "flex",
-                      gap: 16,
-                      padding: "12px 0",
-                      borderTop: "1px solid #2b2e33",
-                      opacity: k,
-                      transform: `translateY(${(1 - k) * 10}px)`,
-                    }}
-                  >
-                    <span style={{ width: 40, fontWeight: 600, fontSize: 14 }}>{id}</span>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-                      <span style={{ fontSize: 14 }}>“{text}”</span>
-                      <span style={{ fontSize: 12, color: mine ? "#5ccb8a" : "#9096a0" }}>
-                        {mine ? meta : `${meta} · Unreviewed · in the digest`}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+            {i === 0 ? "</>" : i === 1 ? <JiraMark /> : "PDF"}
+          </span>
+          <span style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <span style={{ fontSize: 14, fontWeight: 500 }}>{c.name}</span>
+            <span style={{ fontSize: 12, color: muted }}>{c.sub}</span>
+          </span>
+          {w[i] > 0.5 ? (
+            <span style={{ position: "absolute", right: 10, top: 8 }}>
+              <Check />
+            </span>
+          ) : null}
         </div>
+      ))}
 
-        {/* export preview */}
-        <div style={{ position: "absolute", inset: 0, opacity: inA, transform: `translateY(${(1 - inA) * 14}px)` }}>
-          <div
-            style={{
-              padding: "14px 20px",
-              marginBottom: 14,
-              background: "#17301f",
-              border: "1px solid #2c5e3c",
-              borderRadius: 12,
-              fontSize: 14,
-              lineHeight: "20px",
-            }}
-          >
-            <b style={{ display: "block", color: "#5ccb8a", marginBottom: 2 }}>Ready to export</b>
-            Every must-approve item is approved. Unreviewed lines and Still open items go along as suggestions.
+      {/* 1 Copilot issue: the text that is sent */}
+      <div style={{ position: "absolute", left: 25, top: 245, width: 1048, height: 543, boxSizing: "border-box", overflow: "hidden", opacity: wA, background: "#111316", border: `1px solid ${line}`, borderRadius: 6, padding: 16, visibility: wA <= 0.001 ? "hidden" : "visible" }}>
+        <div style={{ ...mono, transform: `translateY(${-scrollA}px)` }}>
+          {"Title: Add sign-in to the Repair Tracker mobile app\nSpec: "}
+          {SPEC_ORIGINAL}
+          {"\nAdded during review:\n"}
+          {REVIEW_LINES.map(([id, text]) => `  ${id}: ${text}\n`).join("")}
+          {"Unreviewed lines:\n  G-01\n  S-02\n  D-03\n  D-04"}
+        </div>
+      </div>
+
+      {/* 2 Jira ticket: the fields, filled in and editable, and the description */}
+      <div style={{ position: "absolute", inset: 0, opacity: wB, visibility: wB <= 0.001 ? "hidden" : "visible" }}>
+        <Field label="Project" style={{ left: 25, top: 258, width: 400 }}>
+          <div style={input}>
+            <span>Repair Tracker (RT)</span>
+            <span style={{ color: muted, fontSize: 11 }}>⌄</span>
           </div>
-          <div style={{ overflow: "hidden", height: 470, borderRadius: 12, background: "#1f222e" }}>
-            <div style={{ padding: "16px 20px", fontSize: 13, lineHeight: "20px", transform: `translateY(${-exportScroll * tab}px)` }}>
-              <p style={{ margin: "0 0 14px" }}>Title: Add sign-in to the Repair Tracker mobile app using our company-approved authentication library.</p>
-              <b>## Spec (original text, unchanged)</b>
-              <p style={{ margin: "6px 0 14px" }}>{SPEC_ORIGINAL}</p>
-              <b>## Added during review (approved or answered by a person)</b>
-              {ADDED.map(([id, text]) => (
-                <p key={id} style={{ margin: "6px 0", color: "#83ecaf" }}>
-                  - [{id}] {text}
-                </p>
-              ))}
-              <b style={{ display: "block", marginTop: 14 }}>## Unreviewed lines (no person has approved these yet)</b>
-              {UNREVIEWED.map(([id, text]) => (
-                <p key={id} style={{ margin: "6px 0" }}>
-                  - [{id}] {text} (Unreviewed · in the digest)
-                </p>
-              ))}
+        </Field>
+        <Field label="Issue type" style={{ left: 25, top: 338, width: 400 }}>
+          <div style={input}>
+            <span>Story</span>
+            <span style={{ color: muted, fontSize: 11 }}>⌄</span>
+          </div>
+        </Field>
+        <Field label="Summary" style={{ left: 25, top: 418, width: 400 }}>
+          <div style={input}>Add sign-in to the Repair Tracker mobile app</div>
+        </Field>
+        <Field label="Labels" style={{ left: 25, top: 498, width: 400 }}>
+          <div style={{ display: "flex", gap: 8 }}>
+            {["spectrim", "sign-in", "+ add"].map((t, i) => (
+              <span key={t} style={{ fontFamily: PLEX_MONO, fontSize: 12, padding: "4px 12px", borderRadius: 999, border: `1px ${i === 2 ? "dashed" : "solid"} #4a4f57`, color: i === 2 ? muted : ink }}>
+                {t}
+              </span>
+            ))}
+          </div>
+        </Field>
+        <div style={{ position: "absolute", left: 25, top: 558, display: "flex", alignItems: "center", gap: 10, fontSize: 14 }}>
+          <Check /> Attach the original, unchanged spec
+        </div>
+        <span style={{ position: "absolute", left: 25, top: 596, fontSize: 12, color: muted }}>You can edit any field before the ticket is created.</span>
+        <Field label="Description" style={{ left: 457, top: 258 }}>
+          <div style={{ boxSizing: "border-box", width: 616, height: 515, overflow: "hidden", background: "#111316", border: `1px solid ${line}`, borderRadius: 6, padding: 16 }}>
+            <div style={{ ...mono, transform: `translateY(${-scrollB}px)` }}>
+              {"Spec\n"}
+              {SPEC_ORIGINAL}
+              {"\n\nAdded during review\n"}
+              {REVIEW_LINES.map(([id, text]) => `  ${id}  ${text}\n`).join("")}
             </div>
           </div>
+        </Field>
+      </div>
+
+      {/* 3 PDF: file name, what to include, page size, and a page preview */}
+      <div style={{ position: "absolute", inset: 0, opacity: wC, visibility: wC <= 0.001 ? "hidden" : "visible" }}>
+        <Field label="File name" style={{ left: 25, top: 258, width: 420 }}>
+          <div style={input}>SpecTrim · Repair Tracker sign-in.pdf</div>
+        </Field>
+        <Field label="Include" style={{ left: 25, top: 338 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 14 }}>
+            {[
+              ["Spec", true],
+              ["Added during review", true],
+              ["Left out on purpose", true],
+              ["Still open", true],
+              ["Original, unchanged", false],
+            ].map(([t, on]) => (
+              <div key={t as string} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <Check on={on as boolean} /> {t as string}
+              </div>
+            ))}
+          </div>
+        </Field>
+        <Field label="Page size" style={{ left: 25, top: 530 }}>
+          <div style={{ display: "flex", width: 220, height: 36, border: `1px solid ${line}`, borderRadius: 4, overflow: "hidden", fontSize: 12 }}>
+            <span style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#33373d", fontWeight: 500 }}>A4</span>
+            <span style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: muted }}>Letter</span>
+          </div>
+        </Field>
+        <Field label="Preview · page 1 of 2" style={{ left: 537, top: 258 }}>
+          <div style={{ boxSizing: "border-box", width: 400, height: 515, background: "#fff", color: "#16181c", padding: "30px 30px" }}>
+            <div style={{ fontWeight: 600, fontSize: 18, lineHeight: "25px" }}>Add sign-in to the Repair Tracker mobile app</div>
+            <div style={{ marginTop: 10, fontSize: 9, color: "#6b7078" }}>SpecTrim · Nov 15, 2026 · 5 items approved</div>
+            <div style={{ marginTop: 22, fontSize: 8, fontWeight: 700, letterSpacing: "0.5px" }}>SPEC</div>
+            {[1, 1, 1, 0.55].map((wd, i) => (
+              <div key={i} style={{ height: 4, width: `${wd * 100}%`, background: "#dcdde0", borderRadius: 2, marginTop: 8 }} />
+            ))}
+            <div style={{ marginTop: 28, fontSize: 8, fontWeight: 700, letterSpacing: "0.5px" }}>ADDED DURING REVIEW</div>
+            {[
+              ["G-01", "Assumption: the company login page already works in a mobile browser"],
+              ["S-02", "Scope: the Repair Tracker mobile app only. No web sign-in."],
+              ["D-03", "Sessions use refresh tokens."],
+            ].map(([id, t]) => (
+              <div key={id} style={{ display: "flex", gap: 14, marginTop: 10, fontSize: 8 }}>
+                <span style={{ fontFamily: PLEX_MONO, color: "#8a8f98" }}>{id}</span>
+                <span>{t}</span>
+              </div>
+            ))}
+            <div style={{ marginTop: 26, fontSize: 8, fontWeight: 700, letterSpacing: "0.5px" }}>STILL OPEN</div>
+            {[1, 0.55].map((wd, i) => (
+              <div key={i} style={{ height: 4, width: `${wd * 100}%`, background: "#dcdde0", borderRadius: 2, marginTop: 8 }} />
+            ))}
+          </div>
+        </Field>
+      </div>
+
+      {/* footer: the button for the chosen way out, and what it did */}
+      <div style={{ position: "absolute", left: 0, right: 0, top: 800, height: 1, background: line }} />
+      {buttons.map((b, i) => (
+        <div
+          key={b}
+          style={{
+            position: "absolute",
+            left: 25,
+            top: 817,
+            height: 44,
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            opacity: w[i],
+            visibility: w[i] <= 0.001 ? "hidden" : "visible",
+          }}
+        >
+          <span style={{ display: "flex", alignItems: "center", gap: 14, padding: "0 6px 0 16px", height: 44, boxSizing: "border-box", borderRadius: 8, background: "#5dd391", border: "2px solid #a8f0c6", color: "#0b2316", fontWeight: 500, fontSize: 14 }}>
+            {b}
+            <span style={{ width: 34, height: 34, borderRadius: 6, background: "#0b1510", color: "#5dd391", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>↗</span>
+          </span>
+          <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: green, opacity: done[i] }}>
+            <Check size={16} /> {results[i]}
+          </span>
         </div>
+      ))}
+
+      <div style={{ position: "absolute", inset: 0, opacity: cOpacity, pointerEvents: "none" }}>
+        <Cursor x={cx} y={cy} press={press} />
       </div>
     </div>
   );

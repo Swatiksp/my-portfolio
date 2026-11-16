@@ -6,7 +6,6 @@ import { motion } from "motion/react";
 import accenture from "@/assets/companies/accenture.webp";
 import microsoft from "@/assets/companies/microsoft.webp";
 import avanade from "@/assets/companies/avanade.svg";
-import ibm from "@/assets/companies/ibm.webp";
 import las from "@/assets/companies/las.png";
 import museum from "@/assets/companies/museum-of-life-and-science.png";
 import bathAndBodyWorks from "@/assets/companies/bath-and-body-works.png";
@@ -74,7 +73,6 @@ const BRANDS: Brand[] = [
   { name: "Microsoft", src: microsoft },
   { name: "Avanade", src: avanade },
   { name: "Museum of Life and Science", src: museum, h: 52 }, // stacked, so it needs more height to read
-  { name: "IBM", src: ibm },
   { name: "Laboratory for Analytic Sciences", src: las },
   { name: "Bath & Body Works", src: bathAndBodyWorks, h: 15 }, // a long, thin wordmark, so it is set smaller
   { name: "U.S. Steel", src: usSteel, h: 38 },

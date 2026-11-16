@@ -16,7 +16,7 @@ import dotScope from "@/assets/concept/dot-scope.svg";
 import dotAccept from "@/assets/concept/dot-accept.svg";
 import dotGoals from "@/assets/concept/dot-goals.svg";
 import btnExportReady from "@/assets/concept/btn-export-ready.svg";
-import { Cursor, ExportScene, GapDialog, KeyScene, ReviewListScene } from "./ConceptScenes";
+import { Cursor, EXPORT_H, EXPORT_W, ExportScene, GapDialog, KeyScene, ReviewListScene } from "./ConceptScenes";
 
 const NAV_H = 66;
 const CHROME = NAV_H + PROGRESS_BAR_HEIGHT;
@@ -82,7 +82,7 @@ const STEPS = [
   },
   {
     title: "Export carries every change.",
-    body: "The working spec lists each line added during review. Unreviewed lines travel on as suggestions.",
+    body: "Send it as a Copilot issue, a Jira ticket or a PDF. Each one lists every line added during review, and unreviewed lines travel on as suggestions.",
     weight: 2,
   },
 ];
@@ -806,7 +806,7 @@ export function ConceptScrollStory() {
       <MapScene key="6" rings={1} labels={1} green={1} />,
       <KeyScene key="7" q={1} />,
       <ReviewListScene key="8" q={1} />,
-      <ExportScene key="9" q={0.3} />,
+      <ExportScene key="9" q={0.9} />,
     ];
     const dims = [
       [388, 471],
@@ -818,7 +818,7 @@ export function ConceptScrollStory() {
       [MAP_W, MAP_H],
       [560, 340],
       [420, 640],
-      [900, 720],
+      [EXPORT_W, EXPORT_H],
     ];
     return (
       <div ref={rootRef} className="flex flex-col w-full" style={{ gap: 48 }}>
@@ -1082,7 +1082,7 @@ export function ConceptScrollStory() {
           </Fit>
 
           {/* 10 the export window */}
-          <Fit w={900} h={720} panelW={panelW} panelH={panelH} opacity={w[9]}>
+          <Fit w={EXPORT_W} h={EXPORT_H} panelW={panelW} panelH={panelH} opacity={w[9]}>
             <ExportScene q={lp(9)} />
           </Fit>
         </div>

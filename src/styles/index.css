@@ -219,9 +219,42 @@ body {
   width: auto;
   display: block;
 }
-.poster-brand-ibm img {
-  height: 4.1cqw;
-  filter: brightness(0) invert(1);
+/* SpecTer, the SpecTrim mascot, in place of a client logo */
+.poster-brand-specter {
+  height: 6.4cqw;
+}
+.spec-ter {
+  width: 6.4cqw;
+  height: 6.4cqw;
+  border-radius: 22%;
+  overflow: hidden;
+  cursor: default;
+  box-shadow: 0 0.6cqw 1.8cqw rgba(0, 0, 0, 0.28);
+  transform: translate(calc(var(--bx, 0) * 0.2cqw), calc(var(--by, 0) * 0.12cqw)) rotate(calc(var(--bx, 0) * 5deg));
+  transition: transform 0.25s ease-out;
+}
+.spec-ter svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* peeking: he leans harder, and the open eye follows the cursor */
+.spec-ter-peeking {
+  transform: translate(calc(var(--bx, 0) * 0.4cqw), calc(var(--by, 0) * 0.24cqw)) rotate(calc(var(--bx, 0) * 9deg));
+}
+.spec-ter-eye {
+  transform: translate(calc(var(--bx, 0) * 5px), calc(var(--by, 0) * 4px));
+  transition: transform 0.12s linear;
+}
+/* happy: one hop. The two names let the same hop run again on the next visit. */
+/* the whole tile hops (the separate `translate` property, so it stacks with the lean), never just what is inside it */
+@keyframes spec-hop-a { 30% { translate: 0 -34%; } 60% { translate: 0 0; } 78% { translate: 0 -8%; } }
+@keyframes spec-hop-b { 30% { translate: 0 -34%; } 60% { translate: 0 0; } 78% { translate: 0 -8%; } }
+.spec-ter[data-hop="a"] { animation: spec-hop-a 0.7s ease-out; }
+.spec-ter[data-hop="b"] { animation: spec-hop-b 0.7s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .spec-ter, .spec-ter-eye { transition: none; transform: none; }
+  .spec-ter { animation: none !important; }
 }
 .poster-brand-prism {
   height: 5.6cqw;
@@ -444,8 +477,12 @@ body {
 .poster-mobile .poster-brand-prism {
   height: 8cqw;
 }
-.poster-mobile .poster-brand-ibm img {
-  height: 6cqw;
+.poster-mobile .poster-brand-specter {
+  height: 8cqw;
+}
+.poster-mobile .spec-ter {
+  width: 8cqw;
+  height: 8cqw;
 }
 .poster-mobile .poster-brand-trio {
   gap: 4cqw;
