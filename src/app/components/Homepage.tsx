@@ -412,6 +412,28 @@ function Card({
     progress.set(1);
   }, [layoutKey, target, viewportW]);
 
+  // The flip: 0 shows the front face, 180 the back. Each face turns on its own (perspective + rotateY) and is shown
+  // only while it faces the viewer, so nothing depends on preserve-3d or backface-visibility.
+  const flip = useMotionValue(isGrid ? 0 : 180);
+  const flipMounted = useRef(false);
+  useEffect(() => {
+    const to = isGrid ? 0 : 180;
+    if (!flipMounted.current) {
+      flipMounted.current = true;
+      flip.set(to);
+      return;
+    }
+    onAnimStart();
+    const controls = motionAnimate(flip, to, { type: "spring", stiffness: 80, damping: 18, delay: delay + 0.05 });
+    controls.then(onAnimComplete);
+    return () => controls.stop();
+  }, [isGrid]);
+  const backAngle = useTransform(flip, (v) => v + 180);
+  const frontShown = useTransform(flip, (v) => (v < 90 ? 1 : 0));
+  const backShown = useTransform(flip, (v) => (v < 90 ? 0 : 1));
+  const frontFlip = { rotateY: flip, transformPerspective: 1200, opacity: frontShown, willChange: "transform" as const };
+  const backFlip = { rotateY: backAngle, transformPerspective: 1200, opacity: backShown, willChange: "transform" as const };
+
   // Larger staircase tiles sit closer, so they travel a little more than the small ones.
   const depth = 0.4 + (index / Math.max(1, last)) * 0.6;
   const lookShiftX = useTransform(lookX, (v) => v * depth * LOOK_SHIFT_X);
@@ -420,37 +442,28 @@ function Card({
   return (
     <motion.div
       className={`absolute${isHero ? " hero-tile" : ""}`}
-      style={{ perspective: "1200px", x: lookShiftX, y: lookShiftY, top: boxTop, left: boxLeft, width: boxWidth, height: boxHeight, contain: "layout style" }}
+      style={{ x: lookShiftX, y: lookShiftY, top: boxTop, left: boxLeft, width: boxWidth, height: boxHeight, contain: "layout style" }}
       // On load the tiles just dissolve in; the spring only moves them when the layout changes.
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6, delay: (PROJECTS.length - 1 - index) * 0.06, ease: "easeOut" }}
     >
+      <div className={isHero ? "hero-tile-shadow w-full h-full" : "w-full h-full"}>
+      {/* The flip is done with each face's own rotateY (see frontFlip / backFlip), not a preserve-3d container with
+          backface-visibility: Safari flattens preserve-3d here, which left the front faces showing mirrored over the
+          back ones. */}
       <div
-        className={isHero ? "hero-tile-shadow w-full h-full" : "w-full h-full"}
-        style={{ transformStyle: "preserve-3d" }}
-      >
-      <motion.div
         className="relative w-full h-full"
-        style={{
-          transformStyle: "preserve-3d",
-          cursor: interactive ? "pointer" : "default",
-          willChange: "transform",
-        }}
-        initial={false}
-        animate={{ rotateY: isGrid ? 0 : 180 }}
-        transition={{ type: "spring", stiffness: 80, damping: 18, delay: delay + 0.05 }}
-        onAnimationStart={onAnimStart}
-        onAnimationComplete={onAnimComplete}
+        style={{ cursor: interactive ? "pointer" : "default" }}
         onClick={() => interactive && onNavigate(project.slug)}
       >
         {/* Back face — image-only glass tile (staircase) */}
-        <div
+        <motion.div
           className="absolute inset-0 flex flex-col items-start"
           style={{
             ...faceStyle,
+            ...backFlip,
             boxShadow: isHero || dark ? "none" : glassFace.boxShadow,
-            transform: "rotateY(180deg)",
             // Hero staircase: padding grows with the tile (Figma).
             padding: STAIRCASE_DESIGN[index].pad,
           }}
@@ -465,13 +478,13 @@ function Card({
             moving={flatten}
             dark={dark}
           />
-        </div>
+        </motion.div>
 
         {/* Front face — live case studies keep the glass tile chrome and reveal the craft card. */}
         {CRAFT_SLUGS.has(project.slug) ? (
-          <div
+          <motion.div
             className={`craft-card-face absolute inset-0 flex flex-col overflow-hidden${isRightCol ? " craft-chrome-end" : ""}`}
-            style={faceStyle}
+            style={{ ...faceStyle, ...frontFlip }}
           >
             <div
               className="relative w-full h-full min-h-0"
@@ -507,9 +520,9 @@ function Card({
                 )}
               </motion.div>
             </div>
-          </div>
+          </motion.div>
         ) : (
-        <div className="absolute inset-0 flex flex-col overflow-hidden" style={faceStyle}>
+        <motion.div className="absolute inset-0 flex flex-col overflow-hidden" style={{ ...faceStyle, ...frontFlip }}>
           <TileImage src={tileSrc} flatSrc={flatSrc} flatten={flatten} dark={dark} />
 
           <div className="flex flex-col gap-[10px] flex-1 min-h-0 overflow-hidden" style={{ paddingTop: 16 }}>
@@ -543,9 +556,9 @@ function Card({
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
         )}
-      </motion.div>
+      </div>
       </div>
     </motion.div>
   );
