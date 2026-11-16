@@ -111,11 +111,11 @@ export function ScreensGallery() {
       <div className="flex flex-col items-center text-center" style={{ gap: 12 }}>
         <h2
           className="m-0"
-          style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: "#fff" }}
+          style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: "var(--fs-h1, 42px)", lineHeight: "var(--lh-h1, 48px)", letterSpacing: "-0.02em", color: "#fff" }}
         >
           The screens in the interface
         </h2>
-        <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "28px", color: "rgba(255,255,255,0.78)", maxWidth: 570 }}>
+        <p className="m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 28px)", color: "rgba(255,255,255,0.78)", maxWidth: 570 }}>
           Here is how the high fidelity screens look inside the product.
         </p>
       </div>
@@ -200,8 +200,8 @@ export function ScreensGallery() {
                 }}
               />
               <figcaption style={{ fontFamily: SANS, textAlign: "left", display: "flex", flexDirection: "column", gap: 2 }}>
-                <span style={{ fontWeight: 500, fontSize: 16, lineHeight: "24px", color: "#fff" }}>{s.title}</span>
-                <span style={{ fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.6)" }}>{s.note}</span>
+                <span style={{ fontWeight: 500, fontSize: "var(--fs-sec, 16px)", lineHeight: "var(--lh-sec, 24px)", color: "#fff" }}>{s.title}</span>
+                <span style={{ fontSize: "var(--fs-sec, 14px)", lineHeight: "var(--lh-sec, 20px)", color: "rgba(255,255,255,0.6)" }}>{s.note}</span>
               </figcaption>
             </figure>
           ))}
@@ -210,7 +210,7 @@ export function ScreensGallery() {
       </div>
 
       <div className="flex items-center justify-between w-full">
-        <span style={{ fontFamily: SANS, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
+        <span style={{ fontFamily: SANS, fontSize: "var(--fs-sec, 13px)", color: "rgba(255,255,255,0.5)" }}>
           {active + 1} of {SCREENS.length} · scroll sideways, drag, or use the arrows
         </span>
         <div className="flex" style={{ gap: 8 }}>

@@ -92,18 +92,18 @@ export function PainClusters() {
               }}
             >
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <span style={{ fontWeight: 700, fontSize: 20, lineHeight: "28px", color: INK }}>{c.name}</span>
-                <span style={{ fontSize: 14, lineHeight: "20px", color: MUTED }}>{c.evidence}</span>
+                <span style={{ fontWeight: 700, fontSize: "var(--fs-lead, 20px)", lineHeight: "var(--lh-lead, 28px)", color: INK }}>{c.name}</span>
+                <span style={{ fontSize: "var(--fs-sec, 14px)", lineHeight: "var(--lh-sec, 20px)", color: MUTED }}>{c.evidence}</span>
               </div>
               <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
                 {c.pains.map((p) => (
-                  <li key={p} style={{ fontSize: 16, lineHeight: "24px", color: INK }}>
+                  <li key={p} style={{ fontSize: "var(--fs-sec, 16px)", lineHeight: "var(--lh-sec, 24px)", color: INK }}>
                     {p}
                   </li>
                 ))}
               </ul>
               {built && (
-                <p style={{ margin: "auto 0 0", paddingTop: 4, fontWeight: 700, fontSize: 16, lineHeight: "24px", color: INK }}>
+                <p style={{ margin: "auto 0 0", paddingTop: 4, fontWeight: 700, fontSize: "var(--fs-sec, 16px)", lineHeight: "var(--lh-sec, 24px)", color: INK }}>
                   {c.idea}
                 </p>
               )}

@@ -178,15 +178,15 @@ export function FinalConceptGallery() {
           <div>
             <p
               className="m-0"
-              style={{ fontFamily: SANS, fontWeight: 600, fontSize: 11, lineHeight: "16px", letterSpacing: "1.1px", textTransform: "uppercase", color: FOREST }}
+              style={{ fontFamily: SANS, fontWeight: 600, fontSize: "var(--fs-label, 11px)", lineHeight: "var(--lh-label, 16px)", letterSpacing: "1.1px", textTransform: "uppercase", color: FOREST }}
             >
               Screen {active + 1} of {n}
             </p>
-            <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "28px", color: INK }}>
+            <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 28px)", color: INK }}>
               {current.title}
             </p>
           </div>
-          <p className="m-left m-0" style={{ fontFamily: SANS, fontSize: 14, lineHeight: "20px", color: MUTED, maxWidth: 420, textAlign: "right" }}>
+          <p className="m-left m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-sec, 14px)", lineHeight: "var(--lh-sec, 20px)", color: MUTED, maxWidth: 420, textAlign: "right" }}>
             {current.note}
           </p>
         </div>
@@ -240,7 +240,7 @@ export function FinalConceptGallery() {
         </div>
       </div>
 
-      <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: INK }}>
+      <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 13px)", lineHeight: "var(--lh-sec, 18px)", color: INK }}>
         Shown as they were before the final feedback session. I’ve since revised the high-fidelity wire frames based on that feedback.
       </p>
 
@@ -270,10 +270,10 @@ export function FinalConceptGallery() {
                   onClick={(e) => e.stopPropagation()}
                 />
                 <div className="mt-[16px] text-center" onClick={(e) => e.stopPropagation()}>
-                  <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "28px", color: CREAM }}>
+                  <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 28px)", color: CREAM }}>
                     {active + 1}. {current.title}
                   </p>
-                  <p className="m-0" style={{ fontFamily: SANS, fontSize: 14, lineHeight: "20px", color: "rgba(251,246,236,0.7)" }}>
+                  <p className="m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-sec, 14px)", lineHeight: "var(--lh-sec, 20px)", color: "rgba(251,246,236,0.7)" }}>
                     {current.note}
                   </p>
                 </div>
@@ -295,8 +295,8 @@ export function FinalConceptGallery() {
                     borderRadius: 999,
                     background: "rgba(251,246,236,0.14)",
                     color: CREAM,
-                    fontSize: 22,
-                    lineHeight: "40px",
+                    fontSize: "var(--fs-h3, 22px)",
+                    lineHeight: "var(--lh-h3, 40px)",
                     outlineColor: CREAM,
                   }}
                 >
@@ -330,8 +330,8 @@ function NavButton({ label, side, onClick }: { label: string; side: "left" | "ri
         borderRadius: 999,
         background: "rgba(251,246,236,0.14)",
         color: CREAM,
-        fontSize: 22,
-        lineHeight: "44px",
+        fontSize: "var(--fs-h3, 22px)",
+        lineHeight: "var(--lh-h3, 44px)",
         outlineColor: CREAM,
       }}
     >

@@ -46,43 +46,43 @@ const T = {
   eyebrow: {
     fontFamily: SANS,
     fontWeight: 600,
-    fontSize: 12,
-    lineHeight: "16px",
+    fontSize: "var(--fs-label, 12px)",
+    lineHeight: "var(--lh-label, 16px)",
     letterSpacing: "1.44px",
     textTransform: "uppercase",
     color: C.forest,
   },
-  heading1: { fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: C.ink },
+  heading1: { fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: "var(--fs-h1, 42px)", lineHeight: "var(--lh-h1, 48px)", letterSpacing: "-0.02em", color: C.ink },
   metaLabel: {
     fontFamily: SANS,
     fontWeight: 600,
-    fontSize: 12,
-    lineHeight: "16px",
+    fontSize: "var(--fs-label, 12px)",
+    lineHeight: "var(--lh-label, 16px)",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(var(--ink-rgb),0.42)",
+    color: "rgba(var(--ink-rgb),var(--muted-a, 0.42))",
   },
   storyMetaLabel: {
     fontFamily: SANS,
     fontWeight: 500,
-    fontSize: 18,
-    lineHeight: "16px",
+    fontSize: "var(--fs-body, 18px)",
+    lineHeight: "var(--lh-body, 16px)",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(var(--ink-rgb),0.42)",
+    color: "rgba(var(--ink-rgb),var(--muted-a, 0.42))",
   },
-  metaValue: { fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "22px", color: C.ink },
-  muted: { fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: "rgba(var(--ink-rgb),0.45)" },
+  metaValue: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 16px)", lineHeight: "var(--lh-sec, 22px)", color: C.ink },
+  muted: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 13px)", lineHeight: "var(--lh-sec, 18px)", color: "rgba(var(--ink-rgb),var(--muted-a, 0.45))" },
   heading2: {
     fontFamily: SANS,
     fontWeight: 400,
-    fontSize: 24,
-    lineHeight: "34px",
+    fontSize: "var(--fs-h3, 24px)",
+    lineHeight: "var(--lh-h3, 34px)",
     letterSpacing: "0.26px",
     color: C.ink,
   },
-  body: { fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "32px", color: C.ink },
-  intro: { fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "28px", color: C.ink },
+  body: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 32px)", color: C.ink },
+  intro: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 28px)", color: C.ink },
 } satisfies Record<string, CSSProperties>;
 
 const P = ({ children, style }: { children: ReactNode; style?: CSSProperties }) => (
@@ -106,8 +106,8 @@ function Tag({ children, color }: { children: ReactNode; color: string }) {
         color,
         fontFamily: SANS,
         fontWeight: 400,
-        fontSize: 16,
-        lineHeight: "18px",
+        fontSize: "var(--fs-sec, 16px)",
+        lineHeight: "var(--lh-sec, 18px)",
         padding: "4px 12px",
         borderRadius: 999,
       }}
@@ -119,7 +119,7 @@ function Tag({ children, color }: { children: ReactNode; color: string }) {
 
 function Mark({ n, style }: { n: number; style?: CSSProperties }) {
   return (
-    <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 20, lineHeight: "30px", color: C.ink, ...style }}>[{n}]</span>
+    <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: "var(--fs-lead, 20px)", lineHeight: "var(--lh-lead, 30px)", color: C.ink, ...style }}>[{n}]</span>
   );
 }
 
@@ -335,15 +335,15 @@ function PersonaCard({ person }: { person: Persona }) {
           color: BW.ink,
           fontFamily: SANS,
           fontWeight: 500,
-          fontSize: 14,
-          lineHeight: "18px",
+          fontSize: "var(--fs-sec, 14px)",
+          lineHeight: "var(--lh-sec, 18px)",
           padding: "6px 12px",
           borderRadius: 999,
         }}
       >
         {label}
       </span>
-      <ul className="m-0 pl-[18px] list-disc" style={{ ...T.intro, lineHeight: "24px", color: BW.text }}>
+      <ul className="m-0 pl-[18px] list-disc" style={{ ...T.intro, lineHeight: "var(--lh-body, 24px)", color: BW.text }}>
         {items.map((item) => (
           <li key={item} style={{ marginBottom: 8 }}>
             {item}
@@ -373,13 +373,13 @@ function PersonaCard({ person }: { person: Persona }) {
             style={{ background: "linear-gradient(180deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.92) 78%, #ffffff 100%)" }}
           />
           <div className="absolute left-0 right-0 bottom-0 flex flex-col items-start text-left" style={{ padding: 16, gap: 4 }}>
-            <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: BW.ink }}>
+            <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 13px)", lineHeight: "var(--lh-sec, 18px)", color: BW.ink }}>
               {person.role}
             </p>
-            <p className="m-0" style={{ fontFamily: MONO, fontWeight: 700, fontSize: 22, lineHeight: "28px", color: BW.ink }}>
+            <p className="m-0" style={{ fontFamily: MONO, fontWeight: 700, fontSize: "var(--fs-h3, 22px)", lineHeight: "var(--lh-h3, 28px)", color: BW.ink }}>
               {person.name}
             </p>
-            <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: BW.ink }}>
+            <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 13px)", lineHeight: "var(--lh-sec, 18px)", color: BW.ink }}>
               {person.meta}
             </p>
           </div>
@@ -389,7 +389,7 @@ function PersonaCard({ person }: { person: Persona }) {
           <Block label="Pain Points" items={person.pains} />
         </div>
       </div>
-      <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "24px", color: BW.text }}>
+      <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 16px)", lineHeight: "var(--lh-sec, 24px)", color: BW.text }}>
         “{person.quote}”
       </p>
       <div className="grid w-full items-start max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 24 }}>
@@ -402,8 +402,8 @@ function PersonaCard({ person }: { person: Persona }) {
               color: BW.ink,
               fontFamily: SANS,
               fontWeight: 500,
-              fontSize: 14,
-              lineHeight: "18px",
+              fontSize: "var(--fs-sec, 14px)",
+              lineHeight: "var(--lh-sec, 18px)",
               padding: "6px 12px",
               borderRadius: 999,
             }}
@@ -418,7 +418,7 @@ function PersonaCard({ person }: { person: Persona }) {
                   background: BW.chip,
                   color: BW.ink,
                   fontFamily: SANS,
-                  fontSize: 13,
+                  fontSize: "var(--fs-sec, 13px)",
                   padding: "6px 10px",
                   borderRadius: 999,
                 }}
@@ -439,7 +439,7 @@ function DesignExecution() {
     <div className="flex flex-col w-full" style={{ gap: 20 }}>
       <div className="flex flex-col" style={{ gap: 20 }}>
         <H1>Design Execution</H1>
-        <p className="m-0" style={{ ...T.body, lineHeight: "28px", maxWidth: 570 }}>
+        <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)", maxWidth: 570 }}>
           <LensDrift text="Low & high fidelity wireframes" />
         </p>
         <p className="m-0" style={T.muted}>
@@ -485,8 +485,8 @@ export function HaloCaseStudy() {
                   style={{
                     fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
                     fontWeight: 700,
-                    fontSize: 64,
-                    lineHeight: "66px",
+                    fontSize: "var(--fs-display, 64px)",
+                    lineHeight: "var(--lh-display, 66px)",
                     letterSpacing: "-0.02em",
                     color: "#fff",
                     maxWidth: 720,
@@ -496,7 +496,7 @@ export function HaloCaseStudy() {
                   <br />
                   <TypeIn text="Conversations" />
                 </h1>
-                <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "32px", color: "#fff", maxWidth: 720 }}>
+                <p className="m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 32px)", color: "#fff", maxWidth: 720 }}>
                   <TypeIn text={HERO_DESC} />
                 </p>
                 <div className="flex gap-[8px] items-start flex-wrap">
@@ -508,7 +508,7 @@ export function HaloCaseStudy() {
 
               <div className="grid w-full items-start max-lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 20 }}>
                 <div className="flex flex-col gap-[20px] min-w-0">
-                  <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 28, lineHeight: "36px", color: C.ink }}>
+                  <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-h3, 28px)", lineHeight: "var(--lh-h3, 36px)", color: C.ink }}>
                     <TypeIn
                       text="An internal sales tool on Microsoft’s stack, so a client conversation can become a tailored deck."
                     />
@@ -556,12 +556,12 @@ export function HaloCaseStudy() {
                     <H1>
                       <LensDrift text="What were we trying to achieve?" />
                     </H1>
-                    <p className="m-0" style={{ ...T.body, lineHeight: "28px" }}>
+                    <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)" }}>
                       <LensDrift
                         text="We intended to create an internal tool for Avanade employees that they could use to generate sales decks specific to a potential client’s needs."
                       />
                     </p>
-                    <p className="m-0" style={{ ...T.body, lineHeight: "28px" }}>
+                    <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)" }}>
                       <LensDrift text="Avanade required a tool built on Microsoft ecosystems for Microsoft ecosystems." />
                     </p>
                   </SceneCopy>
@@ -569,7 +569,7 @@ export function HaloCaseStudy() {
                 count={PROBLEM_STEPS.length}
                 renderStep={(i, active) => (
                   <SceneStep n={i + 1} active={active}>
-                    <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "28px" }}>
+                    <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "var(--lh-body, 28px)" }}>
                       <LensDrift text={PROBLEM_STEPS[i]} />
                     </P>
                   </SceneStep>
@@ -588,7 +588,7 @@ export function HaloCaseStudy() {
 
             <Focus index={3} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
               <H1>Ideas we developed</H1>
-              <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "28px", color: C.ink, maxWidth: 720 }}>
+              <p className="m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 28px)", color: C.ink, maxWidth: 720 }}>
                 <B>
                   <LensDrift text="A Copilot-native sales workspace" />
                 </B>
@@ -611,10 +611,10 @@ export function HaloCaseStudy() {
                       className="block theme-lineart"
                       style={{ width: "100%", maxWidth: 320, height: "auto", alignSelf: "center", objectFit: "contain" }}
                     />
-                    <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "24px", color: C.ink }}>
+                    <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 24px)", color: C.ink }}>
                       <LensDrift text={feat.title} />
                     </p>
-                    <p className="m-0" style={{ ...T.intro, lineHeight: "26px" }}>
+                    <p className="m-0" style={{ ...T.intro, lineHeight: "var(--lh-body, 26px)" }}>
                       <LensDrift text={feat.body} />
                     </p>
                   </div>
@@ -627,7 +627,7 @@ export function HaloCaseStudy() {
                 <div className="w-full flex flex-col" style={{ maxWidth: SCENE_MAX, gap: 20 }}>
                   <SceneCopy>
                     <H1>General task flow</H1>
-                    <p className="m-0" style={{ ...T.body, lineHeight: "28px", maxWidth: 570 }}>
+                    <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)", maxWidth: 570 }}>
                       <LensDrift text="Presentation of the general task flow created post iteration stages to ensure efficient navigation throughout the experience." />
                     </p>
                   </SceneCopy>

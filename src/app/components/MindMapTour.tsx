@@ -116,7 +116,7 @@ const pill: React.CSSProperties = {
   WebkitBackdropFilter: "blur(6px)",
   color: "rgba(0,0,0,0.72)",
   fontFamily: SANS,
-  fontSize: 12,
+  fontSize: "var(--fs-label, 12px)",
   fontWeight: 500,
   cursor: "pointer",
 };
@@ -260,7 +260,7 @@ export function MindMapTour({ caption }: { caption?: string }) {
         </div>
       </div>
       {caption && (
-        <figcaption style={{ fontFamily: SANS, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.5)", textAlign: "center" }}>
+        <figcaption style={{ fontFamily: SANS, fontSize: "var(--fs-sec, 13px)", lineHeight: "var(--lh-sec, 18px)", color: "rgba(0,0,0,0.5)", textAlign: "center" }}>
           {caption}
         </figcaption>
       )}
@@ -279,7 +279,7 @@ export function MindMapTour({ caption }: { caption?: string }) {
             style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(8,8,8,0.92)", display: "flex", flexDirection: "column" }}
           >
             <div
-              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", fontFamily: SANS, color: "#fff", fontSize: 13 }}
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", fontFamily: SANS, color: "#fff", fontSize: "var(--fs-sec, 13px)" }}
               onClick={(e) => e.stopPropagation()}
             >
               <span style={{ color: "rgba(255,255,255,0.65)" }}>{full ? `${verb} the map to fit the screen` : `${verb} the map for full size`}</span>
@@ -289,7 +289,7 @@ export function MindMapTour({ caption }: { caption?: string }) {
                   setOpen(false);
                   setFull(false);
                 }}
-                style={{ padding: "8px 16px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.3)", background: "transparent", color: "#fff", fontFamily: SANS, fontSize: 13, cursor: "pointer" }}
+                style={{ padding: "8px 16px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.3)", background: "transparent", color: "#fff", fontFamily: SANS, fontSize: "var(--fs-sec, 13px)", cursor: "pointer" }}
               >
                 Close
               </button>

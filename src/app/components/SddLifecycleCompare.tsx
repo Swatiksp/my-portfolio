@@ -49,8 +49,8 @@ function Legend() {
             style={{
               fontFamily: SANS,
               fontWeight: 400,
-              fontSize: 13,
-              lineHeight: "18px",
+              fontSize: "var(--fs-sec, 13px)",
+              lineHeight: "var(--lh-sec, 18px)",
               color: "var(--ink)",
             }}
           >
@@ -205,9 +205,9 @@ export function SddLifecycleCompare({ children }: { children: ReactNode | ((t: n
       style={{
         fontFamily: SANS,
         fontWeight: 400,
-        fontSize: 13,
-        lineHeight: "18px",
-        color: "rgba(var(--ink-rgb),0.45)",
+        fontSize: "var(--fs-sec, 13px)",
+        lineHeight: "var(--lh-sec, 18px)",
+        color: "rgba(var(--ink-rgb),var(--muted-a, 0.45))",
       }}
     >
       Scroll, or drag the handle, to see where the two ideas sit in the flow.
@@ -220,7 +220,7 @@ export function SddLifecycleCompare({ children }: { children: ReactNode | ((t: n
       <p
         className="m-0 w-full text-center"
         aria-live="polite"
-        style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "24px", color: "var(--ink)" }}
+        style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 24px)", color: "var(--ink)" }}
       >
         {t >= 0.5 ? "After implementing idea" : "Before implementing idea"}
       </p>

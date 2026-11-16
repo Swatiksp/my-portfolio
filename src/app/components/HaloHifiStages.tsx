@@ -264,8 +264,8 @@ export function HaloHifiStages() {
                         style={{
                           fontFamily: SANS,
                           fontWeight: 600,
-                          fontSize: 12,
-                          lineHeight: "16px",
+                          fontSize: "var(--fs-label, 12px)",
+                          lineHeight: "var(--lh-label, 16px)",
                           letterSpacing: "1.44px",
                           textTransform: "uppercase",
                           color: FOREST,
@@ -278,8 +278,8 @@ export function HaloHifiStages() {
                         style={{
                           fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
                           fontWeight: 400,
-                          fontSize: 40,
-                          lineHeight: "44px",
+                          fontSize: "var(--fs-display, 40px)",
+                          lineHeight: "var(--lh-display, 44px)",
                           letterSpacing: "-0.02em",
                           color: INK,
                         }}
@@ -370,7 +370,7 @@ export function HaloHifiStages() {
 const copy = {
   fontFamily: SANS,
   fontWeight: 400,
-  fontSize: 18,
-  lineHeight: "28px",
+  fontSize: "var(--fs-body, 18px)",
+  lineHeight: "var(--lh-body, 28px)",
   color: INK,
 } as const;

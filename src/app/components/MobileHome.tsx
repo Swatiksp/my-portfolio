@@ -56,13 +56,16 @@ export function MobileHomepage() {
   const navLink = {
     fontFamily: FONT_COND,
     fontWeight: 700,
-    fontSize: 13,
+    fontSize: 15,
     lineHeight: "20px",
     letterSpacing: "1.04px",
     color: copy,
     background: "none",
     border: "none",
     padding: 0,
+    minHeight: 44,
+    display: "inline-flex",
+    alignItems: "center",
     textDecoration: "none",
     cursor: "pointer",
   } as const;
@@ -71,12 +74,13 @@ export function MobileHomepage() {
     color: dark ? "#000000" : COLORS.cream,
     fontFamily: FONT_COND,
     fontWeight: 700,
-    fontSize: 13,
+    fontSize: 15,
     lineHeight: "20px",
     letterSpacing: "1.04px",
     borderRadius: 4,
     border: "none",
-    padding: "10px 16px",
+    minHeight: 44,
+    padding: "0 16px",
     cursor: "pointer",
     textDecoration: "none",
     whiteSpace: "nowrap",
@@ -119,7 +123,7 @@ export function MobileHomepage() {
           <button type="button" onClick={() => goTo("work")} style={navLink}>
             WORK
           </button>
-          <button type="button" onClick={() => window.open(RESUME_URL, "_blank", "noopener,noreferrer")} style={{ ...button, padding: "8px 12px", fontSize: 12 }}>
+          <button type="button" onClick={() => window.open(RESUME_URL, "_blank", "noopener,noreferrer")} style={{ ...button, padding: "0 12px" }}>
             RESUME
           </button>
         </div>
@@ -129,17 +133,17 @@ export function MobileHomepage() {
       <section style={{ padding: "108px 24px 56px", display: "flex", flexDirection: "column", gap: 28 }}>
         <div className="flex flex-col" style={{ gap: 12 }}>
           <div className="flex flex-col" style={{ gap: 14 }}>
-            <p className="m-0" style={{ fontWeight: 700, fontSize: 16, lineHeight: "24px", color: heading }}>
+            <p className="m-0" style={{ fontWeight: 700, fontSize: 17, lineHeight: "26px", color: heading }}>
               <TypeIn text="Glad you’re here!" />
             </p>
             <p
               className="m-0"
-              style={{ fontFamily: SERIF, fontOpticalSizing: "auto", fontWeight: 700, fontSize: 48, lineHeight: "52px", letterSpacing: "-0.02em", color: heading }}
+              style={{ fontFamily: SERIF, fontOpticalSizing: "auto", fontWeight: 700, fontSize: 40, lineHeight: "44px", letterSpacing: "-0.02em", color: heading }}
             >
               <TypeIn text="I’m Swatik" />
             </p>
           </div>
-          <p className="m-0" style={{ fontSize: 18, lineHeight: "29px", color: copy }}>
+          <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
             <TypeIn text="Designing digital systems and the relationships people have with them, through product and interaction design." />
           </p>
         </div>
@@ -151,7 +155,7 @@ export function MobileHomepage() {
             <p className="m-0" style={{ fontWeight: 700, fontSize: 15, color: heading }}>
               <TypeIn text="Previously designed at" />
             </p>
-            <p className="m-0" style={{ fontSize: 18, lineHeight: "26px", color: copy }}>
+            <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
               <TypeIn text="Accenture Microsoft Business Group" />
             </p>
           </div>
@@ -159,11 +163,11 @@ export function MobileHomepage() {
             <p className="m-0" style={{ fontWeight: 700, fontSize: 15, color: heading }}>
               <TypeIn text="Currently Studying at" />
             </p>
-            <p className="m-0" style={{ fontSize: 18, lineHeight: "26px", color: copy }}>
+            <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
               <TypeIn text="North Carolina State University" />
             </p>
-            <p className="m-0 flex items-center uppercase" style={{ gap: 6, fontFamily: FONT_COND, fontWeight: 700, fontSize: 18, color: copy }}>
-              <span aria-hidden style={{ display: "inline-block", transform: "rotate(45deg)", fontFamily: FONT_DING, fontWeight: 400, fontSize: 18, lineHeight: 1 }}>
+            <p className="m-0 flex items-center uppercase" style={{ gap: 6, fontFamily: FONT_COND, fontWeight: 700, fontSize: 17, color: copy }}>
+              <span aria-hidden style={{ display: "inline-block", transform: "rotate(45deg)", fontFamily: FONT_DING, fontWeight: 400, fontSize: 17, lineHeight: 1 }}>
                 H
               </span>
               <TypeIn text="gowolfpack!" />
@@ -174,10 +178,10 @@ export function MobileHomepage() {
 
       {/* The work */}
       <section id="work" style={{ padding: "8px 24px 72px", scrollMarginTop: 72 }}>
-        <h2 className="m-0" style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 48, lineHeight: "52px", letterSpacing: "-0.02em", color: heading }}>
+        <h2 className="m-0" style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 40, lineHeight: "44px", letterSpacing: "-0.02em", color: heading }}>
           My Craft
         </h2>
-        <p className="m-0" style={{ marginTop: 8, fontFamily: FONT_COND, fontSize: 16, lineHeight: "24px", color: muted }}>
+        <p className="m-0" style={{ marginTop: 8, fontFamily: FONT_COND, fontSize: 15, lineHeight: "22px", color: muted }}>
           Each tile represents a body of work.
         </p>
         <div className="flex flex-col" style={{ gap: 28, marginTop: 28 }}>
@@ -237,8 +241,8 @@ export function MobileHomepage() {
                         style={{ display: "block", width: "100%", aspectRatio: "16 / 9", objectFit: "cover", borderRadius: 15, boxShadow: dark ? "none" : "0px 2px 7px 5px rgba(0,0,0,0.1)" }}
                       />
                       <div className="flex flex-col" style={{ gap: 10, paddingTop: 16 }}>
-                        <span style={{ fontWeight: 500, fontSize: 24, lineHeight: 1, color: heading }}>{project.title}</span>
-                        <p className="m-0" style={{ fontSize: 14, lineHeight: "1.4", color: dark ? "rgba(255,255,255,0.82)" : COLORS.ink }}>
+                        <span style={{ fontWeight: 500, fontSize: 22, lineHeight: 1.1, color: heading }}>{project.title}</span>
+                        <p className="m-0" style={{ fontSize: 15, lineHeight: "1.45", color: dark ? "rgba(255,255,255,0.82)" : COLORS.ink }}>
                           {project.desc}
                         </p>
                         <div className="flex flex-wrap" style={{ gap: 8 }}>
@@ -274,13 +278,13 @@ export function MobileHomepage() {
       {/* Footer */}
       <footer style={{ padding: "48px 24px 28px", borderTop: `1px solid ${line}`, display: "flex", flexDirection: "column", gap: 40 }}>
         <div id="about" className="flex flex-col items-start" style={{ gap: 14, paddingBottom: 36, borderBottom: `1px solid ${line}`, scrollMarginTop: 72 }}>
-          <p className="m-0" style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 36, lineHeight: "42px", letterSpacing: "-0.02em", color: heading }}>
+          <p className="m-0" style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 28, lineHeight: "34px", letterSpacing: "-0.02em", color: heading }}>
             Want to know more about me?
           </p>
           <span style={{ marginTop: 6 }}><AboutCta buttonStyle={button} dark={dark} glyphSize={22} onClick={() => navigate("/about")} /></span>
         </div>
         <div className="flex flex-col" style={{ gap: 18 }}>
-          <p className="m-0" style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 48, lineHeight: "52px", letterSpacing: "-0.02em", color: heading }}>
+          <p className="m-0" style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 40, lineHeight: "44px", letterSpacing: "-0.02em", color: heading }}>
             Let’s work together.
           </p>
           <div className="flex items-start">
@@ -312,7 +316,7 @@ export function MobileHomepage() {
             <span style={{ fontWeight: 500, fontSize: 15, color: heading }}>Swatik SP</span>
           </div>
           <ToolMarks size={24} gap={16} color={muted} labelSize={13} style={{ gridRow: 2, gridColumn: "1 / -1" }} />
-          <span style={{ fontSize: 12, color: muted, justifySelf: "end", textAlign: "right" }}>© 2026 Swatik SP</span>
+          <span style={{ fontSize: 13, color: muted, justifySelf: "end", textAlign: "right" }}>© 2026 Swatik SP</span>
         </div>
       </footer>
     </div>

@@ -18,8 +18,8 @@ const photoShadow = "0 0 0 1px rgba(0,0,0,0.2), 0 0 2px rgba(0,0,0,0.08), 0 2px 
 const label: CSSProperties = {
   fontFamily: SANS,
   fontWeight: 700,
-  fontSize: 15,
-  lineHeight: "16px",
+  fontSize: "var(--fs-sec, 15px)",
+  lineHeight: "var(--lh-sec, 16px)",
   color: FOREST,
   margin: 0,
 };
@@ -27,7 +27,7 @@ const label: CSSProperties = {
 const body: CSSProperties = {
   fontFamily: SANS,
   fontWeight: 400,
-  fontSize: 18,
+  fontSize: "var(--fs-body, 18px)",
   lineHeight: 1.5,
   color: INK,
   margin: 0,
@@ -36,7 +36,7 @@ const body: CSSProperties = {
 const personName: CSSProperties = {
   fontFamily: MONO,
   fontWeight: 400,
-  fontSize: 28,
+  fontSize: "var(--fs-h3, 28px)",
   lineHeight: 1.2,
   letterSpacing: "0.28px",
   margin: 0,
@@ -45,7 +45,7 @@ const personName: CSSProperties = {
 const personRole: CSSProperties = {
   fontFamily: SANS,
   fontWeight: 700,
-  fontSize: 15,
+  fontSize: "var(--fs-sec, 15px)",
   lineHeight: 1.4,
   margin: 0,
 };
@@ -53,7 +53,7 @@ const personRole: CSSProperties = {
 const personNote: CSSProperties = {
   fontFamily: SANS,
   fontWeight: 400,
-  fontSize: 15,
+  fontSize: "var(--fs-sec, 15px)",
   lineHeight: 1.4,
   margin: 0,
 };
@@ -146,7 +146,7 @@ function ToolChip({ children }: { children: string }) {
         color: PILL_FG,
         fontFamily: SANS,
         fontWeight: 500,
-        fontSize: 12,
+        fontSize: "var(--fs-label, 12px)",
         lineHeight: "normal",
         padding: "6px 10px",
         borderRadius: 100,
@@ -199,7 +199,7 @@ function FactColumn({ title, items }: { title: string; items: string[] }) {
           style={{
             fontFamily: MONO,
             fontWeight: 400,
-            fontSize: 28,
+            fontSize: "var(--fs-h3, 28px)",
             lineHeight: 1.2,
             letterSpacing: "0.28px",
             color: INK,
@@ -223,7 +223,7 @@ function MeetMarcusStage({ t }: { t: number }) {
     <div className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
       <p
         className="m-0"
-        style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: INK }}
+        style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: "var(--fs-h1, 42px)", lineHeight: "var(--lh-h1, 48px)", letterSpacing: "-0.02em", color: INK }}
       >
         Meet Marcus
       </p>
@@ -236,8 +236,8 @@ function MeetMarcusStage({ t }: { t: number }) {
           style={{
             fontFamily: SANS,
             fontWeight: 500,
-            fontSize: 18,
-            lineHeight: "24px",
+            fontSize: "var(--fs-body, 18px)",
+            lineHeight: "var(--lh-body, 24px)",
             color: FOREST,
             opacity: subOp,
             maxHeight: subOp > 0.02 ? 48 : 0,
@@ -300,7 +300,7 @@ function MeetMarcusOrbit({ t }: { t: number }) {
                 color: PILL_FG,
                 fontFamily: SANS,
                 fontWeight: 500,
-                fontSize: 17,
+                fontSize: "var(--fs-body, 17px)",
                 lineHeight: "normal",
                 padding: "9px 15px",
                 borderRadius: 100,
@@ -425,10 +425,10 @@ export function MarcusPersonaCard() {
           <div className="flex flex-col min-w-0" style={{ gap: 10, maxWidth: 400 }}>
             <p style={label}>User persona</p>
             <div className="flex flex-col">
-              <p className="m-0" style={{ fontFamily: MONO, fontWeight: 700, fontSize: 64, lineHeight: 1, color: FOREST }}>
+              <p className="m-0" style={{ fontFamily: MONO, fontWeight: 700, fontSize: "var(--fs-display, 64px)", lineHeight: 1, color: FOREST }}>
                 Marcus
               </p>
-              <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: 20, lineHeight: "30px", color: INK }}>
+              <p className="m-0" style={{ fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-lead, 20px)", lineHeight: "var(--lh-lead, 30px)", color: INK }}>
                 Intelligence Analytic Editor
               </p>
             </div>

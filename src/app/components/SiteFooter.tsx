@@ -31,9 +31,12 @@ export function SiteFooter({ showAbout = true }: { showAbout?: boolean }) {
   const navLink: CSSProperties = {
     fontFamily: COND,
     fontWeight: 700,
-    fontSize: mobile ? 13 : 14,
+    fontSize: mobile ? 15 : 14,
     lineHeight: mobile ? "20px" : "24px",
     letterSpacing: mobile ? "1.04px" : "1.12px",
+    minHeight: mobile ? 44 : undefined,
+    display: mobile ? "inline-flex" : undefined,
+    alignItems: mobile ? "center" : undefined,
     color: INK,
     textDecoration: "none",
     background: "none",
@@ -46,12 +49,13 @@ export function SiteFooter({ showAbout = true }: { showAbout?: boolean }) {
     color: CREAM,
     fontFamily: COND,
     fontWeight: 700,
-    fontSize: mobile ? 13 : 14,
+    fontSize: mobile ? 15 : 14,
     lineHeight: mobile ? "20px" : "24px",
     letterSpacing: mobile ? "1.04px" : "1.12px",
+    minHeight: mobile ? 44 : undefined,
     borderRadius: 4,
     border: "none",
-    padding: mobile ? "10px 16px" : "10px 20px",
+    padding: mobile ? "12px 16px" : "10px 20px",
     cursor: "pointer",
     textDecoration: "none",
     display: "inline-block",
@@ -70,14 +74,14 @@ export function SiteFooter({ showAbout = true }: { showAbout?: boolean }) {
     >
       {showAbout && (
         <div className="flex items-center justify-between w-full" style={{ gap: 32, flexWrap: "wrap", paddingBottom: mobile ? 36 : 56, borderBottom: `1px solid ${LINE}`, flexDirection: mobile ? "column" : "row", alignItems: mobile ? "flex-start" : "center" }}>
-          <p style={{ ...bigHeading(mobile ? 36 : 44, mobile ? "42px" : "50px"), maxWidth: 640 }}>Want to know more about me?</p>
+          <p style={{ ...bigHeading(mobile ? 28 : 44, mobile ? "34px" : "50px"), maxWidth: 640 }}>Want to know more about me?</p>
           <AboutCta buttonStyle={button} dark={dark} glyphSize={mobile ? 22 : 24} onClick={goAbout} />
         </div>
       )}
 
       <div className="flex w-full" style={{ gap: mobile ? 40 : 48, flexWrap: "wrap", flexDirection: mobile ? "column" : "row", justifyContent: "space-between", alignItems: mobile ? "stretch" : "flex-end" }}>
         <div className="flex flex-col" style={{ gap: mobile ? 18 : 20, maxWidth: 640 }}>
-          <p style={bigHeading(mobile ? 48 : 52, mobile ? "52px" : "57.6px")}>Let’s work together.</p>
+          <p style={bigHeading(mobile ? 40 : 52, mobile ? "44px" : "57.6px")}>Let’s work together.</p>
           <div className="flex items-start">
             <a href={`mailto:${EMAIL}`} className="hover:opacity-85 transition-opacity" style={button}>
               {EMAIL.toUpperCase()}
@@ -113,7 +117,7 @@ export function SiteFooter({ showAbout = true }: { showAbout?: boolean }) {
           <span style={{ fontFamily: SANS, fontWeight: 500, fontSize: 15, color: BLACK }}>Swatik SP</span>
         </div>
         <ToolMarks size={mobile ? 24 : 28} gap={mobile ? 16 : 18} color={MUTED} fontFamily={SANS} labelSize={mobile ? 13 : 14} style={mobile ? { gridRow: 2, gridColumn: "1 / -1" } : undefined} />
-        <span style={{ fontFamily: SANS, fontSize: mobile ? 12 : 14, color: MUTED, justifySelf: "end", textAlign: "right" }}>
+        <span style={{ fontFamily: SANS, fontSize: mobile ? 13 : 14, color: MUTED, justifySelf: "end", textAlign: "right" }}>
           {mobile ? "© 2026 Swatik SP" : "© 2026 Swatik SP. All rights reserved."}
         </span>
       </div>

@@ -89,7 +89,7 @@ export function ExpandableImage({
             border: "1px solid rgba(0,0,0,0.06)",
             color: "rgba(0,0,0,0.72)",
             fontFamily: SANS,
-            fontSize: 12,
+            fontSize: "var(--fs-label, 12px)",
             fontWeight: 500,
           }}
         >
@@ -100,7 +100,7 @@ export function ExpandableImage({
         </span>
       </button>
       {caption && (
-        <figcaption style={{ fontFamily: SANS, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.5)", textAlign: "center" }}>
+        <figcaption style={{ fontFamily: SANS, fontSize: "var(--fs-sec, 13px)", lineHeight: "var(--lh-sec, 18px)", color: "rgba(0,0,0,0.5)", textAlign: "center" }}>
           {caption}
         </figcaption>
       )}
@@ -124,7 +124,7 @@ export function ExpandableImage({
                 padding: "14px 20px",
                 fontFamily: SANS,
                 color: "#fff",
-                fontSize: 13,
+                fontSize: "var(--fs-sec, 13px)",
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -140,7 +140,7 @@ export function ExpandableImage({
                   background: "transparent",
                   color: "#fff",
                   fontFamily: SANS,
-                  fontSize: 13,
+                  fontSize: "var(--fs-sec, 13px)",
                   cursor: "pointer",
                 }}
               >

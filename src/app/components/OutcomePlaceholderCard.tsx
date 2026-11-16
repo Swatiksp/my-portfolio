@@ -156,8 +156,8 @@ function OutcomeVideoCard({
           style={{
             fontFamily: SANS,
             fontWeight: 500,
-            fontSize: 20,
-            lineHeight: "26px",
+            fontSize: "var(--fs-lead, 20px)",
+            lineHeight: "var(--lh-lead, 26px)",
             color: INK,
           }}
         >
@@ -165,7 +165,7 @@ function OutcomeVideoCard({
         </p>
         <p
           className="m-0"
-          style={{ fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "24px", color: "rgba(var(--ink-rgb),0.72)" }}
+          style={{ fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 16px)", lineHeight: "var(--lh-sec, 24px)", color: "rgba(var(--ink-rgb),0.72)" }}
         >
           {copy}
         </p>

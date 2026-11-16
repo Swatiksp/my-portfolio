@@ -105,7 +105,7 @@ export function IdeasDevelopedCards() {
               fontSize: 18,
               lineHeight: "16px",
               textTransform: "uppercase",
-              color: "rgba(var(--ink-rgb),0.42)",
+              color: "rgba(var(--ink-rgb),var(--muted-a, 0.42))",
             }}
           >
             {col.title}

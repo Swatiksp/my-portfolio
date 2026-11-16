@@ -82,14 +82,14 @@ const BRANDS: Brand[] = [
 
 /* ------------------------------ styles ------------------------------ */
 
-const heading: CSSProperties = { fontFamily: SERIF, fontWeight: 400, fontSize: 36, lineHeight: "42px", letterSpacing: "-0.02em", color: INK, textAlign: "center", margin: 0 };
-const body: CSSProperties = { fontFamily: SANS, fontSize: 17, lineHeight: "30px", color: INK, margin: 0 };
+const heading: CSSProperties = { fontFamily: SERIF, fontWeight: 400, fontSize: "var(--fs-h2, 36px)", lineHeight: "var(--lh-h2, 42px)", letterSpacing: "-0.02em", color: INK, textAlign: "center", margin: 0 };
+const body: CSSProperties = { fontFamily: SANS, fontSize: "var(--fs-body, 17px)", lineHeight: "var(--lh-body, 30px)", color: INK, margin: 0 };
 const button: CSSProperties = {
   display: "inline-block",
   fontFamily: COND,
   fontWeight: 700,
-  fontSize: 14,
-  lineHeight: "24px",
+  fontSize: "var(--fs-sec, 14px)",
+  lineHeight: "var(--lh-sec, 24px)",
   letterSpacing: "1.12px",
   borderRadius: 4,
   padding: "10px 20px",
@@ -182,7 +182,7 @@ function WorkExperience() {
           <p className="m-0" style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 19, lineHeight: "26px", color: INK }}>
             <TypeInView text={job.role} />
           </p>
-          <p className="m-0" style={{ fontFamily: SANS, fontSize: 14, lineHeight: "21px", color: MUTED }}>
+          <p className="m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-sec, 14px)", lineHeight: "var(--lh-sec, 21px)", color: MUTED }}>
             <strong style={{ fontWeight: 700 }}>
               <TypeInView text={job.where} start={120} />
             </strong>
@@ -210,7 +210,7 @@ function Brands() {
             {b.src ? (
               <img decoding="async" src={b.src} alt={b.name} draggable={false} className={`company-logo${dark ? " company-logo-dark" : ""}`} style={{ height: b.h ?? 34 }} />
             ) : (
-              <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: 15, color: MUTED, whiteSpace: "nowrap" }}>{b.name}</span>
+              <span style={{ fontFamily: SANS, fontWeight: 600, fontSize: "var(--fs-sec, 15px)", color: MUTED, whiteSpace: "nowrap" }}>{b.name}</span>
             )}
           </li>
         ))}
@@ -257,7 +257,7 @@ export function AboutPage() {
         transition={{ duration: 0.35, ease: "easeOut" }}
       >
         <div className="about-column mx-auto w-full flex flex-col" style={{ maxWidth: 702, gap: 80 }}>
-          <p className="about-bio" style={{ ...body, fontSize: 20, lineHeight: "32px", textAlign: "center" }}><TypeInView text={BIO} start={typeDuration("Hey there!") - 100} />
+          <p className="about-bio" style={{ ...body, fontSize: "var(--fs-lead, 20px)", lineHeight: "var(--lh-lead, 32px)", textAlign: "center" }}><TypeInView text={BIO} start={typeDuration("Hey there!") - 100} />
           </p>
           <WorkExperience />
           <Brands />

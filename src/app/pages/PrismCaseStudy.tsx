@@ -45,49 +45,49 @@ const T = {
   eyebrow: {
     fontFamily: SANS,
     fontWeight: 600,
-    fontSize: 12,
-    lineHeight: "16px",
+    fontSize: "var(--fs-label, 12px)",
+    lineHeight: "var(--lh-label, 16px)",
     letterSpacing: "1.44px",
     textTransform: "uppercase",
     color: C.forest,
   },
-  heading1: { fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 42, lineHeight: "48px", letterSpacing: "-0.02em", color: C.ink },
+  heading1: { fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: "var(--fs-h1, 42px)", lineHeight: "var(--lh-h1, 48px)", letterSpacing: "-0.02em", color: C.ink },
   metaLabel: {
     fontFamily: SANS,
     fontWeight: 600,
-    fontSize: 12,
-    lineHeight: "16px",
+    fontSize: "var(--fs-label, 12px)",
+    lineHeight: "var(--lh-label, 16px)",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(var(--ink-rgb),0.42)",
+    color: "rgba(var(--ink-rgb),var(--muted-a, 0.42))",
   },
   storyMetaLabel: {
     fontFamily: SANS,
     fontWeight: 500,
-    fontSize: 18,
-    lineHeight: "16px",
+    fontSize: "var(--fs-body, 18px)",
+    lineHeight: "var(--lh-body, 16px)",
     letterSpacing: "1.2px",
     textTransform: "uppercase",
-    color: "rgba(var(--ink-rgb),0.42)",
+    color: "rgba(var(--ink-rgb),var(--muted-a, 0.42))",
   },
-  metaValue: { fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "22px", color: C.ink },
-  muted: { fontFamily: SANS, fontWeight: 400, fontSize: 13, lineHeight: "18px", color: "rgba(var(--ink-rgb),0.45)" },
+  metaValue: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 16px)", lineHeight: "var(--lh-sec, 22px)", color: C.ink },
+  muted: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-sec, 13px)", lineHeight: "var(--lh-sec, 18px)", color: "rgba(var(--ink-rgb),var(--muted-a, 0.45))" },
   heading2: {
     fontFamily: SANS,
     fontWeight: 400,
-    fontSize: 24,
-    lineHeight: "34px",
+    fontSize: "var(--fs-h3, 24px)",
+    lineHeight: "var(--lh-h3, 34px)",
     letterSpacing: "0.26px",
     color: C.ink,
   },
-  body: { fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "32px", color: C.ink },
-  bodyTight: { fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "24px", color: C.ink },
-  intro: { fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "28px", color: C.ink },
-  label: { fontFamily: SANS, fontWeight: 700, fontSize: 18, lineHeight: "20px", color: C.ink },
-  factLabel: { fontFamily: SANS, fontWeight: 700, fontSize: 18, lineHeight: "16px", color: C.forest },
-  quote: { fontFamily: SANS, fontWeight: 400, fontSize: 24, lineHeight: "38px", color: C.ink },
-  small: { fontFamily: NAV, fontWeight: 400, fontSize: 14, lineHeight: "20px", color: C.ink },
-  mark: { fontFamily: MONO, fontWeight: 700, fontSize: 20, lineHeight: "30px", color: C.ink },
+  body: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 32px)", color: C.ink },
+  bodyTight: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 24px)", color: C.ink },
+  intro: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 28px)", color: C.ink },
+  label: { fontFamily: SANS, fontWeight: 700, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 20px)", color: C.ink },
+  factLabel: { fontFamily: SANS, fontWeight: 700, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 16px)", color: C.forest },
+  quote: { fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-lead, 24px)", lineHeight: "var(--lh-lead, 38px)", color: C.ink },
+  small: { fontFamily: NAV, fontWeight: 400, fontSize: "var(--fs-sec, 14px)", lineHeight: "var(--lh-sec, 20px)", color: C.ink },
+  mark: { fontFamily: MONO, fontWeight: 700, fontSize: "var(--fs-lead, 20px)", lineHeight: "var(--lh-lead, 30px)", color: C.ink },
   painIndex: {
     fontFamily: MONO,
     fontWeight: 700,
@@ -99,12 +99,12 @@ const T = {
   painTitle: {
     fontFamily: SANS,
     fontWeight: 400,
-    fontSize: 24,
-    lineHeight: "34px",
+    fontSize: "var(--fs-h3, 24px)",
+    lineHeight: "var(--lh-h3, 34px)",
     letterSpacing: "0.26px",
     color: C.ink,
   },
-  cardTitle: { fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "32px", color: C.ink },
+  cardTitle: { fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 32px)", color: C.ink },
 } satisfies Record<string, CSSProperties>;
 
 const P = ({ children, style }: { children: ReactNode; style?: CSSProperties }) => (
@@ -133,8 +133,8 @@ function Tag({ children, color }: { children: ReactNode; color: string }) {
         color,
         fontFamily: SANS,
         fontWeight: 400,
-        fontSize: 16,
-        lineHeight: "18px",
+        fontSize: "var(--fs-sec, 16px)",
+        lineHeight: "var(--lh-sec, 18px)",
         padding: "4px 12px",
         borderRadius: 999,
       }}
@@ -273,7 +273,7 @@ function EvidencePanel({ painPoint, compact = false }: { painPoint: PainPoint; c
             <p className="m-0" style={{ ...T.eyebrow, color: "rgba(255,255,255,0.9)" }}>
               Where this came from
             </p>
-            <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: 12, lineHeight: "20px", color: "rgba(255,255,255,0.9)" }}>
+            <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-label, 12px)", lineHeight: "var(--lh-label, 20px)", color: "rgba(255,255,255,0.9)" }}>
               {painPoint.excerpts.length} interview excerpts
             </span>
           </motion.div>
@@ -295,7 +295,7 @@ function EvidencePanel({ painPoint, compact = false }: { painPoint: PainPoint; c
               >
                 <blockquote
                   className="m-0"
-                  style={{ fontFamily: SANS, fontWeight: 400, fontSize: 18, lineHeight: "25px", color: "#000000" }}
+                  style={{ fontFamily: SANS, fontWeight: 400, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 25px)", color: "#000000" }}
                 >
                   “<HighlightedQuote quote={ex.quote} highlight={ex.highlight} />”
                 </blockquote>
@@ -303,8 +303,8 @@ function EvidencePanel({ painPoint, compact = false }: { painPoint: PainPoint; c
                   style={{
                     fontFamily: SANS,
                     fontWeight: 600,
-                    fontSize: 11,
-                    lineHeight: "16px",
+                    fontSize: "var(--fs-label, 11px)",
+                    lineHeight: "var(--lh-label, 16px)",
                     letterSpacing: "1.1px",
                     textTransform: "uppercase",
                     color: "#000000",
@@ -459,8 +459,8 @@ export function PrismCaseStudy() {
               style={{
                 fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif",
                 fontWeight: 700,
-                fontSize: 64,
-                lineHeight: "66px",
+                fontSize: "var(--fs-display, 64px)",
+                lineHeight: "var(--lh-display, 66px)",
                 letterSpacing: "-0.02em",
                 color: "#fff",
                 maxWidth: 720,
@@ -468,10 +468,10 @@ export function PrismCaseStudy() {
             >
               <TypeIn text="Prism" />
             </h1>
-            <p className="m-0" style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontSize: 24, lineHeight: "30px", color: "#fff", maxWidth: 720 }}>
+            <p className="m-0" style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontSize: "var(--fs-h3, 24px)", lineHeight: "var(--lh-h3, 30px)", color: "#fff", maxWidth: 720 }}>
               <TypeIn text="formerly" /> <em style={{ fontStyle: "italic" }}><TypeIn text="Infinite Canvas" /></em>
             </p>
-            <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "32px", color: "#fff", maxWidth: 720 }}>
+            <p className="m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 32px)", color: "#fff", maxWidth: 720 }}>
               <TypeIn text="An AI workspace for intelligence editors" />
             </p>
             <div className="flex gap-[8px] items-start flex-wrap">
@@ -483,7 +483,7 @@ export function PrismCaseStudy() {
 
           <div className="grid w-full items-start max-lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 20 }}>
             <div className="flex flex-col gap-[20px] min-w-0">
-              <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 28, lineHeight: "36px", color: C.ink }}>
+              <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-h3, 28px)", lineHeight: "var(--lh-h3, 36px)", color: C.ink }}>
                 <TypeIn text="One report has to reach several audiences. None of them can see what they shouldn’t." />
               </p>
               <p className="m-0" style={T.intro}>
@@ -542,13 +542,13 @@ export function PrismCaseStudy() {
             left={
               <SceneCopy>
                 <H1>A slow edit can still leak a source</H1>
-                <p className="m-0" style={{ ...T.body, lineHeight: "28px" }}>
+                <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)" }}>
                   <LensDrift text="Our provided persona ‘Marcus’ is the last person who sees a report before it leaves." />
                 </p>
-                <p className="m-0" style={{ ...T.body, lineHeight: "28px" }}>
+                <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)" }}>
                   <LensDrift text="He has to confirm accuracy, sourcing, confidence language and policy before a report moves on." />
                 </p>
-                <p className="m-0" style={{ ...T.body, lineHeight: "28px" }}>
+                <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)" }}>
                   <LensDrift text="His tools do not keep up." />
                 </p>
               </SceneCopy>
@@ -556,7 +556,7 @@ export function PrismCaseStudy() {
             count={PROBLEM_STEPS.length}
             renderStep={(i, active) => (
               <SceneStep n={i + 1} active={active}>
-                <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "28px" }}>{PROBLEM_STEPS[i]}</P>
+                <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "var(--lh-body, 28px)" }}>{PROBLEM_STEPS[i]}</P>
               </SceneStep>
             )}
           />
@@ -569,7 +569,7 @@ export function PrismCaseStudy() {
         {/* ── Ideas we developed ── */}
         <Focus index={3} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
           <H1>Ideas we developed</H1>
-          <p className="m-0" style={{ fontFamily: SANS, fontSize: 18, lineHeight: "28px", color: C.ink, maxWidth: 720 }}>
+          <p className="m-0" style={{ fontFamily: SANS, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 28px)", color: C.ink, maxWidth: 720 }}>
             <B>
               <LensDrift text="An infinity canvas tool" />
             </B>
@@ -582,8 +582,8 @@ export function PrismCaseStudy() {
         {/* ── How the canvas works ── */}
         <Focus index={4} className="flex flex-col items-center w-full" style={{ gap: 20 }}>
           <div className="flex flex-col items-center text-center" style={{ gap: 20 }}>
-            <H1 style={{ lineHeight: "34px" }}>How the canvas works</H1>
-            <p className="m-0" style={{ ...T.body, lineHeight: "28px", maxWidth: 570 }}>
+            <H1 style={{ lineHeight: "var(--lh-h1, 34px)" }}>How the canvas works</H1>
+            <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)", maxWidth: 570 }}>
               <LensDrift text="Workflow sorting, alerts when a change hits another tier, multi-tier analysis, and a mind map of sources, policies, and annotations." />
             </p>
           </div>
@@ -602,11 +602,11 @@ export function PrismCaseStudy() {
         {/* ── What I learned ── */}
         <Focus as="section" index={6} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
           <H1>What I learned</H1>
-          <P style={{ lineHeight: "28px", maxWidth: 570 }}>
+          <P style={{ lineHeight: "var(--lh-body, 28px)", maxWidth: 570 }}>
             Make the better choice the easier one. The job was not more AI. It was keeping source, policy, and edit in one place so
             Marcus did not have to hunt.
           </P>
-          <P style={{ lineHeight: "28px", maxWidth: 570 }}>The person still decides. The AI points; Marcus signs off.</P>
+          <P style={{ lineHeight: "var(--lh-body, 28px)", maxWidth: 570 }}>The person still decides. The AI points; Marcus signs off.</P>
         </Focus>
         </div>
 
@@ -616,7 +616,7 @@ export function PrismCaseStudy() {
             <LensDrift text="Optional reading" />
           </p>
           <H1>The research behind this</H1>
-          <P style={{ lineHeight: "28px", maxWidth: 570 }}>
+          <P style={{ lineHeight: "var(--lh-body, 28px)", maxWidth: 570 }}>
             The days we mapped, the pains we chose, the critiques that changed the work, and the calls that were mine.
           </P>
         </Focus>
@@ -635,7 +635,7 @@ export function PrismCaseStudy() {
               left={
                 <SceneCopy>
                   <H1>Two days under deadline</H1>
-                  <p className="m-0" style={{ ...T.body, lineHeight: "28px" }}>
+                  <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)" }}>
                     <LensDrift text="We combined LAS research, secondary research, benchmarks of AI document tools, and interviews. Then we mapped two of Marcus’s days." />
                   </p>
                 </SceneCopy>
@@ -661,7 +661,7 @@ export function PrismCaseStudy() {
               heading={
                 <>
                   <H1>Where the stress hits</H1>
-                  <p className="m-0" style={{ ...T.body, lineHeight: "34px", letterSpacing: "0.26px" }}>
+                  <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 34px)", letterSpacing: "0.26px" }}>
                     <LensDrift text="The journey map plots his day from stressed to relieved, and pins each pain point to the moment it happens." />
                   </p>
                 </>
@@ -671,7 +671,7 @@ export function PrismCaseStudy() {
 
           <Focus index={11} className="flex flex-col gap-[20px] w-full">
             <H1>Five pains we designed against</H1>
-            <p className="m-0" style={{ ...T.muted, fontSize: 16, lineHeight: "24px" }}>{isMobile ? "Tap" : "Hover over"} each item to see excerpts from the interviews for that area.</p>
+            <p className="m-0" style={{ ...T.muted, fontSize: "var(--fs-sec, 16px)", lineHeight: "var(--lh-sec, 24px)" }}>{isMobile ? "Tap" : "Hover over"} each item to see excerpts from the interviews for that area.</p>
             <div className="case-stack grid grid-cols-[minmax(0,630fr)_minmax(0,650fr)] gap-x-[40px] w-full items-start" style={{ marginTop: 0 }}>
               {!isMobile && <EvidencePanel painPoint={PAIN_POINTS[activePain]} />}
               <div ref={painListRef} className="relative flex flex-col gap-[24px]" style={{ paddingLeft: 20, paddingTop: 0 }}>
@@ -736,7 +736,7 @@ export function PrismCaseStudy() {
             left={
               <SceneCopy>
                 <H1>Stop adding steps. Keep the trail.</H1>
-                <p className="m-0" style={{ ...T.body, lineHeight: "28px" }}>
+                <p className="m-0" style={{ ...T.body, lineHeight: "var(--lh-body, 28px)" }}>
                   <LensDrift text="Critique pushed us off “more AI around the workflow.” The job became one place where sources, policies, and edits stay together and stay traceable across tiers." />
                 </p>
               </SceneCopy>
@@ -744,8 +744,8 @@ export function PrismCaseStudy() {
             count={TURNING_STEPS.length}
             renderStep={(i, active) => (
               <SceneStep n={i + 1} active={active}>
-                <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "28px" }}>{TURNING_STEPS[i].quote}</P>
-                <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "28px" }}>{TURNING_STEPS[i].body}</P>
+                <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "var(--lh-body, 28px)" }}>{TURNING_STEPS[i].quote}</P>
+                <P style={{ fontWeight: active ? 700 : 400, color: "inherit", lineHeight: "var(--lh-body, 28px)" }}>{TURNING_STEPS[i].body}</P>
               </SceneStep>
             )}
           />

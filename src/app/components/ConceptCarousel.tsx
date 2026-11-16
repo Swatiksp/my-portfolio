@@ -197,11 +197,11 @@ function VersionStage({ slides, onComplete, geo }: { slides: readonly Slide[]; o
         <div aria-live={reduceMotion ? "polite" : "off"} style={{ minHeight: geo.captionH, textAlign: "center" }}>
           <p
             className="m-0"
-            style={{ fontFamily: SANS, fontWeight: 600, fontSize: 12, lineHeight: "16px", letterSpacing: "1.1px", textTransform: "uppercase", color: FOREST }}
+            style={{ fontFamily: SANS, fontWeight: 600, fontSize: "var(--fs-label, 12px)", lineHeight: "var(--lh-label, 16px)", letterSpacing: "1.1px", textTransform: "uppercase", color: FOREST }}
           >
             Step {active + 1} of {slides.length} · Lo-fi wireframe
           </p>
-          <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "26px", color: INK }}>
+          <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 26px)", color: INK }}>
             {slides[active].title}
           </p>
         </div>
@@ -303,8 +303,8 @@ export function ConceptCarousel() {
               style={{
                 fontFamily: SANS,
                 fontWeight: selected ? 500 : 400,
-                fontSize: 18,
-                lineHeight: "30px",
+                fontSize: "var(--fs-body, 18px)",
+                lineHeight: "var(--lh-body, 30px)",
                 color: selected ? INK : MUTED,
                 opacity: selected ? 1 : 0.55,
                 paddingBottom: 6,
