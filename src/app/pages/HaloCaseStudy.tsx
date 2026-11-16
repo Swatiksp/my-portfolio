@@ -211,7 +211,7 @@ const FEATURES = [
   },
   {
     title: "Interactive Demos",
-    body: "Provides live previews of presentation decks for client review.",
+    body: "Lets sales execs preview the finished deck and share it with the client to review ahead of the meeting.",
     image: ideaDemos,
   },
 ];
