@@ -2,6 +2,66 @@
 @import './tailwind.css';
 @import './theme.css';
 
+/* ---- Site theme (light / dark). Light values are the site's original colours; dark flips them. The toggle lives in
+   the nav and sets html[data-theme] (see app/lib/theme.ts). Pages and components read these tokens. ---- */
+:root {
+  --ink: #000000;
+  --ink-rgb: 0, 0, 0;
+  --page: #ffffff;
+  --cream: #fbf6ec;
+  --sand: #f3e7d4;
+  --line: #e5daca;
+  --forest: #1f3d2b;
+  --btn-bg: #1f3d2b;
+  --btn-fg: #fbf6ec;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --nav-line: rgba(42, 32, 24, 0.1);
+  --ink-2: #2a2018;
+  --muted: #7b6a58;
+  --ink-55: rgba(0, 0, 0, 0.55);
+  --rule-14: rgba(0, 0, 0, 0.14);
+  --glyph: #f2ddcc;
+  --bar: #133e2b;
+  --card: #ffffff;
+  --track: rgba(31, 61, 43, 0.16);
+  --track-grey: #e4e4e4;
+  --glass: rgba(255, 255, 255, 0.5);
+  --ink-22: rgba(0, 0, 0, 0.22);
+}
+html[data-theme="dark"] {
+  --ink: #ffffff;
+  --ink-rgb: 255, 255, 255;
+  --page: #000000;
+  --cream: #0e0f11;
+  --sand: #16171a;
+  --line: rgba(255, 255, 255, 0.14);
+  --forest: #9ad4b1;
+  --btn-bg: #ffffff;
+  --btn-fg: #000000;
+  --nav-bg: rgba(0, 0, 0, 0.92);
+  --nav-line: rgba(255, 255, 255, 0.12);
+  --ink-2: #ffffff;
+  --muted: rgba(255, 255, 255, 0.62);
+  --ink-55: rgba(255, 255, 255, 0.62);
+  --rule-14: rgba(255, 255, 255, 0.18);
+  --glyph: #2b241d;
+  --bar: #9ad4b1;
+  --card: #15161a;
+  --track: rgba(255, 255, 255, 0.18);
+  --track-grey: rgba(255, 255, 255, 0.18);
+  --glass: rgba(255, 255, 255, 0.07);
+  --ink-22: rgba(255, 255, 255, 0.3);
+}
+/* black line drawings on a transparent ground: white lines in dark mode */
+html[data-theme="dark"] .theme-lineart { filter: invert(1); }
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background-color: #000000;
+  background-image: none;
+}
+
+
+
 /* Linear gradient background used across the entire site (matches the Figma Homepage frame).
    `fixed` keeps the gradient pinned to the viewport so it stays consistent while scrolling. */
 html,
@@ -766,19 +826,19 @@ body {
 .about-glyphs { position: absolute; top: var(--top); left: 0; right: 0; pointer-events: none; user-select: none; z-index: 0; height: calc(var(--g) * 7.5); }
 .about-glyph {
   display: block; flex: none; width: var(--g); height: var(--g); text-align: center; overflow: hidden;
-  font-family: 'Yarndings 12', sans-serif; font-size: var(--g); line-height: var(--g); color: #f2ddcc;
+  font-family: 'Yarndings 12', sans-serif; font-size: var(--g); line-height: var(--g); color: var(--glyph);
 }
 .about-glyph-scatter { position: absolute; }
 .about-title { position: absolute; z-index: 2; left: 50%; top: calc(var(--top) + var(--g) * 4.4 - 138px); transform: translateX(-50%); white-space: nowrap; margin: 0; } /* 58px above the photo flow: its height and a gap */
 .about-top-flow { position: relative; z-index: 1; margin: calc(var(--g) * 4.4 - 80px) auto 0; width: min(calc(var(--g) * 26), 100%); height: calc(var(--g) * 8); }
 .about-tab {
   font-family: 'Roboto', sans-serif; font-weight: 700; white-space: nowrap;
-  background: transparent; color: #000; border: 0.917px solid rgba(0,0,0,.22); cursor: default; user-select: none;
+  background: transparent; color: var(--ink); border: 0.917px solid var(--ink-22); cursor: default; user-select: none;
 }
 /* Pin 365, Creative Guns, Kuwaka Tech: small outlined pills */
 .about-tab-small { font-size: 9.172px; line-height: 18.344px; padding: 4.586px 18.344px; border-radius: 18.344px; }
 /* Accenture and NC State: where I have worked the longest. Highlighted, not buttons, and the same width. */
-.about-pill { display: inline-flex; align-items: center; justify-content: center; width: 210.756px; box-sizing: border-box; font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 13.758px; line-height: 18.344px; padding: 9.172px 18.344px; border-radius: 18.344px; background: #1f3d2b; color: #fbf6ec; cursor: default; user-select: none; }
+.about-pill { display: inline-flex; align-items: center; justify-content: center; width: 210.756px; box-sizing: border-box; font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 13.758px; line-height: 18.344px; padding: 9.172px 18.344px; border-radius: 18.344px; background: var(--btn-bg); color: var(--btn-fg); cursor: default; user-select: none; }
 @media (max-width: 767px) {
   .about-main { padding: 72px 16px 96px !important; gap: 64px !important; }
   .about-column { gap: 64px !important; }

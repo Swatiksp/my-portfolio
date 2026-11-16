@@ -105,14 +105,14 @@ export function IdeasDevelopedCards() {
               fontSize: 18,
               lineHeight: "16px",
               textTransform: "uppercase",
-              color: "rgba(0,0,0,0.42)",
+              color: "rgba(var(--ink-rgb),0.42)",
             }}
           >
             {col.title}
           </p>
           <p
             className="m-0 w-full text-center"
-            style={{ fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "22px", color: "#000000" }}
+            style={{ fontFamily: SANS, fontWeight: 400, fontSize: 16, lineHeight: "22px", color: "var(--ink)" }}
           >
             {col.note}
           </p>

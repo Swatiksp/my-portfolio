@@ -8,10 +8,11 @@ import v2Step2 from "@/assets/concepts/v2-step-2.png";
 import v2Step3 from "@/assets/concepts/v2-step-3.png";
 import { useIsMobile } from "../lib/useIsMobile";
 
-const FOREST = "#1f3d2b";
-const INK = "#000000";
-const MUTED = "#5c4a38";
-const SAND = "#f3e7d4";
+// Theme tokens (index.css) flip in dark mode.
+const FOREST = "var(--forest)";
+const INK = "var(--ink)";
+const MUTED = "var(--muted)";
+const SAND = "var(--sand)";
 const SANS = "'Roboto', sans-serif";
 
 interface Slide {
@@ -216,7 +217,7 @@ function VersionStage({ slides, onComplete, geo }: { slides: readonly Slide[]; o
               className="flex-1 border-0 bg-transparent p-0 cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{ height: 14, display: "flex", alignItems: "center", outlineColor: FOREST }}
             >
-              <span className="block w-full overflow-hidden" style={{ height: 8, borderRadius: 20, background: "rgba(31,61,43,0.16)" }}>
+              <span className="block w-full overflow-hidden" style={{ height: 8, borderRadius: 20, background: "var(--track)" }}>
                 {i < active && <span className="block w-full h-full" style={{ background: FOREST }} />}
                 {i === active && (
                   <span

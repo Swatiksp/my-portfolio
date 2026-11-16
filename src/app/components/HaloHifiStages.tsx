@@ -15,9 +15,10 @@ import macbook from "@/assets/halo/macbook-pro-14-silver.png";
 
 const MONO = "'Roboto Condensed', 'Roboto', sans-serif";
 const SANS = "'Roboto', sans-serif";
-const INK = "#000000";
-const FOREST = "#1f3d2b";
-const TRACK = "#e4e4e4";
+// Theme tokens (index.css) flip in dark mode.
+const INK = "var(--ink)";
+const FOREST = "var(--forest)";
+const TRACK = "var(--track-grey)";
 const NAV_H = 66;
 const CHROME = NAV_H + PROGRESS_BAR_HEIGHT;
 
@@ -351,7 +352,7 @@ export function HaloHifiStages() {
                         style={{
                           flex: 1,
                           background: `linear-gradient(to right, ${FOREST} ${amount * 100}%, ${TRACK} ${amount * 100}%)`,
-                          boxShadow: si < group.steps.length - 1 ? "inset -3px 0 0 #ffffff" : undefined,
+                          boxShadow: si < group.steps.length - 1 ? "inset -3px 0 0 var(--page)" : undefined,
                         }}
                       />
                     );

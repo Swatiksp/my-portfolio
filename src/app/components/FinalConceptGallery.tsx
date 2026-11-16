@@ -10,12 +10,13 @@ import s6 from "@/assets/final-concept/final-6.jpg";
 import s7 from "@/assets/final-concept/final-7.jpg";
 import s8 from "@/assets/final-concept/final-8.jpg";
 
-const FOREST = "#1f3d2b";
-const INK = "#000000";
-const MUTED = "#5c4a38";
+// Theme tokens (index.css) flip in dark mode. CREAM stays literal: it is only used on the dark lightbox overlay.
+const FOREST = "var(--forest)";
+const INK = "var(--ink)";
+const MUTED = "var(--muted)";
 const CREAM = "#fbf6ec";
-const SAND = "#f3e7d4";
-const LINE = "#e5daca";
+const SAND = "var(--sand)";
+const LINE = "var(--line)";
 const SANS = "'Roboto', sans-serif";
 
 const DWELL = 3200;
@@ -217,7 +218,7 @@ export function FinalConceptGallery() {
                     transition: "opacity 250ms ease",
                   }}
                 />
-                <span className="block w-full overflow-hidden" style={{ height: 3, borderRadius: 3, background: "rgba(31,61,43,0.16)" }}>
+                <span className="block w-full overflow-hidden" style={{ height: 3, borderRadius: 3, background: "var(--track)" }}>
                   {i < active && <span className="block w-full h-full" style={{ background: FOREST }} />}
                   {isActive && !reduceMotion && (
                     <span

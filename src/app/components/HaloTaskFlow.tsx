@@ -340,7 +340,7 @@ export function HaloTaskFlow() {
       </svg>
     </div>
       {mobile && (
-        <p className="m-0" style={{ marginTop: 10, fontFamily: FONT, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.5)", textAlign: "center" }}>
+        <p className="m-0" style={{ marginTop: 10, fontFamily: FONT, fontSize: 13, lineHeight: "18px", color: "rgba(var(--ink-rgb),0.5)", textAlign: "center" }}>
           Swipe sideways to follow both paths.
         </p>
       )}

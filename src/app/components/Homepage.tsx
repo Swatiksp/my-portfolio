@@ -1,3 +1,5 @@
+import { useTheme } from "../lib/theme";
+import { LINKEDIN_URL } from "../lib/links";
 import { CompanyMarquee } from "./CompanyMarquee";
 import { ToolMarks } from "./ToolMarks";
 import { AboutCta } from "./AboutCta";
@@ -41,8 +43,6 @@ const FONT_SANS = "'Roboto', sans-serif";
 const FONT_COND = "'Roboto Condensed', 'Roboto', sans-serif";
 const FONT_DING = "'Yarndings 12', sans-serif";
 
-// TODO: replace with the real LinkedIn profile URL.
-const LINKEDIN_URL = "https://www.linkedin.com/in/swatik-s-p-909bb9233/";
 
 const NAV_H = 66;
 const WRAPPER_SPRING = { type: "spring" as const, stiffness: 55, damping: 22 };
@@ -561,7 +561,7 @@ export function Homepage() {
 function DesktopHomepage() {
   const navigate = useNavigate();
   const [isGrid, setIsGrid] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const { dark: darkMode, toggle: toggleDark } = useTheme();
   const [aboutHover, setAboutHover] = useState(false); // hovering the footer ABOUT ME button lights up ABOUT in the nav
   const [wolf, setWolf] = useState(false); // easter egg: hovering GOWOLFPACK swaps the glyph for a wolf
   const wolfRef = useRef<HTMLDivElement>(null);
@@ -698,7 +698,7 @@ function DesktopHomepage() {
           <div className="flex items-center gap-[40px]">
             <button
               type="button"
-              onClick={() => setDarkMode((v) => !v)}
+              onClick={toggleDark}
               className="hover:opacity-60 transition-opacity"
               style={navLinkStyle}
               aria-pressed={darkMode}

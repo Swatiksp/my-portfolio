@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
    page scrolls. Hidden on narrow windows where they would run into the content. */
 
 const GLYPHS = ["q", "k", "r", "s"];
-const COLOR = "#f2ddcc";
+const COLOR = "var(--glyph)"; // theme token: cream in light, a faint warm dark in dark mode
 const SIZE = 61.2;
 const NAV_H = 66;
 const COLUMN_W = 70;
