@@ -266,7 +266,7 @@ export function AboutPage() {
               <TypeInView text="Let’s Connect!" />
             </h2>
             <div className="flex flex-wrap justify-center" style={{ gap: 12 }}>
-              <a href={RESUME_URL} className="hover:opacity-85 transition-opacity" style={{ ...button, background: FOREST, color: CREAM }}>
+              <a href={RESUME_URL} target="_blank" rel="noopener noreferrer" className="hover:opacity-85 transition-opacity" style={{ ...button, background: FOREST, color: CREAM }}>
                 RESUME
               </a>
               <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity" style={{ ...button, background: "transparent", color: FOREST }}>

@@ -1,5 +1,5 @@
 import { useTheme } from "../lib/theme";
-import { LINKEDIN_URL } from "../lib/links";
+import { LINKEDIN_URL, RESUME_URL } from "../lib/links";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import linkedInIcon from "@/imports/Frame7/b9ce6f119974543779bbcad7563e234be8edd900.png";
@@ -119,7 +119,7 @@ export function MobileHomepage() {
           <button type="button" onClick={() => goTo("work")} style={navLink}>
             WORK
           </button>
-          <button type="button" style={{ ...button, padding: "8px 12px", fontSize: 12 }}>
+          <button type="button" onClick={() => window.open(RESUME_URL, "_blank", "noopener,noreferrer")} style={{ ...button, padding: "8px 12px", fontSize: 12 }}>
             RESUME
           </button>
         </div>

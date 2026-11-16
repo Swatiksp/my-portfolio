@@ -14,32 +14,32 @@ const MEDIA_H = 757;
 const VIDEOS = [
   {
     title: "Report Queue",
-    src: "/videos/final-outcomes/report-queue.mov",
+    src: "/videos/final-outcomes/report-queue.mp4",
     copy: "High-priority and recent reports, sorted and filterable by status, so the next edit is the one that is actually due.",
   },
   {
     title: "Infinite Canvas",
-    src: "/videos/final-outcomes/infinite-canvas.mov",
+    src: "/videos/final-outcomes/infinite-canvas.mp4",
     copy: "Sources on the left, the report in the middle, edits and flags on the right. Tiers sit in space so matching passages stay on screen.",
   },
   {
     title: "Multi-Tier Analysis",
-    src: "/videos/final-outcomes/multi-tier-analysis.mov",
+    src: "/videos/final-outcomes/multi-tier-analysis.mp4",
     copy: "The same finding, rewritten for each clearance. A change on one tier flags the others before a source leaks.",
   },
   {
     title: "Mind Map View",
-    src: "/videos/final-outcomes/mind-map-view.mov",
+    src: "/videos/final-outcomes/mind-map-view.mp4",
     copy: "Sources, policies, and annotations as a map, so Marcus can see how a sentence is grounded before he signs off.",
   },
   {
     title: "Policy Search Engine",
-    src: "/videos/final-outcomes/policy-search-engine.mov",
+    src: "/videos/final-outcomes/policy-search-engine.mp4",
     copy: "Search that returns the policy and the reason, not just a keyword hit, with a path back from the flag.",
   },
   {
     title: "Timeline",
-    src: "/videos/final-outcomes/timeline-1.mov",
+    src: "/videos/final-outcomes/timeline-1.mp4",
     copy: "How the report moved: who touched it, what changed, and when the deadline actually is.",
   },
 ] as const;

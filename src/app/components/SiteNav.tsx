@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { useNavigate } from "react-router";
 import logoMark from "@/assets/logo/logo.svg";
 import { useTheme } from "../lib/theme";
+import { RESUME_URL } from "../lib/links";
 
 const COND = "'Roboto Condensed', 'Roboto', sans-serif";
 
@@ -77,6 +78,7 @@ export function SiteNav({ current, dark: darkOverride = false }: { current?: "wo
         </button>
         <button
           type="button"
+          onClick={() => window.open(RESUME_URL, "_blank", "noopener,noreferrer")}
           className="site-nav-btn hover:opacity-85 transition-opacity"
           style={{ background: "var(--btn-bg)", color: "var(--btn-fg)", fontFamily: COND, fontWeight: 700, fontSize: 14, lineHeight: "24px", letterSpacing: "1.12px", borderRadius: 4, border: "none", padding: "10px 20px", cursor: "pointer", whiteSpace: "nowrap" }}
         >

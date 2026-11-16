@@ -1,5 +1,5 @@
 import { useTheme } from "../lib/theme";
-import { LINKEDIN_URL } from "../lib/links";
+import { LINKEDIN_URL, RESUME_URL } from "../lib/links";
 import { CompanyMarquee } from "./CompanyMarquee";
 import { ToolMarks } from "./ToolMarks";
 import { AboutCta } from "./AboutCta";
@@ -731,7 +731,7 @@ function DesktopHomepage() {
             >
               ABOUT
             </a>
-            <button className="hover:opacity-85 transition-opacity" style={primaryButton}>
+            <button type="button" onClick={() => window.open(RESUME_URL, "_blank", "noopener,noreferrer")} className="hover:opacity-85 transition-opacity" style={primaryButton}>
               VIEW RESUME
             </button>
           </div>
