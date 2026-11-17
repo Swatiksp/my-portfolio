@@ -18,12 +18,6 @@ import { HaloTaskFlow } from "../components/HaloTaskFlow";
 import { HaloHifiStages } from "../components/HaloHifiStages";
 import alexPhoto from "@/assets/halo/personas/alex.jpg";
 import haliePhoto from "@/assets/halo/personas/halie.jpg";
-import ideaSuggestions from "@/assets/halo/ideas/ai-powered-suggestions.png";
-import ideaTemplates from "@/assets/halo/ideas/industry-specific-templates.png";
-import ideaCollaboration from "@/assets/halo/ideas/real-time-collaboration.png";
-import ideaQuery from "@/assets/halo/ideas/natural-language-query.png";
-import ideaPerformance from "@/assets/halo/ideas/performance-optimization.png";
-import ideaDemos from "@/assets/halo/ideas/interactive-demos.png";
 
 const C = {
   forest: "var(--forest)",
@@ -185,42 +179,17 @@ const PROBLEM_STEPS = [
 
 const FEATURES = [
   {
-    title: "AI-Powered Suggestions",
-    body: "Contextual recommendations for slides, content, and visuals based on client inputs.",
-    image: ideaSuggestions,
+    title: "Conversation to deck",
+    body: "Copilot turns a client conversation into an industry-specific sales deck.",
   },
   {
-    title: "Industry-Specific Templates",
-    body: "Pre-designed templates tailored for various industries (e.g., healthcare, finance).",
-    image: ideaTemplates,
+    title: "Four conversational tones",
+    body: "Copilot's existing tones, narrowed to the four testers preferred: Wave, Grove, Canyon and Meadow.",
   },
   {
-    title: "Real-Time Collaboration",
-    body: "Allows sales teams to share decks and receive feedback from clients instantly.",
-    image: ideaCollaboration,
+    title: "Three paths from client data to a prompt",
+    body: "Three flows that take what the executive knows about the client and turn it into a prompt.",
   },
-  {
-    title: "Natural Language Query Support",
-    body: "Users can describe what they need, and MS Copilot generates relevant slides.",
-    image: ideaQuery,
-  },
-  {
-    title: "Performance Optimization",
-    body: "Minimal memory usage ensures smooth operation across devices.",
-    image: ideaPerformance,
-  },
-  {
-    title: "Interactive Demos",
-    body: "Lets sales execs preview the finished deck and share it with the client to review ahead of the meeting.",
-    image: ideaDemos,
-  },
-];
-
-const SALES_USE = [
-  "Halo Conversations sits in Microsoft Showcase as a Copilot-native workspace. Sales executives can take a client conversation and generate a deck tailored to that account — without leaving the Microsoft stack.",
-  "Copilot’s conversational interface streamlines gathering requirements. Executives describe the client in natural language instead of assembling slides by hand, so the first draft is already specific to the industry and the meeting ahead.",
-  "Forms let them refine those inputs — industry, offerings, constraints — before anything lands in PowerPoint. That extra pass on client needs means less time spent on decks that still miss the brief.",
-  "Design and content stay in one place. The team walks into the client conversation with a presentation built for that account, not a generic template.",
 ];
 
 type Persona = {
@@ -605,12 +574,6 @@ export function HaloCaseStudy() {
                     className="flex flex-col items-start"
                     style={{ gap: 12, background: C.cream, borderRadius: 15, padding: 20, minHeight: 160 }}
                   >
-                    <img decoding="async"
-                      src={feat.image}
-                      alt={feat.title}
-                      className="block theme-lineart"
-                      style={{ width: "100%", maxWidth: 320, height: "auto", alignSelf: "center", objectFit: "contain" }}
-                    />
                     <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 24px)", color: C.ink }}>
                       <LensDrift text={feat.title} />
                     </p>
@@ -646,11 +609,25 @@ export function HaloCaseStudy() {
 
             <Focus as="section" index={7} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
               <H1>How it helped sales executives</H1>
-              {SALES_USE.map((para) => (
-                <P key={para} style={{ lineHeight: "28px", maxWidth: 570 }}>
-                  {para}
-                </P>
-              ))}
+              <p
+                className="m-0"
+                style={{
+                  fontFamily: T.heading1.fontFamily,
+                  fontWeight: 400,
+                  fontSize: "clamp(64px, 11vw, 112px)",
+                  lineHeight: 1,
+                  letterSpacing: "-0.02em",
+                  color: C.forest,
+                }}
+              >
+                {revealText("4+ → 1–2")}
+              </p>
+              <p className="m-0" style={{ ...T.metaLabel, textTransform: "none", letterSpacing: "0.2px", fontWeight: 500, fontSize: "var(--fs-sec, 15px)", lineHeight: "var(--lh-sec, 20px)", marginTop: -8 }}>
+                {revealText("client meetings per deck, in testing (7 testers)")}
+              </p>
+              <P style={{ lineHeight: "28px", maxWidth: 570 }}>
+                Executives describe the client in plain language and Copilot drafts a deck for that industry. In testing, client back-and-forth dropped from 4+ meetings, each days apart, to 1–2. Client turnaround time dropped by 70% in usability testing.
+              </P>
             </Focus>
           </div>
         </motion.main>
