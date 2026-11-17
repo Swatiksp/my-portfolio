@@ -17,6 +17,10 @@ import { ConceptScrollStory } from "../components/ConceptScrollStory";
 import { ScreensGallery } from "../components/ScreensGallery";
 import { PainClusters } from "../components/ResearchStory";
 import stakeholderMap from "@/assets/research/stakeholder-map.webp";
+import stakeholderMapSvg from "@/assets/research/stakeholder-map.svg";
+import ecosystemMapSvg from "@/assets/research/ecosystem-map.svg";
+import journeyMapSvg from "@/assets/research/journey-map.svg";
+import userFlowSvg from "@/assets/research/user-flow.svg";
 import ecosystemMap from "@/assets/research/ecosystem-map.webp";
 import journeyMap from "@/assets/research/journey-map.webp";
 import lifecycle from "@/assets/research/lifecycle.png";
@@ -709,12 +713,12 @@ export function ProductSCaseStudy() {
               <ProblemDeck />
 
               <MapBlock
-                title="Stakeholder map"
+                title="User journey"
                 paragraphs={[
-                  "Showed why I focused on senior engineers: they run spec development, while principals hand it down and juniors don’t call the shots.",
+                  "Mapped the actions, needs, pain points and gain points of a senior software engineer’s workflow.",
                 ]}
               >
-                <ExpandableImage src={stakeholderMap} alt="Stakeholder map" width={2800} height={2030} />
+                <ExpandableImage src={journeyMap} svgSrc={journeyMapSvg} alt="User journey map: The Conductor" width={3446} height={4096} />
               </MapBlock>
               <div className="grid w-full max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
                 <MapBlock
@@ -723,15 +727,15 @@ export function ProductSCaseStudy() {
                     "Showed the tools, people, processes and props around each stage of specification-driven development, and where my idea sits in that lifecycle.",
                   ]}
                 >
-                  <ExpandableImage src={ecosystemMap} alt="Ecosystem map" width={2800} height={2800} />
+                  <ExpandableImage src={ecosystemMap} svgSrc={ecosystemMapSvg} alt="Ecosystem map" width={3498} height={4096} />
                 </MapBlock>
                 <MapBlock
-                  title="User journey"
+                  title="Stakeholder map"
                   paragraphs={[
-                    "Mapped the actions, needs, pain points and gain points of a senior software engineer’s workflow.",
+                    "Showed why I focused on senior engineers: they run spec development, while principals hand it down and juniors don’t call the shots.",
                   ]}
                 >
-                  <ExpandableImage src={journeyMap} alt="User journey map: The Conductor" width={2857} height={3200} />
+                  <ExpandableImage src={stakeholderMap} svgSrc={stakeholderMapSvg} alt="Stakeholder map" width={2240} height={3226} />
                 </MapBlock>
               </div>
               <P style={{ lineHeight: "var(--lh-body, 28px)", maxWidth: 570 }}>
@@ -764,9 +768,10 @@ export function ProductSCaseStudy() {
               </div>
               <ExpandableImage
                 src={userFlow}
+                svgSrc={userFlowSvg}
                 alt="User flow: the prototype as it is now (Review list model, Version 23)"
-                width={3700}
-                height={2900}
+                width={3163}
+                height={2233}
                 caption="The final user flow."
               />
 
