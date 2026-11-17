@@ -6,3 +6,7 @@
 # Videos keep the same file name, so cache them for a day.
 /videos/*
   Cache-Control: public, max-age=86400
+
+# The resume keeps the same file name, so always re-check for a newer copy.
+/Swatik-Parthasarathy-Resume.pdf
+  Cache-Control: public, max-age=0, must-revalidate
