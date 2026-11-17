@@ -309,7 +309,7 @@ body {
   transform: translateX(-50%) perspective(110cqw) translateY(0) rotateX(0) rotateY(0);
   transform-origin: 50% 100%;
   padding: 0.9cqw;
-  border-radius: 2.6cqw;
+  border-radius: 1.2cqw;
   /* fills any gap under a shorter screen so no light strip shows while it moves */
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -320,14 +320,14 @@ body {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 1.8cqw;
+  border-radius: 0.4cqw;
   pointer-events: none;
 }
 .poster-shot::after {
   content: "";
   position: absolute;
   inset: 0.9cqw;
-  border-radius: 1.8cqw;
+  border-radius: 0.4cqw;
   pointer-events: none;
   background: radial-gradient(circle at var(--px) var(--py), rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0) 55%);
   opacity: 0;
@@ -355,6 +355,10 @@ body {
   padding: 0;
   border-radius: 50%;
   line-height: 0;
+}
+.mobile-notice,
+.mobile-notice * {
+  cursor: none !important;
 }
 .poster-screen-note {
   /* centred in the part of the screen that shows: from the top of the frame to the bottom edge of the card */
@@ -598,11 +602,11 @@ body {
   display: flex; flex-direction: column; align-items: flex-start; gap: 20px; color: #fff;
 }
 .case-hero-shot {
-  position: absolute; z-index: 4; left: 38cqw; top: 6.5cqw; width: 66cqw; padding: 0.55cqw; border-radius: 1.3cqw;
+  position: absolute; z-index: 4; left: 38cqw; top: 6.5cqw; width: 66cqw; padding: 0.55cqw; border-radius: 0.7cqw;
   background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); box-shadow: 0 0 22px rgba(0,0,0,.32);
   transition: transform .7s cubic-bezier(.22,.7,.2,1);
 }
-.case-hero-shot img { display: block; width: 100%; height: auto; border-radius: 0.9cqw; }
+.case-hero-shot img { display: block; width: 100%; height: auto; border-radius: 0.25cqw; }
 .case-hero:hover .case-hero-shot { transform: translate(-1.2cqw, -1cqw) scale(1.02); }
 .case-hero-pill {
   white-space: nowrap; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3); color: #fff;
@@ -610,8 +614,8 @@ body {
 }
 @container (max-width: 700px) {
   .case-hero { aspect-ratio: auto; min-height: 118cqw; }
-  .case-hero-shot { left: 8cqw; top: 10cqw; width: 110cqw; padding: 5px; border-radius: 10px; }
-  .case-hero-shot img { border-radius: 6px; }
+  .case-hero-shot { left: 8cqw; top: 10cqw; width: 110cqw; padding: 5px; border-radius: 6px; }
+  .case-hero-shot img { border-radius: 2px; }
   .case-hero-shade { background: radial-gradient(ellipse 150cqw 110cqw at 0% 100%, rgba(5,8,12,.94) 32%, rgba(5,8,12,.7) 50%, rgba(5,8,12,0) 82%); }
   .case-hero-copy { right: 14px; left: 14px; bottom: 14px; width: auto; }
 }
