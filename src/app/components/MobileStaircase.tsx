@@ -183,19 +183,17 @@ export function MobileWork({
   const stackTop = heroBottom + gapEach;
   const layouts = buildLayouts(w, stackTop);
 
-  // Scroll budget: one stretch for the turn-over, then the column scrolling under the title, then the release.
-  const contentH = hS - NAV_H;
+  // Scroll budget: the stage is pinned for one stretch while the tiles turn over. After that it is released and the
+  // column of cards is ordinary page content, scrolled by the browser itself (a column moved by script on every scroll
+  // event is what made the phone stutter). The spacer below the stage is the room the column needs.
   const animEnd = hS * 1.1;
-  const maxGridScroll = Math.max(0, layouts.gridTotalH - contentH + 40);
-  const maxScrollY = animEnd + maxGridScroll * 1.1;
-  const wrapperH = maxScrollY + hL;
+  const pinH = animEnd + hL;
+  const tailH = Math.max(0, layouts.gridTotalH - hL) + 56;
 
-  // 0..1 across the pinned stretch; the maths below wants pixels
-  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
-  const pinned = wrapperH - hL;
-  const px = useTransform(scrollYProgress, (v) => v * pinned);
-  const progress = useTransform(px, [0, animEnd], [0, 1], { clamp: true });
-  const gridScroll = useTransform(px, [animEnd, maxScrollY], [0, -maxGridScroll], { clamp: true });
+  // 0..1 across the pinned stretch
+  const pinTop = useRef(0);
+  const { scrollY } = useScroll();
+  const progress = useTransform(scrollY, (y) => Math.min(1, Math.max(0, (y - pinTop.current) / animEnd)));
 
   const heroOpacity = useTransform(progress, [0, 0.28], [1, 0]);
   const heroX = useTransform(progress, [0, 0.28], [0, -60]);
@@ -210,11 +208,13 @@ export function MobileWork({
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    workScrollRef.current = el.getBoundingClientRect().top + window.scrollY + animEnd;
+    pinTop.current = el.getBoundingClientRect().top + window.scrollY;
+    workScrollRef.current = pinTop.current + animEnd;
   });
 
   return (
-    <div ref={wrapRef} id="work" style={{ height: wrapperH }}>
+    <div id="work">
+    <div ref={wrapRef} style={{ height: pinH, position: "relative" }}>
       <div ref={stageRef} className="m-stair-stage" data-compact={tier > 0 ? String(tier) : undefined}>
         <div ref={probeRef} aria-hidden className="m-stair-probe" />
 
@@ -246,7 +246,7 @@ export function MobileWork({
           </p>
         </motion.div>
 
-        <motion.div className="absolute inset-0" style={{ y: gridScroll, pointerEvents: "none" }}>
+        <div className="absolute inset-0" style={{ pointerEvents: "none" }}>
           <motion.h2
             initial={false}
             className="absolute m-0"
@@ -280,8 +280,10 @@ export function MobileWork({
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
+    </div>
+    <div aria-hidden style={{ height: tailH }} />
     </div>
   );
 }
@@ -388,10 +390,11 @@ function MobileTile({
     return () => controls.stop();
   }, [isGrid]);
   const backAngle = useTransform(flip, (v) => v + 180);
-  const frontShown = useTransform(flip, (v) => (v < 90 ? 1 : 0));
-  const backShown = useTransform(flip, (v) => (v < 90 ? 0 : 1));
-  const frontFlip = { rotateY: flip, transformPerspective: 1200, opacity: frontShown };
-  const backFlip = { rotateY: backAngle, transformPerspective: 1200, opacity: backShown };
+  // The face turned away is hidden outright, so the phone never paints a second, invisible card under the first.
+  const frontShown = useTransform(flip, (v) => (v < 90 ? "visible" : "hidden"));
+  const backShown = useTransform(flip, (v) => (v < 90 ? "hidden" : "visible"));
+  const frontFlip = { rotateY: flip, transformPerspective: 1200, visibility: frontShown };
+  const backFlip = { rotateY: backAngle, transformPerspective: 1200, visibility: backShown };
 
   const pad = heroPad(from.width);
   const radius = heroRadius(from.width);

@@ -919,7 +919,7 @@ body {
   top: 0;
   height: 100vh;
   height: 100lvh;
-  overflow: hidden;
+  /* visible: after the pin is released the cards scroll with the page, past the bottom of this box */
 }
 /* the screen with Safari's toolbars showing, which the intro, tiles and hint are laid out for */
 .m-stair-probe {
