@@ -911,3 +911,16 @@ body {
   .about-title { top: calc(var(--top) + var(--g) * 7.5 - 38px); }
   .about-top-flow { margin-top: calc(var(--g) * 7.5 + 20px); width: 100%; height: 280px; }
 }
+
+/* Phone homepage: the pinned stage. It sticks to the screen while the tiles turn over and the cards scroll. vh first,
+   then svh, so Safari's collapsing toolbar can't change its size mid-scroll. */
+.m-stair-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.m-stair-stage[data-compact] .m-hero-marquee {
+  display: none;
+}

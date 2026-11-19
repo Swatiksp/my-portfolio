@@ -1,21 +1,15 @@
 import { useTheme } from "../lib/theme";
 import { LINKEDIN_URL, RESUME_URL } from "../lib/links";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 import linkedInIcon from "@/imports/Frame7/b9ce6f119974543779bbcad7563e234be8edd900.png";
 import logoMark from "@/assets/logo/logo.svg";
-import { PROJECTS, isOpenable } from "../data/projects";
-import { useIsMobile } from "../lib/useIsMobile";
+import { MobileWork } from "./MobileStaircase";
+import { GlyphCursorTrail } from "./GlyphCursorTrail";
 import { CompanyMarquee } from "./CompanyMarquee";
 import { ToolMarks } from "./ToolMarks";
 import { AboutCta } from "./AboutCta";
 import { TypeIn } from "./TypeIn";
-import { PrismCraftCard } from "./PrismCraftCard";
-import { HaloCraftCard } from "./HaloCraftCard";
-import { ProjectSCraftCard } from "./ProjectSCraftCard";
-import { ThesisCraftCard } from "./ThesisCraftCard";
-import { ShowcaseCraftCard } from "./ShowcaseCraftCard";
-import { GearsIcon } from "./GearsIcon";
 
 /* The phone layout of the homepage (iPhone width and below). The desktop page is a pinned, scroll-driven staircase of
    tiles; on a phone the same story is one calm column: intro, the work as stacked cards, then the closing and footer.
@@ -26,8 +20,6 @@ const FONT_SANS = "'Roboto', sans-serif";
 const FONT_COND = "'Roboto Condensed', 'Roboto', sans-serif";
 const FONT_DING = "'Yarndings 12', sans-serif";
 const SERIF = "'Newsreader', 'Iowan Old Style', Georgia, serif";
-
-const CRAFT = new Set(["prism", "halo-conversations", "project-s", "thesis", "microsoft-showcase"]);
 
 export function MobileHomepage() {
   const navigate = useNavigate();
@@ -86,18 +78,73 @@ export function MobileHomepage() {
     whiteSpace: "nowrap",
   } as const;
 
-  const goTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  // Where the work column is fully in place (set by the pinned stage)
+  const workTop = useRef(0);
+  const goTo = (id: string) => {
+    if (id === "work") window.scrollTo({ top: workTop.current, behavior: "smooth" });
+    else document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   // arriving from another page's WORK link (/#work)
   const { hash } = useLocation();
   useEffect(() => {
     if (hash !== "#work") return;
-    const id = requestAnimationFrame(() => document.getElementById("work")?.scrollIntoView({ block: "start" }));
+    const id = requestAnimationFrame(() => window.scrollTo({ top: workTop.current }));
     return () => cancelAnimationFrame(id);
   }, [hash]);
 
+  const hero = (
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div className="flex flex-col" style={{ gap: 12 }}>
+          <div className="flex flex-col" style={{ gap: 14 }}>
+            <p className="m-0" style={{ fontWeight: 700, fontSize: 17, lineHeight: "26px", color: heading }}>
+              <TypeIn text="Glad you’re here!" />
+            </p>
+            <p
+              className="m-0"
+              style={{ fontFamily: SERIF, fontOpticalSizing: "auto", fontWeight: 700, fontSize: 40, lineHeight: "44px", letterSpacing: "-0.02em", color: heading }}
+            >
+              <TypeIn text="I’m Swatik" />
+            </p>
+          </div>
+          <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
+            <TypeIn text="Designing digital systems and the relationships people have with them, through product and interaction design." />
+          </p>
+        </div>
+
+        <div className="m-hero-marquee"><CompanyMarquee dark={dark} /></div>
+
+        <div className="flex flex-col" style={{ gap: 20 }}>
+          <div className="flex flex-col" style={{ gap: 3 }}>
+            <p className="m-0" style={{ fontWeight: 700, fontSize: 15, color: heading }}>
+              <TypeIn text="Previously designed at" />
+            </p>
+            <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
+              <TypeIn text="Accenture Microsoft Business Group" />
+            </p>
+          </div>
+          <div className="flex flex-col" style={{ gap: 3 }}>
+            <p className="m-0" style={{ fontWeight: 700, fontSize: 15, color: heading }}>
+              <TypeIn text="Currently Studying at" />
+            </p>
+            <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
+              <TypeIn text="North Carolina State University" />
+            </p>
+            <p className="m-0 flex items-center uppercase" style={{ gap: 6, fontFamily: FONT_COND, fontWeight: 700, fontSize: 17, color: copy }}>
+              <span aria-hidden style={{ display: "inline-block", transform: "rotate(45deg)", fontFamily: FONT_DING, fontWeight: 400, fontSize: 17, lineHeight: 1 }}>
+                H
+              </span>
+              <TypeIn text="gowolfpack!" />
+            </p>
+          </div>
+        </div>
+    </div>
+  );
+
   return (
     <div className={`w-full${dark ? " home-dark" : ""}`} style={{ fontFamily: FONT_SANS, background: dark ? "#000000" : "#ffffff", color: copy, overflowX: "clip" }}>
+      <GlyphCursorTrail />
+
       {/* Nav */}
       <nav
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between"
@@ -129,151 +176,9 @@ export function MobileHomepage() {
         </div>
       </nav>
 
-      {/* Intro */}
-      <section style={{ padding: "108px 24px 56px", display: "flex", flexDirection: "column", gap: 28 }}>
-        <div className="flex flex-col" style={{ gap: 12 }}>
-          <div className="flex flex-col" style={{ gap: 14 }}>
-            <p className="m-0" style={{ fontWeight: 700, fontSize: 17, lineHeight: "26px", color: heading }}>
-              <TypeIn text="Glad you’re here!" />
-            </p>
-            <p
-              className="m-0"
-              style={{ fontFamily: SERIF, fontOpticalSizing: "auto", fontWeight: 700, fontSize: 40, lineHeight: "44px", letterSpacing: "-0.02em", color: heading }}
-            >
-              <TypeIn text="I’m Swatik" />
-            </p>
-          </div>
-          <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
-            <TypeIn text="Designing digital systems and the relationships people have with them, through product and interaction design." />
-          </p>
-        </div>
-
-        <CompanyMarquee dark={dark} />
-
-        <div className="flex flex-col" style={{ gap: 20 }}>
-          <div className="flex flex-col" style={{ gap: 3 }}>
-            <p className="m-0" style={{ fontWeight: 700, fontSize: 15, color: heading }}>
-              <TypeIn text="Previously designed at" />
-            </p>
-            <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
-              <TypeIn text="Accenture Microsoft Business Group" />
-            </p>
-          </div>
-          <div className="flex flex-col" style={{ gap: 3 }}>
-            <p className="m-0" style={{ fontWeight: 700, fontSize: 15, color: heading }}>
-              <TypeIn text="Currently Studying at" />
-            </p>
-            <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
-              <TypeIn text="North Carolina State University" />
-            </p>
-            <p className="m-0 flex items-center uppercase" style={{ gap: 6, fontFamily: FONT_COND, fontWeight: 700, fontSize: 17, color: copy }}>
-              <span aria-hidden style={{ display: "inline-block", transform: "rotate(45deg)", fontFamily: FONT_DING, fontWeight: 400, fontSize: 17, lineHeight: 1 }}>
-                H
-              </span>
-              <TypeIn text="gowolfpack!" />
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* The work */}
-      <section id="work" style={{ padding: "8px 24px 72px", scrollMarginTop: 72 }}>
-        <h2 className="m-0" style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 40, lineHeight: "44px", letterSpacing: "-0.02em", color: heading }}>
-          My Craft
-        </h2>
-        <p className="m-0" style={{ marginTop: 8, fontFamily: FONT_COND, fontSize: 15, lineHeight: "22px", color: muted }}>
-          Each tile represents a body of work.
-        </p>
-        <div className="flex flex-col" style={{ gap: 28, marginTop: 28 }}>
-          {PROJECTS.map((project) => {
-            const craft = CRAFT.has(project.slug);
-            const open = isOpenable(project);
-            const go = () => {
-              if (open) navigate(`/projects/${project.slug}`);
-            };
-            return (
-              <div key={project.slug} className="flex flex-col" style={{ gap: 12 }}>
-                <div
-                  onClick={go}
-                  {...(open ? { role: "link", tabIndex: 0, onKeyDown: (e: { key: string }) => (e.key === "Enter" ? go() : undefined), "aria-label": `Open ${project.title}` } : {})}
-                  style={{
-                    background: "rgba(255,255,255,0.55)",
-                    border: "1px solid rgba(255,255,255,0.9)",
-                    borderRadius: 20,
-                    padding: 20,
-                    boxSizing: "border-box",
-                    boxShadow: dark ? "none" : "0px 16px 20px rgba(89,51,13,0.24)",
-                    cursor: open ? "pointer" : "default",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  {craft ? (
-                    <div
-                      className="poster-mobile"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        aspectRatio: "100 / 92",
-                        borderRadius: 15,
-                        overflow: "hidden",
-                        boxShadow: dark ? "none" : "0px 2px 7px 5px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      {project.slug === "prism" ? (
-                        <PrismCraftCard />
-                      ) : project.slug === "project-s" ? (
-                        <ProjectSCraftCard />
-                      ) : project.slug === "thesis" ? (
-                        <ThesisCraftCard />
-                      ) : project.slug === "microsoft-showcase" ? (
-                        <ShowcaseCraftCard />
-                      ) : (
-                        <HaloCraftCard />
-                      )}
-                    </div>
-                  ) : (
-                    <>
-                      <img decoding="async"
-                        src={dark ? project.frost : project.image}
-                        alt=""
-                        draggable={false}
-                        style={{ display: "block", width: "100%", aspectRatio: "16 / 9", objectFit: "cover", borderRadius: 15, boxShadow: dark ? "none" : "0px 2px 7px 5px rgba(0,0,0,0.1)" }}
-                      />
-                      <div className="flex flex-col" style={{ gap: 10, paddingTop: 16 }}>
-                        <span style={{ fontWeight: 500, fontSize: 22, lineHeight: 1.1, color: heading }}>{project.title}</span>
-                        <p className="m-0" style={{ fontSize: 15, lineHeight: "1.45", color: dark ? "rgba(255,255,255,0.82)" : COLORS.ink }}>
-                          {project.desc}
-                        </p>
-                        <div className="flex flex-wrap" style={{ gap: 8 }}>
-                          {project.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              style={{ padding: "5px 10px", borderRadius: 4, background: dark ? "rgba(255,255,255,0.12)" : "rgba(31,61,43,0.08)", color: dark ? "#fff" : COLORS.forest, fontWeight: 500, fontSize: 12 }}
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-                {craft && !open && (
-                  <span style={{ ...navLink, alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 10, padding: "4px 2px", color: muted, cursor: "default" }}>
-                    <GearsIcon size={20} /> CASE STUDY IN PROGRESS
-                  </span>
-                )}
-                {craft && open && (
-                  <button type="button" onClick={go} style={{ ...navLink, alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 8, padding: "4px 2px" }}>
-                    VIEW CASE STUDY <span aria-hidden>→</span>
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
+      {/* The pinned stage: the intro over the staircase of tiles, which turn over into the craft cards as you scroll
+          (the same behaviour as the desktop page, Figma 1102:2210) */}
+      <MobileWork hero={hero} dark={dark} heading={heading} copy={copy} muted={muted} link={navLink} onOpen={(slug) => navigate(`/projects/${slug}`)} workScrollRef={workTop} />
 
       {/* Footer */}
       <footer style={{ padding: "48px 24px 28px", borderTop: `1px solid ${line}`, display: "flex", flexDirection: "column", gap: 40 }}>

@@ -6,7 +6,11 @@ import { useEffect, useRef } from "react";
    wake lags behind the pointer and fades over about a second; a resting pointer leaves nothing behind.
 
    The items are glyphs from Yarndings 12 (Figma "Yarndings 12", node 779:1481): q, k, r and s, in #f2ddcc. Each cell
-   always shows the same glyph, picked from the four. */
+   always shows the same glyph, picked from the four.
+
+   On a touch screen there is no cursor, so scrolling does the waking: the pattern follows the finger while it drags
+   the page (or the middle of the screen when nothing is touching it), swells with how fast the page is moving, and
+   fades once it stops. */
 
 const GLYPHS = ["q", "k", "r", "s"] as const;
 const COLOR = "#f2ddcc";
@@ -30,10 +34,11 @@ export function GlyphCursorTrail() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Hover-capable pointers only, and nothing for people who ask for less motion.
+    // A mouse or trackpad wakes it by moving; a touch screen wakes it by scrolling. Nothing for people who ask for less motion.
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!fine.matches || reduce.matches) return;
+    const touch = !fine.matches;
+    if (reduce.matches) return;
 
     let cells: Cell[] = [];
     let spacing = 44;
@@ -47,6 +52,9 @@ export function GlyphCursorTrail() {
 
     const pointer = { x: 0, y: 0, seen: false };
     const wake = { x: 0, y: 0 };
+    let scrollDrive = 0; // touch screens: how fast the page is moving, 0..1
+    let lastScrollY = window.scrollY;
+    let lastScrollAt = 0;
 
     const layout = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -91,7 +99,8 @@ export function GlyphCursorTrail() {
       wake.x += (pointer.x - wake.x) * k;
       wake.y += (pointer.y - wake.y) * k;
       const speed = Math.hypot(wake.x - prevX, wake.y - prevY) / (dt * 60);
-      const drive = clamp(speed / 5, 0, 1);
+      scrollDrive *= Math.exp(-dt / 0.25);
+      const drive = Math.max(clamp(speed / 5, 0, 1), scrollDrive);
 
       const reach = spacing * REACH_CELLS;
       const decay = Math.exp(-dt / FADE_SECONDS);
@@ -128,7 +137,7 @@ export function GlyphCursorTrail() {
       ctx.globalAlpha = 1;
 
       // Keep running while the wake is still moving or fading; otherwise sleep until the next mouse move.
-      if (any || drive > 0.01 || Math.hypot(pointer.x - wake.x, pointer.y - wake.y) > 0.5) {
+      if (any || drive > 0.01 || scrollDrive > 0.01 || Math.hypot(pointer.x - wake.x, pointer.y - wake.y) > 0.5) {
         raf = requestAnimationFrame(frame);
       }
     };
@@ -159,6 +168,37 @@ export function GlyphCursorTrail() {
       wakeUp();
     };
 
+    // Touch screens: the pattern rides on the finger while it drags, and on the page's own speed afterwards.
+    const onTouch = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      pointer.x = t.clientX;
+      pointer.y = t.clientY;
+      if (!pointer.seen) {
+        pointer.seen = true;
+        wake.x = t.clientX;
+        wake.y = t.clientY;
+      }
+      wakeUp();
+    };
+    const onScroll = () => {
+      const now = performance.now();
+      const dy = Math.abs(window.scrollY - lastScrollY);
+      const dt = Math.max(8, now - lastScrollAt);
+      lastScrollY = window.scrollY;
+      lastScrollAt = now;
+      // px per ms: a slow drag is about 0.3, a flick 2 or more
+      scrollDrive = Math.max(scrollDrive, clamp((dy / dt) / 1.2, 0, 1));
+      if (!pointer.seen) {
+        pointer.x = w / 2;
+        pointer.y = h * 0.55;
+        wake.x = pointer.x;
+        wake.y = pointer.y;
+        pointer.seen = true;
+      }
+      wakeUp();
+    };
+
     layout();
     document.fonts
       .load(`20px ${FONT}`)
@@ -167,12 +207,21 @@ export function GlyphCursorTrail() {
         ready = true;
       });
 
-    window.addEventListener("pointermove", onMove, { passive: true });
-    document.documentElement.addEventListener("pointerleave", onLeave);
+    if (touch) {
+      window.addEventListener("touchstart", onTouch, { passive: true });
+      window.addEventListener("touchmove", onTouch, { passive: true });
+      window.addEventListener("scroll", onScroll, { passive: true });
+    } else {
+      window.addEventListener("pointermove", onMove, { passive: true });
+      document.documentElement.addEventListener("pointerleave", onLeave);
+    }
     window.addEventListener("resize", onResize);
     return () => {
       alive = false;
       if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("resize", onResize);
