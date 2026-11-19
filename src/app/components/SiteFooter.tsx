@@ -53,12 +53,15 @@ export function SiteFooter({ showAbout = true }: { showAbout?: boolean }) {
     lineHeight: mobile ? "20px" : "24px",
     letterSpacing: mobile ? "1.04px" : "1.12px",
     minHeight: mobile ? 44 : undefined,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxSizing: "border-box",
     borderRadius: 4,
     border: "none",
     padding: mobile ? "12px 16px" : "10px 20px",
     cursor: "pointer",
     textDecoration: "none",
-    display: "inline-block",
     whiteSpace: "nowrap",
   };
   const bigHeading = (size: number, line: string): CSSProperties => ({ fontFamily: SERIF, fontWeight: 400, fontSize: size, lineHeight: line, letterSpacing: "-0.02em", color: BLACK, margin: 0 });
@@ -99,7 +102,7 @@ export function SiteFooter({ showAbout = true }: { showAbout?: boolean }) {
               ABOUT
             </button>
             <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="hover:opacity-60 transition-opacity" style={navLink}>
-              LINKEDIN ↗
+              LINKEDIN<span className="m-no-arrow"> ↗</span>
             </a>
             <button type="button" onClick={toTop} className="hover:opacity-60 transition-opacity" style={navLink}>
               BACK TO TOP ↑

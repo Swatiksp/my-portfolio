@@ -1,8 +1,7 @@
 import { useTheme } from "../lib/theme";
-import { LINKEDIN_URL, RESUME_URL } from "../lib/links";
+import { RESUME_URL } from "../lib/links";
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
-import linkedInIcon from "@/imports/Frame7/b9ce6f119974543779bbcad7563e234be8edd900.png";
 import logoMark from "@/assets/logo/logo.svg";
 import { MobileWork } from "./MobileStaircase";
 import { GlyphCursorTrail } from "./GlyphCursorTrail";
@@ -73,6 +72,10 @@ export function MobileHomepage() {
     border: "none",
     minHeight: 44,
     padding: "0 16px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxSizing: "border-box",
     cursor: "pointer",
     textDecoration: "none",
     whiteSpace: "nowrap",
@@ -153,8 +156,6 @@ export function MobileHomepage() {
           padding: "0 16px",
           background: dark ? "rgba(0,0,0,0.92)" : "rgba(255,255,255,0.92)",
           borderBottom: `1px solid ${line}`,
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
         }}
       >
         <button
@@ -207,9 +208,6 @@ export function MobileHomepage() {
             <button type="button" onClick={() => navigate("/about")} style={navLink}>
               ABOUT
             </button>
-            <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" style={navLink}>
-              LINKEDIN ↗
-            </a>
             <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} style={navLink}>
               BACK TO TOP ↑
             </button>

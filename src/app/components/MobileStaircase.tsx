@@ -3,6 +3,7 @@ import { motion, animate as motionAnimate, useMotionValue, useMotionValueEvent, 
 import { PROJECTS, isOpenable } from "../data/projects";
 import { FrostBitmap, useFrostBitmaps } from "../lib/frostBitmaps";
 import { GearsIcon } from "./GearsIcon";
+import { TypeIn } from "./TypeIn";
 import { PrismCraftCard } from "./PrismCraftCard";
 import { HaloCraftCard } from "./HaloCraftCard";
 import { ProjectSCraftCard } from "./ProjectSCraftCard";
@@ -11,13 +12,17 @@ import { ShowcaseCraftCard } from "./ShowcaseCraftCard";
 
 /* The phone version of the homepage's pinned stage, the same behaviour as the desktop page.
 
-   At rest the intro sits in the open space at the top and five glass tiles step up and to the right underneath it
-   (Figma "Frame 1", 1102:2210). Scrolling turns every tile over to reveal its craft card and lays the cards out in
-   one column, which then scrolls up under the My Craft title. The stage is pinned to the screen the whole time and
-   released into the footer at the end.
+   At rest the intro sits at the top, the five glass tiles step up and to the right between it and the hint along the
+   bottom (Figma "Frame 1", 1102:2210). Scrolling turns every tile over to reveal its craft card and lays the cards
+   out in one column, which then scrolls up under the My Craft title. The stage is pinned to the screen the whole
+   time and released into the footer at the end.
 
    Like the desktop page, a tile travels between its two layouts on a spring, and each face turns on its own
-   (perspective + rotateY), so nothing depends on preserve-3d, which Safari flattens. */
+   (perspective + rotateY), so nothing depends on preserve-3d, which Safari flattens.
+
+   Two heights matter in mobile Safari: the screen with its toolbars showing (svh), which the intro, tiles and hint are
+   laid out for, and the screen with them tucked away (lvh), which the pinned stage fills so the cards never stop short
+   of the bottom edge. */
 
 // Figma slots, front tile first: left, top and width in the frame's own units (the frame is 204 x 357).
 const FIG = [
@@ -30,32 +35,35 @@ const FIG = [
 const FIG_W = 204;
 const FIG_H = 357;
 const FIG_TOP = 264; // where the smallest tile starts; the stack is FIG_H - FIG_TOP tall
-const GROUP_GAP = 40; // between the intro and the stack
-const MIN_GAP = 20; // the least it shrinks to on a short screen
-// On a short screen the company logos step aside so the intro, the stack and the hint all fit.
-const COMPACT_BELOW = 720;
-const CAPTION_H = 58; // the "scroll down" line along the bottom, and its margin
-const FONT_COND = "'Roboto Condensed', 'Roboto', sans-serif";
-const FONT_DING = "'Yarndings 12', sans-serif";
 const TILE_RATIO = 0.5583; // height / width of the artwork in the staircase tiles
 
-// The craft card, as it sits in the column
-const CARD_PAD = 20;
+const FONT_COND = "'Roboto Condensed', 'Roboto', sans-serif";
+const FONT_DING = "'Yarndings 12', sans-serif";
+const SERIF = "'Newsreader', 'Iowan Old Style', Georgia, serif";
+
+// The craft card, as it sits in the column: a thin glass frame, so the card itself gets the width
+const CARD_PAD = 8;
 const CARD_BORDER = 1;
 const CHROME = (CARD_PAD + CARD_BORDER) * 2;
-const CARD_RADIUS = 20;
-const IMAGE_RADIUS = 15;
-const POSTER_RATIO = 0.92; // card height / width, as the phone poster has always been drawn
+const CARD_RADIUS = 18;
+const IMAGE_RADIUS = 12;
+const POSTER_RATIO = 1.12; // card height / width
 
-const SIDE = 24;
-const LABEL_H = 44; // the "view case study" row under each card
-const GAP = 24;
+const SIDE = 14; // the cards' margin
+const TEXT_SIDE = 24; // the text's margin
+const LABEL_H = 38; // the "case study in progress" row under a card that isn't open yet
+const GAP = 28;
 const TITLE_TOP = 84;
 const GRID_TOP = 150;
 
 const NAV_H = 60;
 const LAST = PROJECTS.length - 1;
-const SERIF = "'Newsreader', 'Iowan Old Style', Georgia, serif";
+const LINE_H = 26; // one line of the hint
+const HINT_BOTTOM = 14;
+const HERO_TOP = NAV_H + 24;
+// Shorter screens give up the logo strip (tier 1), then the first line of the hint and some spacing (tier 2).
+const TIER1_BELOW = 750;
+const TIER2_BELOW = 690;
 
 interface Rect {
   top: number;
@@ -67,7 +75,7 @@ interface Rect {
 const heroPad = (width: number) => Math.max(6, Math.round(width * 0.04));
 const heroRadius = (width: number) => Math.max(9, Math.round(width * 0.075));
 
-function buildLayouts(w: number, h: number, stackTop: number) {
+function buildLayouts(w: number, stackTop: number) {
   const s = w / FIG_W;
   // index 0 is the smallest, top-right tile, index 4 the front one, as on the desktop page
   const staircase: Rect[] = PROJECTS.map((_, index) => {
@@ -84,28 +92,34 @@ function buildLayouts(w: number, h: number, stackTop: number) {
 
   const cardW = w - 2 * SIDE;
   const cardH = (cardW - CHROME) * POSTER_RATIO + CHROME;
-  const grid: Rect[] = PROJECTS.map((_, j) => ({
-    top: GRID_TOP + j * (cardH + LABEL_H + GAP),
-    left: SIDE,
-    width: cardW,
-    height: cardH,
-  }));
-  const gridTotalH = GRID_TOP + PROJECTS.length * cardH + LAST * GAP + PROJECTS.length * LABEL_H;
+  let y = GRID_TOP;
+  const grid: Rect[] = PROJECTS.map((project) => {
+    const r = { top: y, left: SIDE, width: cardW, height: cardH };
+    y += cardH + (isOpenable(project) ? 0 : LABEL_H) + GAP;
+    return r;
+  });
+  const gridTotalH = y - GAP;
   return { staircase, grid, gridTotalH };
 }
 
-/** The pinned stage's own size. It is 100svh tall, so the toolbar collapsing in Safari never changes it. */
-function useStageSize(ref: React.RefObject<HTMLElement | null>) {
-  const [size, setSize] = useState({ w: 393, h: 700 });
+/** Width and both heights of the pinned stage. The stage fills the full screen (lvh); a hidden probe is the small one (svh). */
+function useStageSize(stageRef: React.RefObject<HTMLElement | null>, probeRef: React.RefObject<HTMLElement | null>) {
+  const [size, setSize] = useState({ w: 393, hL: 760, hS: 700 });
   useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const read = () => setSize((cur) => (cur.w === el.clientWidth && cur.h === el.clientHeight ? cur : { w: el.clientWidth, h: el.clientHeight }));
+    const stage = stageRef.current;
+    const probe = probeRef.current;
+    if (!stage || !probe) return;
+    const read = () =>
+      setSize((cur) => {
+        const next = { w: stage.clientWidth, hL: stage.clientHeight, hS: probe.clientHeight };
+        return cur.w === next.w && cur.hL === next.hL && cur.hS === next.hS ? cur : next;
+      });
     read();
     const ro = new ResizeObserver(read);
-    ro.observe(el);
+    ro.observe(stage);
+    ro.observe(probe);
     return () => ro.disconnect();
-  }, [ref]);
+  }, [stageRef, probeRef]);
   return size;
 }
 
@@ -129,15 +143,15 @@ export function MobileWork({
 }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const probeRef = useRef<HTMLDivElement | null>(null);
+  const heroRef = useRef<HTMLDivElement | null>(null);
   const [isGrid, setIsGrid] = useState(false);
+  const [craftReady, setCraftReady] = useState(false);
   const frostBitmaps = useFrostBitmaps(dark);
 
-  const { w, h } = useStageSize(stageRef);
+  const { w, hL, hS } = useStageSize(stageRef, probeRef);
+  const tier = hS < TIER2_BELOW ? 2 : hS < TIER1_BELOW ? 1 : 0;
 
-  // The intro and the stack sit together: the stack comes right under the text, and on a tall screen the pair is
-  // centred between the nav and the "scroll down" line instead of leaving a gap between them. On a short screen the
-  // gap shrinks a little to make room.
-  const heroRef = useRef<HTMLDivElement | null>(null);
   const [heroH, setHeroH] = useState(430);
   useLayoutEffect(() => {
     const el = heroRef.current;
@@ -148,24 +162,37 @@ export function MobileWork({
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  // The craft cards are heavy, so they are only built once the page has settled (or the moment scrolling starts).
+  useEffect(() => {
+    const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+    const id = ric ? ric(() => setCraftReady(true), { timeout: 2500 }) : window.setTimeout(() => setCraftReady(true), 1500);
+    return () => {
+      if (ric) (window as unknown as { cancelIdleCallback?: (n: number) => void }).cancelIdleCallback?.(id);
+      else window.clearTimeout(id);
+    };
+  }, []);
+
+  // Intro at the top, hint along the bottom, and the stack centred in the space between them.
+  const heroTop = tier === 2 ? NAV_H + 16 : HERO_TOP;
+  const hintLines = tier === 2 ? 1 : 2;
+  const hintTop = hS - HINT_BOTTOM - hintLines * LINE_H;
+  const heroBottom = heroTop + heroH;
   const stackH = (FIG_H - FIG_TOP) * (w / FIG_W);
-  const region = h - NAV_H - CAPTION_H;
-  const spare = region - (heroH + GROUP_GAP + stackH);
-  const gap = spare >= 0 ? GROUP_GAP : Math.max(MIN_GAP, GROUP_GAP + spare);
-  const heroTop = NAV_H + Math.max(20, spare / 2);
-  const stackTop = heroTop + heroH + gap;
-  const layouts = buildLayouts(w, h, stackTop);
+  const gapEach = Math.max(6, (hintTop - heroBottom - stackH) / 2);
+  const stackTop = heroBottom + gapEach;
+  const layouts = buildLayouts(w, stackTop);
 
   // Scroll budget: one stretch for the turn-over, then the column scrolling under the title, then the release.
-  const contentH = h - NAV_H;
-  const animEnd = h * 1.1;
+  const contentH = hS - NAV_H;
+  const animEnd = hS * 1.1;
   const maxGridScroll = Math.max(0, layouts.gridTotalH - contentH + 40);
   const maxScrollY = animEnd + maxGridScroll * 1.1;
-  const wrapperH = maxScrollY + h;
+  const wrapperH = maxScrollY + hL;
 
   // 0..1 across the pinned stretch; the maths below wants pixels
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
-  const pinned = wrapperH - h;
+  const pinned = wrapperH - hL;
   const px = useTransform(scrollYProgress, (v) => v * pinned);
   const progress = useTransform(px, [0, animEnd], [0, 1], { clamp: true });
   const gridScroll = useTransform(px, [animEnd, maxScrollY], [0, -maxGridScroll], { clamp: true });
@@ -174,6 +201,7 @@ export function MobileWork({
   const heroX = useTransform(progress, [0, 0.28], [0, -60]);
 
   useMotionValueEvent(progress, "change", (v) => {
+    if (v > 0.02 && !craftReady) setCraftReady(true);
     if (v > 0.35 && !isGrid) setIsGrid(true);
     if (v < 0.28 && isGrid) setIsGrid(false);
   });
@@ -187,32 +215,42 @@ export function MobileWork({
 
   return (
     <div ref={wrapRef} id="work" style={{ height: wrapperH }}>
-      <div ref={stageRef} className="m-stair-stage" data-compact={h < COMPACT_BELOW ? "" : undefined}>
+      <div ref={stageRef} className="m-stair-stage" data-compact={tier > 0 ? String(tier) : undefined}>
+        <div ref={probeRef} aria-hidden className="m-stair-probe" />
+
         <motion.div
           ref={heroRef}
           className="absolute"
-          style={{ left: SIDE, right: SIDE, top: heroTop, opacity: heroOpacity, x: heroX, pointerEvents: isGrid ? "none" : "auto" }}
+          style={{ left: TEXT_SIDE, right: TEXT_SIDE, top: heroTop, opacity: heroOpacity, x: heroX, pointerEvents: isGrid ? "none" : "auto" }}
         >
           {hero}
         </motion.div>
 
-        {/* The hint under the stack. It leaves with the intro. */}
-        <motion.p
-          className="absolute m-0 flex items-center"
-          style={{ left: SIDE, right: SIDE, bottom: "max(14px, env(safe-area-inset-bottom, 0px))", opacity: heroOpacity, x: heroX, fontFamily: FONT_COND, fontSize: 15, lineHeight: "24px", color: copy }}
-        >
-          <span aria-hidden style={{ fontFamily: FONT_DING, fontSize: 16, lineHeight: "24px", color: heading, marginRight: 6 }}>
-            z
-          </span>
-          <span style={{ fontWeight: 700 }}>Scroll down</span>
-          <span>{"\u00A0to view the work behind them."}</span>
-        </motion.p>
+        {/* The hint under the stack, as on the desktop page. It leaves with the intro. */}
+        <motion.div className="absolute flex flex-col" style={{ left: TEXT_SIDE, right: TEXT_SIDE, top: hintTop, opacity: heroOpacity, x: heroX, pointerEvents: "none" }}>
+          {tier < 2 && (
+            <p className="m-0" style={{ fontFamily: FONT_COND, fontWeight: 400, fontSize: 15, lineHeight: `${LINE_H}px`, color: copy }}>
+              <TypeIn text="Each tile represents a body of work." />
+            </p>
+          )}
+          <p className="m-0 flex items-center" style={{ fontFamily: FONT_COND, fontWeight: 400, fontSize: 15, lineHeight: `${LINE_H}px`, color: copy }}>
+            <span aria-hidden style={{ fontFamily: FONT_DING, fontWeight: 400, fontSize: 16, lineHeight: `${LINE_H}px`, color: heading, marginRight: 6 }}>
+              z
+            </span>
+            <span style={{ fontWeight: 700 }}>
+              <TypeIn text="Scroll down" />
+            </span>
+            <span>
+              <TypeIn text={"\u00A0to view the work behind them."} />
+            </span>
+          </p>
+        </motion.div>
 
         <motion.div className="absolute inset-0" style={{ y: gridScroll, pointerEvents: "none" }}>
           <motion.h2
             initial={false}
             className="absolute m-0"
-            style={{ top: TITLE_TOP, left: SIDE, fontFamily: SERIF, fontWeight: 400, fontSize: 40, lineHeight: "44px", letterSpacing: "-0.02em", color: heading }}
+            style={{ top: TITLE_TOP, left: TEXT_SIDE, fontFamily: SERIF, fontWeight: 400, fontSize: 40, lineHeight: "44px", letterSpacing: "-0.02em", color: heading }}
             animate={isGrid ? { opacity: 1, x: 0 } : { opacity: 0, x: -32 }}
             transition={isGrid ? { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.3 } : { duration: 0.15, ease: "easeIn", delay: 0 }}
           >
@@ -220,30 +258,25 @@ export function MobileWork({
           </motion.h2>
 
           {PROJECTS.map((_, i) => (
-            <MobileTile key={i} index={i} isGrid={isGrid} layouts={layouts} stageW={w} dark={dark} frostBitmaps={frostBitmaps} onOpen={onOpen} />
+            <MobileTile key={i} index={i} isGrid={isGrid} craftReady={craftReady} layouts={layouts} stageW={w} dark={dark} frostBitmaps={frostBitmaps} onOpen={onOpen} />
           ))}
 
+          {/* Only the cards that can't be opened yet say so */}
           {PROJECTS.map((project, j) => {
+            if (isOpenable(project)) return null;
             const r = layouts.grid[j];
-            const open = isOpenable(project);
             return (
               <motion.div
                 key={project.slug}
                 initial={false}
                 className="absolute flex items-center"
-                style={{ top: r.top + r.height + 2, left: r.left, height: LABEL_H - 2, pointerEvents: isGrid ? "auto" : "none" }}
+                style={{ top: r.top + r.height + 2, left: r.left + 10, height: LABEL_H - 2, pointerEvents: "none" }}
                 animate={{ opacity: isGrid ? 1 : 0 }}
                 transition={{ duration: 0.3, delay: isGrid ? 0.5 : 0 }}
               >
-                {open ? (
-                  <button type="button" tabIndex={isGrid ? 0 : -1} onClick={() => onOpen(project.slug)} style={{ ...link, gap: 8, padding: "4px 2px" }}>
-                    VIEW CASE STUDY <span aria-hidden>→</span>
-                  </button>
-                ) : (
-                  <span style={{ ...link, gap: 10, padding: "4px 2px", color: muted, cursor: "default" }}>
-                    <GearsIcon size={20} /> CASE STUDY IN PROGRESS
-                  </span>
-                )}
+                <span style={{ ...link, gap: 10, padding: "4px 2px", color: muted, cursor: "default" }}>
+                  <GearsIcon size={20} /> CASE STUDY IN PROGRESS
+                </span>
               </motion.div>
             );
           })}
@@ -276,9 +309,11 @@ function MobileTile({
   dark,
   frostBitmaps,
   onOpen,
+  craftReady,
 }: {
   index: number;
   isGrid: boolean;
+  craftReady: boolean;
   layouts: ReturnType<typeof buildLayouts>;
   stageW: number;
   dark: boolean;
@@ -355,8 +390,8 @@ function MobileTile({
   const backAngle = useTransform(flip, (v) => v + 180);
   const frontShown = useTransform(flip, (v) => (v < 90 ? 1 : 0));
   const backShown = useTransform(flip, (v) => (v < 90 ? 0 : 1));
-  const frontFlip = { rotateY: flip, transformPerspective: 1200, opacity: frontShown, willChange: "transform" as const };
-  const backFlip = { rotateY: backAngle, transformPerspective: 1200, opacity: backShown, willChange: "transform" as const };
+  const frontFlip = { rotateY: flip, transformPerspective: 1200, opacity: frontShown };
+  const backFlip = { rotateY: backAngle, transformPerspective: 1200, opacity: backShown };
 
   const pad = heroPad(from.width);
   const radius = heroRadius(from.width);
@@ -404,9 +439,9 @@ function MobileTile({
           <div className="relative w-full h-full min-h-0" style={{ borderRadius: IMAGE_RADIUS, overflow: "hidden", boxShadow: dark ? "none" : "0px 2px 7px 5px rgba(0,0,0,0.1)" }}>
             <motion.div
               className="poster-mobile"
-              style={{ position: "absolute", left: 0, top: 0, width: gridInnerW, height: gridInnerH, scaleX: posterScaleX, scaleY: posterScaleY, transformOrigin: "0 0", willChange: "transform" }}
+              style={{ position: "absolute", left: 0, top: 0, width: gridInnerW, height: gridInnerH, scaleX: posterScaleX, scaleY: posterScaleY, transformOrigin: "0 0" }}
             >
-              <CraftFor slug={project.slug} />
+              {craftReady && <CraftFor slug={project.slug} />}
             </motion.div>
           </div>
         </motion.div>

@@ -83,7 +83,10 @@ const BRANDS: Brand[] = [
 const heading: CSSProperties = { fontFamily: SERIF, fontWeight: 400, fontSize: "var(--fs-h2, 36px)", lineHeight: "var(--lh-h2, 42px)", letterSpacing: "-0.02em", color: INK, textAlign: "center", margin: 0 };
 const body: CSSProperties = { fontFamily: SANS, fontSize: "var(--fs-body, 17px)", lineHeight: "var(--lh-body, 30px)", color: INK, margin: 0 };
 const button: CSSProperties = {
-  display: "inline-block",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  boxSizing: "border-box",
   fontFamily: COND,
   fontWeight: 700,
   fontSize: "var(--fs-sec, 14px)",
@@ -268,7 +271,7 @@ export function AboutPage() {
                 RESUME
               </a>
               <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity" style={{ ...button, background: "transparent", color: FOREST }}>
-                LINKEDIN ↗
+                LINKEDIN<span className="m-no-arrow"> ↗</span>
               </a>
             </div>
           </section>

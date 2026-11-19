@@ -57,7 +57,7 @@ export function GlyphCursorTrail() {
     let lastScrollAt = 0;
 
     const layout = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
       w = window.innerWidth;
       h = window.innerHeight;
       canvas.width = Math.round(w * dpr);
@@ -113,6 +113,7 @@ export function GlyphCursorTrail() {
       ctx.textBaseline = "middle";
 
       let any = false;
+      let lastStep = -1;
       for (const cell of cells) {
         if (drive > 0.01) {
           const d = Math.hypot(cell.x - wake.x, cell.y - wake.y);
@@ -131,7 +132,12 @@ export function GlyphCursorTrail() {
         const t = clamp((cell.heat - cell.threshold) / (1 - cell.threshold), 0, 1);
         const size = MIN_SIZE + (maxSize - MIN_SIZE) * smooth(t);
         ctx.globalAlpha = clamp(0.25 + cell.heat * 1.2, 0, 1);
-        ctx.font = `${size.toFixed(1)}px ${FONT}`;
+        // the font string only changes when the size steps by half a pixel, which saves a style parse per glyph
+        const step = Math.round(size * 2);
+        if (step !== lastStep) {
+          lastStep = step;
+          ctx.font = `${(step / 2).toFixed(1)}px ${FONT}`;
+        }
         ctx.fillText(cell.glyph, cell.x, cell.y);
       }
       ctx.globalAlpha = 1;
@@ -164,6 +170,8 @@ export function GlyphCursorTrail() {
       pointer.seen = false;
     };
     const onResize = () => {
+      // Safari's toolbars sliding away resize the window by a few dozen pixels on every scroll: not worth rebuilding the canvas for
+      if (touch && window.innerWidth === w && window.innerHeight <= h) return;
       layout();
       wakeUp();
     };

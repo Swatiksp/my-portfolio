@@ -918,9 +918,32 @@ body {
   position: sticky;
   top: 0;
   height: 100vh;
-  height: 100svh;
+  height: 100lvh;
   overflow: hidden;
+}
+/* the screen with Safari's toolbars showing, which the intro, tiles and hint are laid out for */
+.m-stair-probe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 100vh;
+  height: 100svh;
+  visibility: hidden;
+  pointer-events: none;
 }
 .m-stair-stage[data-compact] .m-hero-marquee {
   display: none;
+}
+/* iOS draws the arrow glyph as an emoji, so it is left off on phones */
+@media (max-width: 767px) {
+  .m-no-arrow { display: none; }
+}
+/* a drop shadow that is redrawn every frame is too much for a phone */
+@media (hover: none) {
+  .about-cta-glyph { filter: none; }
+  @keyframes about-press {
+    0%, 42%, 56%, 100% { transform: scale(1); }
+    47%, 51% { transform: scale(0.95); }
+  }
 }
