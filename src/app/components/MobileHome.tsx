@@ -100,7 +100,7 @@ export function MobileHomepage() {
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         <div className="flex flex-col" style={{ gap: 12 }}>
           <div className="flex flex-col" style={{ gap: 14 }}>
-            <p className="m-0" style={{ fontWeight: 700, fontSize: 17, lineHeight: "26px", color: heading }}>
+            <p className="m-0" style={{ fontWeight: 700, fontSize: 14, lineHeight: "22px", color: heading }}>
               <TypeIn text="Glad you’re here!" />
             </p>
             <p
@@ -110,7 +110,7 @@ export function MobileHomepage() {
               <TypeIn text="I’m Swatik" />
             </p>
           </div>
-          <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
+          <p className="m-0" style={{ fontSize: 14, lineHeight: "22px", color: copy }}>
             <TypeIn text="Designing digital systems and the relationships people have with them, through product and interaction design." />
           </p>
         </div>
@@ -119,22 +119,22 @@ export function MobileHomepage() {
 
         <div className="flex flex-col" style={{ gap: 20 }}>
           <div className="flex flex-col" style={{ gap: 3 }}>
-            <p className="m-0" style={{ fontWeight: 700, fontSize: 15, color: heading }}>
+            <p className="m-0" style={{ fontWeight: 700, fontSize: 13, color: heading }}>
               <TypeIn text="Previously designed at" />
             </p>
-            <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
+            <p className="m-0" style={{ fontSize: 14, lineHeight: "22px", color: copy }}>
               <TypeIn text="Accenture Microsoft Business Group" />
             </p>
           </div>
           <div className="flex flex-col" style={{ gap: 3 }}>
-            <p className="m-0" style={{ fontWeight: 700, fontSize: 15, color: heading }}>
+            <p className="m-0" style={{ fontWeight: 700, fontSize: 13, color: heading }}>
               <TypeIn text="Currently Studying at" />
             </p>
-            <p className="m-0" style={{ fontSize: 17, lineHeight: "26px", color: copy }}>
+            <p className="m-0" style={{ fontSize: 14, lineHeight: "22px", color: copy }}>
               <TypeIn text="North Carolina State University" />
             </p>
-            <p className="m-0 flex items-center uppercase" style={{ gap: 6, fontFamily: FONT_COND, fontWeight: 700, fontSize: 17, color: copy }}>
-              <span aria-hidden style={{ display: "inline-block", transform: "rotate(45deg)", fontFamily: FONT_DING, fontWeight: 400, fontSize: 17, lineHeight: 1 }}>
+            <p className="m-0 flex items-center uppercase" style={{ gap: 6, fontFamily: FONT_COND, fontWeight: 700, fontSize: 14, color: copy }}>
+              <span aria-hidden style={{ display: "inline-block", transform: "rotate(45deg)", fontFamily: FONT_DING, fontWeight: 400, fontSize: 14, lineHeight: 1 }}>
                 H
               </span>
               <TypeIn text="gowolfpack!" />

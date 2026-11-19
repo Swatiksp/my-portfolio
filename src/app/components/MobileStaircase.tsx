@@ -58,7 +58,7 @@ const GRID_TOP = 150;
 
 const NAV_H = 60;
 const LAST = PROJECTS.length - 1;
-const LINE_H = 26; // one line of the hint
+const LINE_H = 22; // one line of the hint
 const HINT_BOTTOM = 14;
 const HERO_TOP = NAV_H + 24;
 // Shorter screens give up the logo strip (tier 1), then the first line of the hint and some spacing (tier 2).
@@ -229,11 +229,11 @@ export function MobileWork({
         {/* The hint under the stack, as on the desktop page. It leaves with the intro. */}
         <motion.div className="absolute flex flex-col" style={{ left: TEXT_SIDE, right: TEXT_SIDE, top: hintTop, opacity: heroOpacity, x: heroX, pointerEvents: "none" }}>
           {tier < 2 && (
-            <p className="m-0" style={{ fontFamily: FONT_COND, fontWeight: 400, fontSize: 15, lineHeight: `${LINE_H}px`, color: copy }}>
+            <p className="m-0" style={{ fontFamily: FONT_COND, fontWeight: 400, fontSize: 14, lineHeight: `${LINE_H}px`, color: copy }}>
               <TypeIn text="Each tile represents a body of work." />
             </p>
           )}
-          <p className="m-0 flex items-center" style={{ fontFamily: FONT_COND, fontWeight: 400, fontSize: 15, lineHeight: `${LINE_H}px`, color: copy }}>
+          <p className="m-0 flex items-center" style={{ fontFamily: FONT_COND, fontWeight: 400, fontSize: 14, lineHeight: `${LINE_H}px`, color: copy }}>
             <span aria-hidden style={{ fontFamily: FONT_DING, fontWeight: 400, fontSize: 16, lineHeight: `${LINE_H}px`, color: heading, marginRight: 6 }}>
               z
             </span>

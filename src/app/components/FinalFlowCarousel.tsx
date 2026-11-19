@@ -435,7 +435,7 @@ export function FinalFlowCarousel() {
           style={{ fontFamily: SANS, fontWeight: 600, fontSize: 11, lineHeight: "16px", letterSpacing: "1.1px", textTransform: "uppercase", color: FOREST }}
         >
           {cur.section.person} · Screen {cur.indexInSection + 1} of {cur.section.screens.length}        </p>
-        <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: 18, lineHeight: "28px", color: INK }}>
+        <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-lead, 18px)", lineHeight: "var(--lh-lead, 28px)", color: INK }}>
           {cur.screen.title}
         </p>
       </div>

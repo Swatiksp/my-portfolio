@@ -104,7 +104,7 @@ const T = {
 const MapBlock = ({ title, paragraphs, children }: { title: string; paragraphs: string[]; children: ReactNode }) => (
   <div className="flex flex-col items-center w-full" style={{ gap: 20 }}>
     <div className="flex flex-col items-center" style={{ gap: 12, maxWidth: 570 }}>
-      <h3 className="m-0" style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: 34, lineHeight: "40px", letterSpacing: "-0.02em", color: C.ink }}>
+      <h3 className="m-0" style={{ fontFamily: "'Newsreader', 'Iowan Old Style', Georgia, serif", fontWeight: 400, fontSize: "var(--fs-h1, 34px)", lineHeight: "var(--lh-h1, 40px)", letterSpacing: "-0.02em", color: C.ink }}>
         {revealText(title)}
       </h3>
       {paragraphs.map((t) => (
