@@ -199,7 +199,7 @@ function Overlay({
       overflow: "hidden",
       background: "#fff",
       boxShadow: a < 0.5 ? "0 14px 34px rgba(0,0,0,0.28)" : "0 8px 20px rgba(0,0,0,0.22)",
-      filter: `brightness(${1 - 0.08 * Math.min(a, 2)})`,
+      ...(phone ? null : { filter: `brightness(${1 - 0.08 * Math.min(a, 2)})` }),
       pointerEvents: "none",
       willChange: "transform",
     };
@@ -218,8 +218,7 @@ function Overlay({
           zIndex: 90,
           pointerEvents: "none",
           background: "rgba(0,0,0,0.16)",
-          backdropFilter: "blur(2px)",
-          WebkitBackdropFilter: "blur(2px)",
+          ...(phone ? null : { backdropFilter: "blur(2px)", WebkitBackdropFilter: "blur(2px)" }),
           opacity: shown ? 1 : 0,
           transition: "opacity 260ms ease",
         }}
@@ -376,6 +375,9 @@ export function VersionPreview({
   const unmountTimer = useRef<number | undefined>(undefined);
   const openRef = useRef(false);
   const startY = useRef(0);
+  // On a touch screen a tap makes the browser fire mouseenter, mousemove and focus before the click. Those
+  // would open the deck and then the click would close it again, so on touch only the click does anything.
+  const touch = () => typeof window !== "undefined" && !!window.matchMedia?.("(hover: none)").matches;
 
   const open = useCallback(() => {
     if (openRef.current || !thumbRef.current) return;
@@ -422,18 +424,20 @@ export function VersionPreview({
         ref={thumbRef}
         type="button"
         onMouseEnter={() => {
+          if (touch()) return;
           over.current.thumb = true;
           if (closeTimer.current) window.clearTimeout(closeTimer.current);
         }}
         // open on real pointer movement, so a page that scrolls under a resting pointer does not trigger it
         onMouseMove={() => {
-          if (openRef.current || openTimer.current) return;
+          if (touch() || openRef.current || openTimer.current) return;
           openTimer.current = window.setTimeout(() => {
             openTimer.current = undefined;
             if (over.current.thumb) open();
           }, 70);
         }}
         onMouseLeave={() => {
+          if (touch()) return;
           over.current.thumb = false;
           if (openTimer.current) {
             window.clearTimeout(openTimer.current);
@@ -441,8 +445,11 @@ export function VersionPreview({
           }
           settle();
         }}
-        onFocus={open}
+        onFocus={() => {
+          if (!touch()) open();
+        }}
         onBlur={() => {
+          if (touch()) return;
           over.current.thumb = false;
           settle();
         }}

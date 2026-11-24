@@ -53,6 +53,8 @@ function Card({
             borderRadius: 10,
             background: inverted ? "transparent" : "rgba(45, 74, 54, 0.6)",
             color: "#fff",
+            textAlign: "left",
+            alignSelf: "flex-start",
             textWrap: "balance",
           }}
         >

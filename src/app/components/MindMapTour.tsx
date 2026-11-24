@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useStableVh } from "../lib/useStableVh";
 import { useReducedMotion } from "motion/react";
 import mindMapSvg from "@/assets/research/mind-map.svg?raw";
 import { useIsMobile } from "../lib/useIsMobile";
@@ -138,7 +139,7 @@ export function MindMapTour({ caption }: { caption?: string }) {
   const verb = useIsMobile() ? "Tap" : "Click";
   const frameRef = useRef<HTMLDivElement>(null);
   const [frameW, setFrameW] = useState(735);
-  const [winH, setWinH] = useState(() => (typeof window === "undefined" ? 900 : window.innerHeight));
+  const winH = useStableVh();
   const [step, setStep] = useState(0);
   const [settled, setSettled] = useState(false);
   const [started, setStarted] = useState(false);
@@ -151,7 +152,6 @@ export function MindMapTour({ caption }: { caption?: string }) {
     if (!el) return;
     const measure = () => {
       setFrameW(el.clientWidth);
-      setWinH(window.innerHeight);
     };
     measure();
     const ro = new ResizeObserver(measure);

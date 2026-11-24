@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useStableVh } from "../lib/useStableVh";
 import type { CSSProperties, ReactNode } from "react";
 import { useReducedMotion } from "motion/react";
 import { PROGRESS_BAR_HEIGHT } from "./SectionProgressBar";
@@ -703,7 +704,7 @@ export function ConceptScrollStory() {
   const [inView, setInView] = useState(false);
   const typed = useRef(false);
   const [W, setW] = useState(900);
-  const [vh, setVh] = useState(() => (typeof window === "undefined" ? 900 : window.innerHeight));
+  const vh = useStableVh();
 
   const narrow = W < 720;
   const panelH = narrow ? PANEL_H_NARROW : PANEL_H_WIDE;
@@ -716,7 +717,6 @@ export function ConceptScrollStory() {
     const el = rootRef.current;
     const measure = () => {
       if (el) setW(el.clientWidth);
-      setVh(window.innerHeight);
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -977,7 +977,7 @@ export function ConceptScrollStory() {
         {STEPS.map((_, i) => {
           const right = i % 2 === 1;
           const style: CSSProperties = narrow
-            ? { position: "absolute", left: 0, right: 0, top: 0, height: textBlockH }
+            ? { position: "absolute", left: 0, right: 0, top: 0, height: textBlockH, display: "flex", flexDirection: "column", justifyContent: "flex-end" }
             : {
                 position: "absolute",
                 top: "50%",
@@ -1007,7 +1007,7 @@ export function ConceptScrollStory() {
             ...panelStyle,
             zIndex: 2,
             position: "absolute",
-            top: narrow ? textBlockH + 16 : 0,
+            top: narrow ? textBlockH + 6 : 0,
             left: panelShift,
             width: panelW,
             height: panelH,

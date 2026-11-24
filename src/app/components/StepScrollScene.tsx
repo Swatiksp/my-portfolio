@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { useStableVh } from "../lib/useStableVh";
 import { useReducedMotion } from "motion/react";
 import { useIsMobile } from "../lib/useIsMobile";
 
@@ -117,7 +118,7 @@ function ScrubbedScene({ left, count, renderStep, gap = 20, endOffset = 0 }: Pro
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [active, setActive] = useState(0);
-  const [vh, setVh] = useState(() => (typeof window === "undefined" ? 900 : window.innerHeight));
+  const vh = useStableVh();
   const [geo, setGeo] = useState<Geo>({ stageH: 0, shift: 0, tops: [] });
 
   const geoRef = useRef(geo);
@@ -150,11 +151,8 @@ function ScrubbedScene({ left, count, renderStep, gap = 20, endOffset = 0 }: Pro
     ro.observe(el);
     measure();
     document.fonts?.ready.then(measure).catch(() => {});
-    const onResize = () => setVh(window.innerHeight);
-    window.addEventListener("resize", onResize);
     return () => {
       ro.disconnect();
-      window.removeEventListener("resize", onResize);
     };
   }, [count, endOffset]);
 

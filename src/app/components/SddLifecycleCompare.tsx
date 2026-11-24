@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent, PointerEvent, ReactNode } from "react";
+import { useStableVh } from "../lib/useStableVh";
 import { useReducedMotion } from "motion/react";
 import { PROGRESS_BAR_HEIGHT } from "./SectionProgressBar";
 import standardFlow from "@/assets/sdd/standard-sdd-cycle.png";
@@ -72,7 +73,7 @@ export function SddLifecycleCompare({ children }: { children: ReactNode | ((t: n
   const [t, setT] = useState(reduced ? 0.5 : T_START);
   const [frameW, setFrameW] = useState(0);
   const [stageH, setStageH] = useState(0);
-  const [vh, setVh] = useState(() => (typeof window === "undefined" ? 900 : window.innerHeight));
+  const vh = useStableVh();
 
   const stickyTop = stickyTopFor(vh, stageH);
   stickyRef.current = stickyTop;
@@ -84,7 +85,6 @@ export function SddLifecycleCompare({ children }: { children: ReactNode | ((t: n
     const measure = () => {
       if (frame) setFrameW(frame.clientWidth);
       if (stage) setStageH(stage.offsetHeight);
-      setVh(window.innerHeight);
     };
     measure();
     const ro = new ResizeObserver(measure);
