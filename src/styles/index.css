@@ -907,6 +907,7 @@ body {
   .spec-left .method-row { align-self: stretch; }
   /* SpecTrim "What is SDD": on a phone the three definitions become three stacked tiles, label above text, all left aligned */
   .deck-inv b { color: #fff !important; }
+  .screens-img { border-radius: 2px !important; }
   .method-card { padding: 12px !important; gap: 10px !important; }
   .method-row { flex-direction: column; align-items: flex-start !important; gap: 10px !important; padding: 16px !important; border-radius: 12px !important; background: rgba(var(--ink-rgb), 0.05); }
   .method-row-inverted { background: #2d4a36 !important; }

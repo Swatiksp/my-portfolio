@@ -195,6 +195,7 @@ export function ScreensGallery() {
                 alt={`${s.title}: ${s.note}`}
                 width={s.w}
                 height={s.h}
+                className="screens-img"
                 draggable={false}
                 loading="lazy"
                 style={{
