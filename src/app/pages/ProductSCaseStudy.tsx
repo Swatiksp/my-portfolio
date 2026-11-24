@@ -614,7 +614,7 @@ export function ProductSCaseStudy() {
                 {(t: number) => (
                 <>
                 <H1>What I developed</H1>
-                <div className="grid w-full text-left max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 40 }}>
+                <div className="sdd-ideas grid w-full text-left max-md:grid-cols-1" style={{ gridTemplateColumns: "1fr 1fr", gap: 40 }}>
                   {IDEAS.map((idea) => (
                     <div key={idea.title} className="flex flex-col items-start" style={{ gap: 12 }}>
                       <p className="m-0" style={{ fontFamily: SANS, fontWeight: 500, fontSize: "var(--fs-body, 18px)", lineHeight: "var(--lh-body, 24px)", color: C.ink }}>
@@ -756,6 +756,7 @@ export function ProductSCaseStudy() {
                 alt="SDD lifecycle with the context compiler and the assumption gate"
                 width={3600}
                 height={671}
+                trim={{ l: 62, t: 62, r: 63, b: 63 }}
                 caption="The SDD lifecycle with the compiler and the gate."
               />
 

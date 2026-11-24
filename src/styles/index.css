@@ -907,6 +907,15 @@ body {
   .spec-left .method-row { align-self: stretch; }
   /* SpecTrim "What is SDD": on a phone the three definitions become three stacked tiles, label above text, all left aligned */
   .deck-inv b { color: #fff !important; }
+  /* the pinned "What I developed" stage has to fit a phone screen with the toolbar showing */
+  /* the lifecycle picture has a grey margin baked in: crop it off on a phone and drop the frosted button */
+  .exp-btn { border-radius: 2px !important; }
+  .exp-trim { aspect-ratio: var(--trim-ratio); border: 0 !important; border-radius: 0 !important; }
+  .exp-trim > img { width: var(--trim-w) !important; max-width: none !important; margin-left: var(--trim-ml); margin-top: var(--trim-mt); }
+  .exp-trim .exp-pill { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(255, 255, 255, 0.96) !important; border: 1px solid rgba(0, 0, 0, 0.12) !important; }
+  .sdd-stage { gap: 8px !important; }
+  .sdd-ideas { gap: 14px !important; }
+  .sdd-ideas > div { gap: 6px !important; }
   .screens-img { border-radius: 2px !important; }
   .method-card { padding: 12px !important; gap: 10px !important; }
   .method-row { flex-direction: column; align-items: flex-start !important; gap: 10px !important; padding: 16px !important; border-radius: 12px !important; background: rgba(var(--ink-rgb), 0.05); }

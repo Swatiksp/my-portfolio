@@ -17,6 +17,7 @@ export function ExpandableImage({
   caption,
   radius = 10,
   svgSrc,
+  trim,
 }: {
   src: string;
   alt: string;
@@ -26,6 +27,8 @@ export function ExpandableImage({
   radius?: number;
   /** A vector version of the figure. When given, the viewer opens it with zoom and pan instead of the flat image. */
   svgSrc?: string;
+  /** Pixels of grey margin baked into the picture (left, top, right, bottom). On a phone the page crops them off so the figure shows only its white card, with a plain button. */
+  trim?: { l: number; t: number; r: number; b: number };
 }) {
   const [open, setOpen] = useState(false);
   const [full, setFull] = useState(false);
@@ -48,13 +51,28 @@ export function ExpandableImage({
     setFull(false);
   };
 
+  const trimVars = trim
+    ? (() => {
+        const cw = width - trim.l - trim.r;
+        const ch = height - trim.t - trim.b;
+        return {
+          "--trim-w": `${(width / cw) * 100}%`,
+          "--trim-ml": `${(-trim.l / cw) * 100}%`,
+          "--trim-mt": `${(-trim.t / cw) * 100}%`,
+          "--trim-ratio": `${cw} / ${ch}`,
+        } as React.CSSProperties;
+      })()
+    : undefined;
+
   return (
     <figure className="m-0 w-full" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-label={`Open larger: ${alt}`}
+        className={trim ? "exp-trim" : "exp-btn"}
         style={{
+          ...trimVars,
           position: "relative",
           display: "block",
           width: "100%",
@@ -77,6 +95,7 @@ export function ExpandableImage({
         />
         <span
           aria-hidden
+          className="exp-pill"
           style={{
             position: "absolute",
             right: 12,

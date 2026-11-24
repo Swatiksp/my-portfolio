@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent, PointerEvent, ReactNode } from "react";
-import { useStableVh } from "../lib/useStableVh";
+import { useViewportRange } from "../lib/useStableVh";
 import { useReducedMotion } from "motion/react";
 import { PROGRESS_BAR_HEIGHT } from "./SectionProgressBar";
 import standardFlow from "@/assets/sdd/standard-sdd-cycle.png";
@@ -73,9 +73,9 @@ export function SddLifecycleCompare({ children }: { children: ReactNode | ((t: n
   const [t, setT] = useState(reduced ? 0.5 : T_START);
   const [frameW, setFrameW] = useState(0);
   const [stageH, setStageH] = useState(0);
-  const vh = useStableVh();
+  const { tall: vh, small: smallVh } = useViewportRange();
 
-  const stickyTop = stickyTopFor(vh, stageH);
+  const stickyTop = stickyTopFor(smallVh, stageH);
   stickyRef.current = stickyTop;
   const travel = Math.max(vh * 1.15, 720);
 
@@ -215,7 +215,7 @@ export function SddLifecycleCompare({ children }: { children: ReactNode | ((t: n
   );
 
   const stage = (
-    <div ref={stageRef} className="flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
+    <div ref={stageRef} className="sdd-stage flex flex-col items-center w-full text-center" style={{ gap: 20 }}>
       {typeof children === "function" ? children(t) : children}
       <p
         className="m-0 w-full text-center"

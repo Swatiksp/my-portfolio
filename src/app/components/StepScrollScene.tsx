@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { useStableVh } from "../lib/useStableVh";
+import { useViewportRange } from "../lib/useStableVh";
 import { useReducedMotion } from "motion/react";
 import { useIsMobile } from "../lib/useIsMobile";
 
@@ -118,14 +118,14 @@ function ScrubbedScene({ left, count, renderStep, gap = 20, endOffset = 0 }: Pro
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [active, setActive] = useState(0);
-  const vh = useStableVh();
+  const { tall: vh, small: smallVh } = useViewportRange();
   const [geo, setGeo] = useState<Geo>({ stageH: 0, shift: 0, tops: [] });
 
   const geoRef = useRef(geo);
   geoRef.current = geo;
   const activeRef = useRef(0);
 
-  const stickyTop = stickyTopFor(vh, geo.stageH);
+  const stickyTop = stickyTopFor(smallVh, geo.stageH);
   const stickyRef = useRef(stickyTop);
   stickyRef.current = stickyTop;
   const travel = HOLD_START + geo.shift * SPEED + HOLD_END;

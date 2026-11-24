@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useStableVh } from "../lib/useStableVh";
+import { useViewportRange } from "../lib/useStableVh";
 import type { CSSProperties, ReactNode } from "react";
 import { useReducedMotion } from "motion/react";
 import { PROGRESS_BAR_HEIGHT } from "./SectionProgressBar";
@@ -21,6 +21,7 @@ import { Cursor, EXPORT_H, EXPORT_W, ExportScene, GapDialog, KeyScene, ReviewLis
 
 const NAV_H = 66;
 const CHROME = NAV_H + PROGRESS_BAR_HEIGHT;
+const PILL_RESERVE = 84; // the fixed "Skip to the screens" bar at the bottom of a phone screen
 const SANS = "'Roboto', sans-serif";
 const PLEX = "'IBM Plex Sans', sans-serif";
 const PLEX_MONO = "'IBM Plex Mono', monospace";
@@ -704,21 +705,40 @@ export function ConceptScrollStory() {
   const [inView, setInView] = useState(false);
   const typed = useRef(false);
   const [W, setW] = useState(900);
-  const vh = useStableVh();
+  const [textH, setTextH] = useState(120);
+  const { tall: vh, small: smallVh } = useViewportRange();
 
   const narrow = W < 720;
-  const panelH = narrow ? PANEL_H_NARROW : PANEL_H_WIDE;
-  const textBlockH = narrow ? 150 : 0;
-  const stageH = panelH + textBlockH + (narrow ? 16 : 0);
-  const stickyTop = CHROME + Math.max(12, (vh - CHROME - stageH) / 2);
+  // On a phone the copy sits right above the picture (its box is as tall as the tallest copy), the picture takes
+  // the height that is left once the fixed "Skip to the screens" bar is kept clear, and the pair is centred in
+  // the screen with the toolbar showing.
+  const textBlockH = narrow ? textH : 0;
+  const textGap = narrow ? 6 : 0;
+  const panelH = narrow
+    ? clamp(smallVh - CHROME - PILL_RESERVE - 16 - textBlockH - textGap, 320, PANEL_H_NARROW)
+    : PANEL_H_WIDE;
+  const stageH = panelH + textBlockH + textGap;
+  const stickyTop = narrow
+    ? CHROME + Math.max(8, (smallVh - CHROME - PILL_RESERVE - stageH) / 2)
+    : CHROME + Math.max(12, (smallVh - CHROME - stageH) / 2);
   const travel = Math.max(vh * 8, 5200);
 
   useEffect(() => {
     const el = rootRef.current;
     const measure = () => {
-      if (el) setW(el.clientWidth);
+      if (el) {
+        setW(el.clientWidth);
+        // the tallest piece of step copy, so the picture can sit right under it on a phone
+        let tallest = 0;
+        el.querySelectorAll<HTMLElement>("[data-copy]").forEach((c) => {
+          const inner = c.firstElementChild as HTMLElement | null;
+          if (inner) tallest = Math.max(tallest, inner.offsetHeight);
+        });
+        if (tallest) setTextH(Math.ceil(tallest));
+      }
     };
     measure();
+    document.fonts?.ready.then(measure).catch(() => {});
     const ro = new ResizeObserver(measure);
     if (el) ro.observe(el);
     window.addEventListener("resize", measure);
@@ -988,6 +1008,7 @@ export function ConceptScrollStory() {
           return (
             <div
               key={i}
+              data-copy
               aria-hidden={w[i] < 0.5}
               style={{
                 ...style,
@@ -1007,7 +1028,7 @@ export function ConceptScrollStory() {
             ...panelStyle,
             zIndex: 2,
             position: "absolute",
-            top: narrow ? textBlockH + 6 : 0,
+            top: narrow ? textBlockH + textGap : 0,
             left: panelShift,
             width: panelW,
             height: panelH,
