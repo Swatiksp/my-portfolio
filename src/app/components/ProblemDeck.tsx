@@ -18,12 +18,52 @@ function Card({
   children,
   style,
   nowrap = true,
+  tile,
 }: {
   pill: ReactNode;
   children: ReactNode;
   style?: React.CSSProperties;
   nowrap?: boolean;
+  /** On a phone the two cards become two tiles inside one card, like the definitions under "What is SDD". */
+  tile?: "inverted" | "soft";
 }) {
+  if (tile) {
+    const inverted = tile === "inverted";
+    return (
+      <div
+        style={{
+          boxSizing: "border-box",
+          width: "100%",
+          padding: 16,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          gap: 10,
+          borderRadius: 12,
+          background: inverted ? FOREST : "rgba(var(--ink-rgb), 0.05)",
+          color: inverted ? "#fff" : "var(--ink)",
+          fontFamily: SANS,
+          fontSize: "var(--fs-body, 14px)",
+          lineHeight: "var(--lh-body, 22px)",
+        }}
+      >
+        <div
+          style={{
+            padding: inverted ? 0 : "4px 10px",
+            borderRadius: 10,
+            background: inverted ? "transparent" : "rgba(45, 74, 54, 0.6)",
+            color: "#fff",
+            textWrap: "balance",
+          }}
+        >
+          {pill}
+        </div>
+        <p className={inverted ? "deck-inv" : undefined} style={{ margin: 0, fontWeight: 400, textAlign: "left" }}>
+          {children}
+        </p>
+      </div>
+    );
+  }
   return (
     <div
       style={{
@@ -51,6 +91,7 @@ function Card({
           lineHeight: "var(--lh-body, 28px)",
           textAlign: "center",
           whiteSpace: nowrap ? "nowrap" : "normal",
+          textWrap: "balance", // when the pill wraps, the lines come out even, never one word alone
         }}
       >
         {pill}
@@ -181,7 +222,8 @@ export function ProblemDeck() {
         style={{
           display: "grid",
           gridTemplateColumns: stacked ? "minmax(0, 1fr)" : `repeat(2, ${CARD_W}px)`,
-          gap: 20,
+          gap: stacked ? 10 : 20,
+          ...(stacked ? { padding: 12, borderRadius: 10, background: "var(--card)", boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)", boxSizing: "border-box" } : null),
           alignItems: "stretch",
           isolation: "isolate",
           width: stacked ? "100%" : DESIGN_W,
@@ -193,7 +235,7 @@ export function ProblemDeck() {
         }}
       >
         <div style={first}>
-          <Card nowrap={!stacked} pill={<>The problem became one <b style={{ fontWeight: 700 }}>How Might We</b>.</>}>
+          <Card nowrap={!stacked} tile={stacked ? "inverted" : undefined} pill={<>The problem became one <b style={{ fontWeight: 700, whiteSpace: "nowrap" }}>How Might We</b>.</>}>
             How might we <B>automatically detect</B> and{" "}
             <B>surface architectural and query missing context gaps before code is generated</B> to{" "}
             <B>prevent unauthorized agent inferences?</B>
@@ -202,10 +244,11 @@ export function ProblemDeck() {
         <div style={second}>
           <Card
             nowrap={!stacked}
+            tile={stacked ? "soft" : undefined}
             pill={
               <>
                 <b style={{ fontWeight: 700 }}>Added</b> the <b style={{ fontWeight: 700 }}>persona</b> and it became a{" "}
-                <b style={{ fontWeight: 700 }}>user story</b>.
+                <b style={{ fontWeight: 700, whiteSpace: "nowrap" }}>user story</b>.
               </>
             }
           >

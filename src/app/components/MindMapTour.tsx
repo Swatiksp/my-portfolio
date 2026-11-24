@@ -54,6 +54,13 @@ const MAP_SVG = mindMapSvg.replace(
   `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Research mind map: four pain clusters, twelve actions and five counter-evidence cards" style="display:block;font-family:Inter,'Roboto',sans-serif" fill="none">`,
 );
 
+// The same map without its outer <svg>, for the sharp layer that is drawn at the exact view the camera has stopped on.
+const MAP_INNER = mindMapSvg.replace(/^<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+
+// How much bigger than the frame the moving layer is drawn. Zooming in is a scale-up of that picture, so the larger it
+// starts, the less soft it is while the camera is moving. (The sharp layer takes over once the camera stops.)
+const SUPERSAMPLE = 2;
+
 function Art({ style }: { style?: React.CSSProperties }) {
   return (
     <div
@@ -66,14 +73,14 @@ function Art({ style }: { style?: React.CSSProperties }) {
 const box = (r: Rect) => ({ x: r.x, y: r.y, width: r.w, height: r.h });
 
 /** Fades everything except the chosen nodes and outlines them. Drawn in map units over the art. */
-function Spotlight({ step }: { step: number }) {
+function Spotlight({ step, view }: { step: number; view?: Rect }) {
   const id = useId().replace(/:/g, "");
   const active = HOLES_BY_STEP[step];
   const all = Object.keys(TARGETS) as ("hmw" | "idea1" | "idea4")[];
   const veil = step === 0 ? 0 : step === 4 ? 0.5 : 0.78;
   return (
     <svg
-      viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+      viewBox={view ? `${view.x} ${view.y} ${view.w} ${view.h}` : `0 0 ${MAP_W} ${MAP_H}`}
       width="100%"
       height="100%"
       aria-hidden
@@ -133,6 +140,7 @@ export function MindMapTour({ caption }: { caption?: string }) {
   const [frameW, setFrameW] = useState(735);
   const [winH, setWinH] = useState(() => (typeof window === "undefined" ? 900 : window.innerHeight));
   const [step, setStep] = useState(0);
+  const [settled, setSettled] = useState(false);
   const [started, setStarted] = useState(false);
   const [open, setOpen] = useState(false);
   const [full, setFull] = useState(false);
@@ -184,6 +192,14 @@ export function MindMapTour({ caption }: { caption?: string }) {
     return () => window.clearTimeout(t);
   }, [started, finished, step]);
 
+  // Once the camera has stopped, the map is drawn again at exactly this view, not as a scaled-up picture of the
+  // overview, so the text is sharp on a phone's screen. Moving to the next step hides it again.
+  useEffect(() => {
+    setSettled(false);
+    const t = window.setTimeout(() => setSettled(true), reduced ? 0 : MOVE + 80);
+    return () => window.clearTimeout(t);
+  }, [step, frameW, winH, reduced]);
+
   const replay = useCallback(() => {
     setStep(0);
     setStarted(true);
@@ -230,16 +246,32 @@ export function MindMapTour({ caption }: { caption?: string }) {
             position: "absolute",
             left: 0,
             top: 0,
-            width: frameW,
-            height: mapH,
+            width: frameW * SUPERSAMPLE,
+            height: mapH * SUPERSAMPLE,
             transformOrigin: "0 0",
-            transform: `translate(${tx}px, ${ty}px) scale(${k})`,
+            transform: `translate(${tx}px, ${ty}px) scale(${k / SUPERSAMPLE})`,
             transition: reduced ? "none" : `transform ${MOVE}ms ${EASE}`,
             willChange: "transform",
           }}
         >
           <Art />
           <Spotlight step={step} />
+        </div>
+
+        {/* the sharp layer: no transform, so it is drawn at the screen's own resolution */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "#fff",
+            opacity: settled ? 1 : 0,
+            transition: settled ? "opacity 160ms ease-out" : "none",
+            pointerEvents: "none",
+          }}
+        >
+          <svg viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }} dangerouslySetInnerHTML={{ __html: MAP_INNER }} />
+          <Spotlight step={step} view={v} />
         </div>
 
         <div style={{ position: "absolute", right: 12, bottom: 12, display: "flex", gap: 8 }}>

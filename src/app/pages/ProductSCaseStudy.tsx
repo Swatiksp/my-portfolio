@@ -138,7 +138,7 @@ function MethodRow({
 }) {
   return (
     <div
-      className="flex items-start justify-center max-w-full"
+      className={`method-row flex items-start justify-center max-w-full${inverted ? " method-row-inverted" : ""}`}
       style={{
         gap: 10,
         flexWrap: "wrap",
@@ -150,7 +150,7 @@ function MethodRow({
       }}
     >
       <span
-        className="shrink-0 whitespace-nowrap"
+        className="method-row-label shrink-0 whitespace-nowrap"
         style={{
           background: inverted ? SDD_GREEN : "rgba(45, 74, 54, 0.6)",
           color: "#fff",
@@ -165,7 +165,7 @@ function MethodRow({
         {label}
       </span>
       <p
-        className="m-0 text-left min-w-0"
+        className="method-row-text m-0 text-left min-w-0"
         style={{
           ...T.body,
           lineHeight: "28px",
@@ -454,7 +454,7 @@ export function ProductSCaseStudy() {
 
       <SectionFocusProvider>
         <motion.main
-          className="case-main mx-auto w-full flex flex-col"
+          className="case-main spec-left mx-auto w-full flex flex-col"
           style={{
             maxWidth: 1440,
             padding: `${NAV_H + PROGRESS_BAR_HEIGHT + 128}px 80px 40vh`,
@@ -516,7 +516,7 @@ export function ProductSCaseStudy() {
                     </MetaCell>
                     <MetaCell label="Duration" labelStyle={T.storyMetaLabel} gap={10}>
                       <p className="m-0" style={T.metaValue}>
-                        <TypeIn text="Aug 20, 2026 to ongoing" />
+                        <TypeIn text="Aug 20, 2026 to Nov 30, 2026" />
                       </p>
                     </MetaCell>
                     <MetaCell label="Course" labelStyle={T.storyMetaLabel} gap={10}>
@@ -547,7 +547,7 @@ export function ProductSCaseStudy() {
                 <H2>The spec is the source of truth, and the AI builds from it.</H2>
               </div>
               <div
-                className="flex flex-col items-center w-full"
+                className="method-card flex flex-col items-center w-full"
                 style={{
                   maxWidth: 912,
                   gap: 20,

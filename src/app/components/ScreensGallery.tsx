@@ -219,7 +219,7 @@ export function ScreensGallery() {
 
       <div className="flex items-center justify-between w-full">
         <span style={{ fontFamily: SANS, fontSize: "var(--fs-sec, 13px)", color: "rgba(255,255,255,0.5)" }}>
-          {active + 1} of {SCREENS.length} · scroll sideways, drag, or use the arrows
+          {active + 1} of {SCREENS.length}<span className="m-hide"> · scroll sideways, drag, or use the arrows</span>
         </span>
         <div className="flex" style={{ gap: 8 }}>
           <Arrow dir="left" disabled={active <= 0} onClick={() => go(active - 1)} />

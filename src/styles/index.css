@@ -901,6 +901,18 @@ body {
 @media (max-width: 767px) {
   .about-main { padding: 72px 16px 96px !important; gap: 64px !important; }
   .about-column { gap: 64px !important; }
+  /* SpecTrim on a phone: the headings, paragraphs and captions read from the left edge instead of the middle */
+  .spec-left :is(h2, h3, p.m-0, figcaption) { text-align: left !important; }
+  .spec-left .flex-col.items-center:not(.inline-flex) { align-items: flex-start !important; }
+  .spec-left .method-row { align-self: stretch; }
+  /* SpecTrim "What is SDD": on a phone the three definitions become three stacked tiles, label above text, all left aligned */
+  .deck-inv b { color: #fff !important; }
+  .method-card { padding: 12px !important; gap: 10px !important; }
+  .method-row { flex-direction: column; align-items: flex-start !important; gap: 10px !important; padding: 16px !important; border-radius: 12px !important; background: rgba(var(--ink-rgb), 0.05); }
+  .method-row-inverted { background: #2d4a36 !important; }
+  .method-row-label { white-space: normal !important; padding: 4px 10px !important; }
+  .method-row-inverted .method-row-label { padding: 0 !important; }
+  .method-row-text { flex: none !important; width: 100% !important; line-height: var(--lh-body) !important; }
   .about-bio { font-size: var(--fs-lead) !important; line-height: var(--lh-lead) !important; }
   /* the small tabs are too small to tap on a phone */
   .about-tab-small { font-size: var(--fs-sec); line-height: var(--lh-sec); padding: 8px 16px; }
@@ -938,6 +950,7 @@ body {
 /* iOS draws the arrow glyph as an emoji, so it is left off on phones */
 @media (max-width: 767px) {
   .m-no-arrow { display: none; }
+  .m-hide { display: none; }
 }
 /* a drop shadow that is redrawn every frame is too much for a phone */
 @media (hover: none) {
