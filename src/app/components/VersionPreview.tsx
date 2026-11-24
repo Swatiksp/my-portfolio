@@ -364,7 +364,7 @@ export function VersionPreview({
   thumbIndex?: number;
 }) {
   const id = useId();
-  const verb = useIsMobile() ? "Tap" : "Hover";
+  const isMobile = useIsMobile();
   const thumbRef = useRef<HTMLButtonElement>(null);
   const [mounted, setMounted] = useState(false);
   const [shown, setShown] = useState(false);
@@ -494,7 +494,7 @@ export function VersionPreview({
             fontWeight: 500,
           }}
         >
-          {verb} to see {screens.length} screens
+          {isMobile ? "Tap to view" : `Hover to see ${screens.length} screens`}
         </span>
       </button>
       <figcaption style={{ fontFamily: SANS, fontSize: 13, lineHeight: "18px", color: "rgba(0,0,0,0.5)", textAlign: "center" }}>
